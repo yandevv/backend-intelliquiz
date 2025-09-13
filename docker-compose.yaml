@@ -1,0 +1,10 @@
+services:
+ backend-intelliquiz:
+  container_name: backend-intelliquiz
+  build:
+   context: .
+   target: base
+  ports:
+   - 8080:8080
+  env_file:
+    - ./.env
