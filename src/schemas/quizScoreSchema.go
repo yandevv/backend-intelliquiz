@@ -8,9 +8,11 @@ import (
 )
 
 type QuizScore struct {
-	ID        string         `json:"id" gorm:"type:uuid;primaryKey"`
-	QuizID    string         `json:"quiz_id" gorm:"not null"`
-	UserID    string         `json:"user_id" gorm:"not null"`
+	ID        string `json:"id" gorm:"type:uuid;primaryKey"`
+	QuizID    string `json:"quiz_id" gorm:"not null"`
+	Quiz      Quiz
+	UserID    string `json:"user_id" gorm:"not null"`
+	User      User
 	Score     uint           `json:"score" gorm:"not null"`
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`

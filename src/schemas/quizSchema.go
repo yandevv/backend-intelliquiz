@@ -8,9 +8,10 @@ import (
 )
 
 type Quiz struct {
-	ID         string    `json:"id" gorm:"type:uuid;primaryKey"`
-	Name       string    `json:"name" gorm:"not null"`
-	CategoryID string    `json:"category_id" gorm:"not null"`
+	ID         string `json:"id" gorm:"type:uuid;primaryKey"`
+	Name       string `json:"name" gorm:"not null"`
+	CategoryID string `json:"category_id" gorm:"not null"`
+	Category   Category
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
 }
