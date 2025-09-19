@@ -21,4 +21,4 @@ RUN go build -o main ./src
 
 EXPOSE 8080
 
-CMD ["/build/main"]
+CMD ["/build/main", "--migrate=true", "--fresh=true"]
