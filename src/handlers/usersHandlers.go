@@ -11,7 +11,9 @@ import (
 )
 
 func GetUsers(c *gin.Context, db *gorm.DB) {
-	users, err := gorm.G[schemas.User](db).Find(c)
+	users, err := gorm.G[schemas.User](db).
+		Select("id, name").
+		Find(c)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"statusCode": http.StatusInternalServerError,
@@ -60,6 +62,10 @@ func CreateUser(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	user.CreatedAt = nil
+	user.UpdatedAt = nil
+	user.DeletedAt = nil
+
 	c.JSON(http.StatusCreated, gin.H{
 		"statusCode": http.StatusCreated,
 		"success":    true,
@@ -82,7 +88,10 @@ func GetUserByID(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	user, err := gorm.G[schemas.User](db).Where("id = ?", uuid).First(c)
+	user, err := gorm.G[schemas.User](db).
+		Where("id = ?", uuid).
+		Select("id, name").
+		First(c)
 
 	if err != nil {
 		log.Printf("Error fetching user by ID: %v", err)
@@ -142,7 +151,9 @@ func UpdateUser(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	user, err := gorm.G[schemas.User](db).Where("id = ?", uuid).First(c)
+	user, err := gorm.G[schemas.User](db).
+		Where("id = ?", uuid).
+		First(c)
 	if err != nil {
 		log.Printf("Error fetching user by ID: %v", err)
 
@@ -198,7 +209,9 @@ func DeleteUser(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	r, err := gorm.G[schemas.User](db).Where("id = ?", uuid).Delete(c)
+	r, err := gorm.G[schemas.User](db).
+		Where("id = ?", uuid).
+		Delete(c)
 
 	if err != nil {
 		log.Printf("Error deleting user: %v", err)
