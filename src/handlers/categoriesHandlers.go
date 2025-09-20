@@ -74,15 +74,6 @@ func GetCategoryByID(c *gin.Context, db *gorm.DB) {
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 
-		if err == gorm.ErrRecordNotFound {
-			c.JSON(http.StatusNotFound, gin.H{
-				"statusCode": http.StatusNotFound,
-				"success":    false,
-				"message":    "Category not found.",
-			})
-			return
-		}
-
 		c.JSON(http.StatusBadRequest, gin.H{
 			"statusCode": http.StatusBadRequest,
 			"success":    false,
