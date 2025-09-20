@@ -8,12 +8,12 @@ import (
 )
 
 type Quiz struct {
-	ID         string `json:"id" gorm:"type:uuid;primaryKey"`
-	Name       string `json:"name" gorm:"not null"`
-	CategoryID string `json:"category_id" gorm:"not null"`
-	Category   Category
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
+	ID         string     `json:"id,omitempty" gorm:"type:uuid;primaryKey"`
+	Name       string     `json:"name,omitempty" gorm:"not null"`
+	CategoryID string     `json:"category_id,omitempty" gorm:"not null"`
+	Category   *Category  `json:"category,omitempty"`
+	CreatedAt  *time.Time `json:"created_at,omitempty"`
+	UpdatedAt  *time.Time `json:"updated_at,omitempty"`
 }
 
 func (q *Quiz) BeforeCreate(tx *gorm.DB) (err error) {
