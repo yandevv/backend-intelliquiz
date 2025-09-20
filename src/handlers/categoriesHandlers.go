@@ -11,7 +11,9 @@ import (
 )
 
 func GetCategories(c *gin.Context, db *gorm.DB) {
-	categories, err := gorm.G[schemas.Category](db).Find(c)
+	categories, err := gorm.G[schemas.Category](db).
+		Select("id, name").
+		Find(c)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"statusCode": http.StatusInternalServerError,
@@ -60,6 +62,10 @@ func CreateCategory(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	category.CreatedAt = nil
+	category.UpdatedAt = nil
+	category.DeletedAt = nil
+
 	c.JSON(http.StatusCreated, gin.H{
 		"statusCode": http.StatusCreated,
 		"success":    true,
@@ -82,7 +88,10 @@ func GetCategoryByID(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	category, err := gorm.G[schemas.Category](db).Where("id = ?", uuid).First(c)
+	category, err := gorm.G[schemas.Category](db).
+		Where("id = ?", uuid).
+		Select("id, name").
+		First(c)
 
 	if err != nil {
 		log.Printf("Error fetching category by ID: %v", err)
@@ -142,7 +151,9 @@ func UpdateCategory(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	category, err := gorm.G[schemas.Category](db).Where("id = ?", uuid).First(c)
+	category, err := gorm.G[schemas.Category](db).
+		Where("id = ?", uuid).
+		First(c)
 	if err != nil {
 		log.Printf("Error fetching category by ID: %v", err)
 

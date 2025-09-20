@@ -8,11 +8,11 @@ import (
 )
 
 type Category struct {
-	ID        string         `json:"id" gorm:"type:uuid;primaryKey"`
-	Name      string         `json:"name" gorm:"not null"`
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
-	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
+	ID        string          `json:"id,omitempty" gorm:"type:uuid;primaryKey"`
+	Name      string          `json:"name,omitempty" gorm:"not null"`
+	CreatedAt *time.Time      `json:"created_at,omitempty"`
+	UpdatedAt *time.Time      `json:"updated_at,omitempty"`
+	DeletedAt *gorm.DeletedAt `json:"deleted_at,omitempty" gorm:"index"`
 }
 
 func (c *Category) BeforeCreate(tx *gorm.DB) (err error) {
