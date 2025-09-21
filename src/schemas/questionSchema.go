@@ -8,13 +8,13 @@ import (
 )
 
 type Question struct {
-	ID        string `json:"id" gorm:"type:uuid;primaryKey"`
-	Content   string `json:"content" gorm:"not null"`
-	QuizID    string `json:"quiz_id" gorm:"not null"`
-	Quiz      Quiz
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
-	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
+	ID        string          `json:"id,omitempty" gorm:"type:uuid;primaryKey"`
+	Content   string          `json:"content,omitempty" gorm:"not null"`
+	QuizID    string          `json:"quiz_id,omitempty" gorm:"not null"`
+	Quiz      *Quiz           `json:"quiz,omitempty"`
+	CreatedAt *time.Time      `json:"created_at,omitempty"`
+	UpdatedAt *time.Time      `json:"updated_at,omitempty"`
+	DeletedAt *gorm.DeletedAt `json:"deleted_at,omitempty" gorm:"index"`
 }
 
 func (q *Question) BeforeCreate(tx *gorm.DB) (err error) {
