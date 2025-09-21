@@ -37,11 +37,11 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	r.DELETE("/quizzes/:id", func(c *gin.Context) { handlers.DeleteQuiz(c, db) })
 
 	// Question Routes
-	r.GET("/questions", func(c *gin.Context) {})
-	r.POST("/questions", func(c *gin.Context) {})
-	r.GET("/questions/:id", func(c *gin.Context) {})
-	r.PATCH("/questions/:id", func(c *gin.Context) {})
-	r.DELETE("/questions/:id", func(c *gin.Context) {})
+	r.GET("/questions", func(c *gin.Context) { handlers.GetQuestions(c, db) })
+	r.POST("/questions", func(c *gin.Context) { handlers.CreateQuestion(c, db) })
+	r.GET("/questions/:id", func(c *gin.Context) { handlers.GetQuestionByID(c, db) })
+	r.PATCH("/questions/:id", func(c *gin.Context) { handlers.UpdateQuestion(c, db) })
+	r.DELETE("/questions/:id", func(c *gin.Context) { handlers.DeleteQuestion(c, db) })
 
 	// Quiz Score Routes
 	r.GET("/quizzesScores", func(c *gin.Context) {})
