@@ -12,7 +12,7 @@ import (
 
 func GetQuizzes(c *gin.Context, db *gorm.DB) {
 	quizzes, err := gorm.G[schemas.Quiz](db).
-		Select("id, name, category_id").
+		Select("id, name, category_id, created_by").
 		Find(c.Request.Context())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -34,6 +34,7 @@ func CreateQuiz(c *gin.Context, db *gorm.DB) {
 	type CreateQuizRequestBody struct {
 		Name       string `json:"name" binding:"required"`
 		CategoryID string `json:"category_id" binding:"required"`
+		CreatedBy  string `json:"created_by" binding:"required"`
 	}
 
 	var reqBody CreateQuizRequestBody
@@ -60,9 +61,22 @@ func CreateQuiz(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	createdByUuid, err := uuidG.Parse(reqBody.CreatedBy)
+	if err != nil {
+		log.Printf("Error parsing CreatedBy UUID: %v", err)
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"statusCode": http.StatusBadRequest,
+			"success":    false,
+			"message":    "Invalid created_by ID format.",
+		})
+		return
+	}
+
 	quiz := schemas.Quiz{
 		Name:       reqBody.Name,
 		CategoryID: categoryUuid.String(),
+		CreatedBy:  createdByUuid.String(),
 	}
 
 	if err := gorm.G[schemas.Quiz](db).Create(c, &quiz); err != nil {
@@ -77,6 +91,7 @@ func CreateQuiz(c *gin.Context, db *gorm.DB) {
 	}
 
 	quiz.Category = nil
+	quiz.User = nil
 	quiz.CreatedAt = nil
 	quiz.UpdatedAt = nil
 
@@ -103,7 +118,7 @@ func GetQuizByID(c *gin.Context, db *gorm.DB) {
 	}
 
 	quiz, err := gorm.G[schemas.Quiz](db).Where("id = ?", uuid).
-		Select("id, name, category_id").
+		Select("id, name, category_id, created_by").
 		First(c)
 	if err != nil {
 		log.Printf("Error fetching quiz by ID: %v", err)
@@ -150,6 +165,7 @@ func UpdateQuiz(c *gin.Context, db *gorm.DB) {
 	type UpdateQuizRequestBody struct {
 		Name       string `json:"name"`
 		CategoryID string `json:"category_id"`
+		CreatedBy  string `json:"created_by"`
 	}
 
 	var reqBody UpdateQuizRequestBody
@@ -193,6 +209,10 @@ func UpdateQuiz(c *gin.Context, db *gorm.DB) {
 		quiz.CategoryID = reqBody.CategoryID
 	}
 
+	if reqBody.CreatedBy != "" {
+		quiz.CreatedBy = reqBody.CreatedBy
+	}
+
 	if err := db.Save(&quiz).Error; err != nil {
 		log.Printf("Error updating quiz: %v", err)
 
@@ -203,10 +223,6 @@ func UpdateQuiz(c *gin.Context, db *gorm.DB) {
 		})
 		return
 	}
-
-	quiz.Category = nil
-	quiz.CreatedAt = nil
-	quiz.UpdatedAt = nil
 
 	c.JSON(http.StatusOK, gin.H{
 		"statusCode": http.StatusOK,
