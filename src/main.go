@@ -1,74 +1,86 @@
 package main
 
 import (
-	"net/http"
+	"flag"
+	"intelliquiz/src/handlers"
+	"intelliquiz/src/schemas"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-var db = make(map[string]string)
-
-func setupRouter() *gin.Engine {
+func setupRouter(db *gorm.DB) *gin.Engine {
 	// Disable Console Color
 	// gin.DisableConsoleColor()
 	r := gin.Default()
 
-	// Ping test
-	r.GET("/ping", func(c *gin.Context) {
-		c.String(http.StatusOK, "pong")
-	})
+	// User Routes
+	r.GET("/users", func(c *gin.Context) { handlers.GetUsers(c, db) })
+	r.POST("/users", func(c *gin.Context) { handlers.CreateUser(c, db) })
+	r.GET("/users/:id", func(c *gin.Context) { handlers.GetUserByID(c, db) })
+	r.PATCH("/users/:id", func(c *gin.Context) { handlers.UpdateUser(c, db) })
+	r.DELETE("/users/:id", func(c *gin.Context) { handlers.DeleteUser(c, db) })
 
-	// Get user value
-	r.GET("/user/:name", func(c *gin.Context) {
-		user := c.Params.ByName("name")
-		value, ok := db[user]
-		if ok {
-			c.JSON(http.StatusOK, gin.H{"user": user, "value": value})
-		} else {
-			c.JSON(http.StatusOK, gin.H{"user": user, "status": "no value"})
-		}
-	})
+	// Category Routes
+	r.GET("/categories", func(c *gin.Context) { handlers.GetCategories(c, db) })
+	r.POST("/categories", func(c *gin.Context) { handlers.CreateCategory(c, db) })
+	r.GET("/categories/:id", func(c *gin.Context) { handlers.GetCategoryByID(c, db) })
+	r.PATCH("/categories/:id", func(c *gin.Context) { handlers.UpdateCategory(c, db) })
+	r.DELETE("/categories/:id", func(c *gin.Context) { handlers.DeleteCategory(c, db) })
 
-	// Authorized group (uses gin.BasicAuth() middleware)
-	// Same than:
-	// authorized := r.Group("/")
-	// authorized.Use(gin.BasicAuth(gin.Credentials{
-	//	  "foo":  "bar",
-	//	  "manu": "123",
-	//}))
-	authorized := r.Group("/", gin.BasicAuth(gin.Accounts{
-		"foo":  "bar", // user:foo password:bar
-		"manu": "123", // user:manu password:123
-	}))
+	// Quiz Routes
+	r.GET("/quizzes", func(c *gin.Context) { handlers.GetQuizzes(c, db) })
+	r.POST("/quizzes", func(c *gin.Context) { handlers.CreateQuiz(c, db) })
+	r.GET("/quizzes/:id", func(c *gin.Context) { handlers.GetQuizByID(c, db) })
+	r.PATCH("/quizzes/:id", func(c *gin.Context) { handlers.UpdateQuiz(c, db) })
+	r.DELETE("/quizzes/:id", func(c *gin.Context) { handlers.DeleteQuiz(c, db) })
 
-	/* example curl for /admin with basicauth header
-	   Zm9vOmJhcg== is base64("foo:bar")
+	// Question Routes
+	r.GET("/questions", func(c *gin.Context) { handlers.GetQuestions(c, db) })
+	r.POST("/questions", func(c *gin.Context) { handlers.CreateQuestion(c, db) })
+	r.GET("/questions/:id", func(c *gin.Context) { handlers.GetQuestionByID(c, db) })
+	r.PATCH("/questions/:id", func(c *gin.Context) { handlers.UpdateQuestion(c, db) })
+	r.DELETE("/questions/:id", func(c *gin.Context) { handlers.DeleteQuestion(c, db) })
 
-		curl -X POST \
-	  	http://localhost:8080/admin \
-	  	-H 'authorization: Basic Zm9vOmJhcg==' \
-	  	-H 'content-type: application/json' \
-	  	-d '{"value":"bar"}'
-	*/
-	authorized.POST("admin", func(c *gin.Context) {
-		user := c.MustGet(gin.AuthUserKey).(string)
+	// Quiz Score Routes
+	r.GET("/quizzesScores", func(c *gin.Context) {})
+	r.POST("/quizzesScores", func(c *gin.Context) {})
+	r.GET("/quizzesScores/:id", func(c *gin.Context) {})
+	r.PATCH("/quizzesScores/:id", func(c *gin.Context) {})
+	r.DELETE("/quizzesScores/:id", func(c *gin.Context) {})
 
-		// Parse JSON
-		var json struct {
-			Value string `json:"value" binding:"required"`
-		}
-
-		if c.Bind(&json) == nil {
-			db[user] = json.Value
-			c.JSON(http.StatusOK, gin.H{"status": "ok"})
-		}
-	})
+	// Quiz Score Question Routes
+	r.GET("/quizzesScoreQuestions", func(c *gin.Context) {})
+	r.POST("/quizzesScoreQuestions", func(c *gin.Context) {})
+	r.GET("/quizzesScoreQuestions/:id", func(c *gin.Context) {})
+	r.PATCH("/quizzesScoreQuestions/:id", func(c *gin.Context) {})
+	r.DELETE("/quizzesScoreQuestions/:id", func(c *gin.Context) {})
 
 	return r
 }
 
 func main() {
-	r := setupRouter()
-	// Listen and Server in 0.0.0.0:8080
+	dsn := "host=postgres user=pgadmin password=pgadmin dbname=intelliquiz port=5432 sslmode=disable TimeZone=America/Sao_Paulo"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		panic("An error occurred while connecting to the database")
+	}
+
+	migrate := flag.Bool("migrate", false, "Migrate schemas on database.")
+	freshMigrate := flag.Bool("fresh", false, "Fresh migrating schemas on database.")
+
+	flag.Parse()
+
+	if *migrate {
+		if *freshMigrate {
+			db.Migrator().DropTable(&schemas.User{}, &schemas.Quiz{}, &schemas.Question{}, &schemas.Category{}, &schemas.QuizScore{}, &schemas.QuizScoreQuestion{})
+		}
+
+		db.AutoMigrate(&schemas.User{}, &schemas.Quiz{}, &schemas.Question{}, &schemas.Category{}, &schemas.QuizScore{}, &schemas.QuizScoreQuestion{})
+	}
+
+	r := setupRouter(db)
+
 	r.Run(":8080")
 }
