@@ -57,11 +57,11 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	r.DELETE("/quizzesScores/:id", func(c *gin.Context) { handlers.DeleteQuizScore(c, db) })
 
 	// Quiz Score Question Routes
-	r.GET("/quizzesScoreQuestions", func(c *gin.Context) {})
-	r.POST("/quizzesScoreQuestions", func(c *gin.Context) {})
-	r.GET("/quizzesScoreQuestions/:id", func(c *gin.Context) {})
-	r.PATCH("/quizzesScoreQuestions/:id", func(c *gin.Context) {})
-	r.DELETE("/quizzesScoreQuestions/:id", func(c *gin.Context) {})
+	r.GET("/quizzesScoreQuestions", func(c *gin.Context) { handlers.GetQuizzesScoreQuestions(c, db) })
+	r.POST("/quizzesScoreQuestions", func(c *gin.Context) { handlers.CreateQuizScoreQuestion(c, db) })
+	r.GET("/quizzesScoreQuestions/:id", func(c *gin.Context) { handlers.GetQuizScoreQuestionByID(c, db) })
+	r.PATCH("/quizzesScoreQuestions/:id", func(c *gin.Context) { handlers.UpdateQuizScoreQuestion(c, db) })
+	r.DELETE("/quizzesScoreQuestions/:id", func(c *gin.Context) { handlers.DeleteQuizScoreQuestion(c, db) })
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
