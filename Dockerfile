@@ -17,8 +17,13 @@ RUN go mod download
 
 COPY ./src ./src
 
-RUN go build -o main ./src
+WORKDIR /build/src
+
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+RUN swag init --parseDependency --parseInternal
+
+RUN go build -o main
 
 EXPOSE 8080
 
-CMD ["/build/main", "--migrate=true", "--fresh=true"]
+CMD ["/build/src/main", "--migrate=true", "--fresh=true"]
