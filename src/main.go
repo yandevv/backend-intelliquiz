@@ -2,18 +2,24 @@ package main
 
 import (
 	"flag"
+	"intelliquiz/src/docs"
 	"intelliquiz/src/handlers"
 	"intelliquiz/src/schemas"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func setupRouter(db *gorm.DB) *gin.Engine {
 	// Disable Console Color
 	// gin.DisableConsoleColor()
 	r := gin.Default()
+
+	docs.SwaggerInfo.BasePath = "/"
 
 	// User Routes
 	r.GET("/users", func(c *gin.Context) { handlers.GetUsers(c, db) })
@@ -57,9 +63,23 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	r.PATCH("/quizzesScoreQuestions/:id", func(c *gin.Context) {})
 	r.DELETE("/quizzesScoreQuestions/:id", func(c *gin.Context) {})
 
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	return r
 }
 
+// @title           IntelliQuiz API
+// @version         1.0
+// @description     Backend service for IntelliQuiz's web application purposes.
+
+// @license.name  MIT License
+// @license.url   https://mit-license.org/
+
+// @host      localhost:8080
+// @BasePath  /
+
+// @externalDocs.description  OpenAPI
+// @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
 	dsn := "host=postgres user=pgadmin password=pgadmin dbname=intelliquiz port=5432 sslmode=disable TimeZone=America/Sao_Paulo"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
