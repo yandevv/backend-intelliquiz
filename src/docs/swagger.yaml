@@ -1,0 +1,232 @@
+basePath: /
+definitions:
+  gin.H:
+    additionalProperties: {}
+    type: object
+  types.BadRequestErrorResponseStruct:
+    properties:
+      message:
+        example: Bad Request
+        type: string
+      statusCode:
+        example: 400
+        type: integer
+      success:
+        example: false
+        type: boolean
+    type: object
+  types.CreateUserSuccessResponseStruct:
+    properties:
+      data:
+        $ref: '#/definitions/types.UserResponseStruct'
+      statusCode:
+        example: 201
+        type: integer
+      success:
+        example: true
+        type: boolean
+    type: object
+  types.GetUsersSuccessResponseStruct:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.UserResponseStruct'
+        type: array
+      statusCode:
+        example: 200
+        type: integer
+      success:
+        example: true
+        type: boolean
+    type: object
+  types.InternalServerErrorResponseStruct:
+    properties:
+      message:
+        example: Internal Server Error
+        type: string
+      statusCode:
+        example: 500
+        type: integer
+      success:
+        example: false
+        type: boolean
+    type: object
+  types.NotFoundErrorResponseStruct:
+    properties:
+      message:
+        example: Not Found
+        type: string
+      statusCode:
+        example: 404
+        type: integer
+      success:
+        example: false
+        type: boolean
+    type: object
+  types.SuccessResponseStruct:
+    properties:
+      message:
+        example: OK
+        type: string
+      statusCode:
+        example: 200
+        type: integer
+      success:
+        example: true
+        type: boolean
+    type: object
+  types.UserResponseStruct:
+    properties:
+      id:
+        example: c6c45f7c-107b-4454-8bdf-a9cff7d3089b
+        type: string
+      name:
+        example: John Doe
+        type: string
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8080
+info:
+  contact: {}
+  description: Backend service for IntelliQuiz's web application purposes.
+  license:
+    name: MIT License
+    url: https://mit-license.org/
+  title: IntelliQuiz API
+  version: "1.0"
+paths:
+  /users:
+    get:
+      description: Retrieve a list of all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetUsersSuccessResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Get all users
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Create a new user
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.CreateUserSuccessResponseStruct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Create a new user
+      tags:
+      - users
+  /users/{id}:
+    delete:
+      description: Delete a user by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponseStruct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Delete a user by ID
+      tags:
+      - users
+    get:
+      description: Retrieve a user by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.UserResponseStruct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Get a user by ID
+      tags:
+      - users
+    patch:
+      consumes:
+      - application/json
+      description: Update a user's information by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/gin.H'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Update a user by ID
+      tags:
+      - users
+swagger: "2.0"
