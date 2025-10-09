@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"intelliquiz/src/schemas"
+	"intelliquiz/src/types"
 	"log"
 	"net/http"
 
@@ -10,15 +11,24 @@ import (
 	"gorm.io/gorm"
 )
 
+// GetUsers godoc
+// @Summary Get all users
+// @Schemes
+// @Description Retrieve a list of all users
+// @Tags users
+// @Produce json
+// @Success 200 {object} types.GetUsersSuccessResponseStruct
+// @Failure 500 {object} types.InternalServerErrorResponseStruct
+// @Router /users [get]
 func GetUsers(c *gin.Context, db *gorm.DB) {
 	users, err := gorm.G[schemas.User](db).
 		Select("id, name").
 		Find(c)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"statusCode": http.StatusInternalServerError,
-			"success":    false,
-			"message":    "An error occurred while fetching users",
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while fetching users",
 		})
 		return
 	}
@@ -30,6 +40,17 @@ func GetUsers(c *gin.Context, db *gorm.DB) {
 	})
 }
 
+// CreateUser godoc
+// @Summary Create a new user
+// @Schemes
+// @Description Create a new user
+// @Tags users
+// @Accept json
+// @Produce json
+// @Success 201 {object} types.CreateUserSuccessResponseStruct
+// @Failure 400 {object} types.BadRequestErrorResponseStruct
+// @Failure 500 {object} types.InternalServerErrorResponseStruct
+// @Router /users [post]
 func CreateUser(c *gin.Context, db *gorm.DB) {
 	type CreateUserRequestBody struct {
 		Name string `json:"name" binding:"required"`
@@ -39,10 +60,10 @@ func CreateUser(c *gin.Context, db *gorm.DB) {
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
 		log.Printf("Error parsing request body: %v", err)
 
-		c.JSON(http.StatusBadRequest, gin.H{
-			"statusCode": http.StatusBadRequest,
-			"success":    false,
-			"message":    "An error occurred while parsing the request body.",
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "An error occurred while parsing the request body.",
 		})
 		return
 	}
@@ -54,10 +75,10 @@ func CreateUser(c *gin.Context, db *gorm.DB) {
 	if err := gorm.G[schemas.User](db).Create(c, &user); err != nil {
 		log.Printf("Error creating user: %v", err)
 
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"statusCode": http.StatusInternalServerError,
-			"success":    false,
-			"message":    "An error occurred while creating the user.",
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while creating the user.",
 		})
 		return
 	}
@@ -73,6 +94,18 @@ func CreateUser(c *gin.Context, db *gorm.DB) {
 	})
 }
 
+// GetUserByID godoc
+// @Summary Get a user by ID
+// @Schemes
+// @Description Retrieve a user by their ID
+// @Tags users
+// @Produce json
+// @Param id path string true "User ID"
+// @Success 200 {object} types.UserResponseStruct
+// @Failure 400 {object} types.BadRequestErrorResponseStruct
+// @Failure 404 {object} types.BadRequestErrorResponseStruct
+// @Failure 500 {object} types.InternalServerErrorResponseStruct
+// @Router /users/{id} [get]
 func GetUserByID(c *gin.Context, db *gorm.DB) {
 	id := c.Param("id")
 
@@ -80,10 +113,10 @@ func GetUserByID(c *gin.Context, db *gorm.DB) {
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 
-		c.JSON(http.StatusBadRequest, gin.H{
-			"statusCode": http.StatusBadRequest,
-			"success":    false,
-			"message":    "Invalid user ID format.",
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "Invalid user ID format.",
 		})
 		return
 	}
@@ -97,18 +130,18 @@ func GetUserByID(c *gin.Context, db *gorm.DB) {
 		log.Printf("Error fetching user by ID: %v", err)
 
 		if err == gorm.ErrRecordNotFound {
-			c.JSON(http.StatusNotFound, gin.H{
-				"statusCode": http.StatusNotFound,
-				"success":    false,
-				"message":    "User not found.",
+			c.JSON(http.StatusNotFound, types.NotFoundErrorResponseStruct{
+				StatusCode: http.StatusNotFound,
+				Success:    false,
+				Message:    "User not found.",
 			})
 			return
 		}
 
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"statusCode": http.StatusInternalServerError,
-			"success":    false,
-			"message":    "An error occurred while fetching the user.",
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while fetching the user.",
 		})
 		return
 	}
@@ -120,6 +153,19 @@ func GetUserByID(c *gin.Context, db *gorm.DB) {
 	})
 }
 
+// UpdateUser godoc
+// @Summary Update a user by ID
+// @Schemes
+// @Description Update a user's information by their ID
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param id path string true "User ID"
+// @Success 200 {object} types.SuccessResponseStruct
+// @Failure 400 {object} types.BadRequestErrorResponseStruct
+// @Failure 404 {object} types.NotFoundErrorResponseStruct
+// @Failure 500 {object} types.InternalServerErrorResponseStruct
+// @Router /users/{id} [patch]
 func UpdateUser(c *gin.Context, db *gorm.DB) {
 	id := c.Param("id")
 
@@ -127,10 +173,10 @@ func UpdateUser(c *gin.Context, db *gorm.DB) {
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 
-		c.JSON(http.StatusBadRequest, gin.H{
-			"statusCode": http.StatusBadRequest,
-			"success":    false,
-			"message":    "Invalid user ID format.",
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "Invalid user ID format.",
 		})
 		return
 	}
@@ -143,10 +189,10 @@ func UpdateUser(c *gin.Context, db *gorm.DB) {
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
 		log.Printf("Error parsing request body: %v", err)
 
-		c.JSON(http.StatusBadRequest, gin.H{
-			"statusCode": http.StatusBadRequest,
-			"success":    false,
-			"message":    "An error occurred while parsing the request body.",
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "An error occurred while parsing the request body.",
 		})
 		return
 	}
@@ -166,10 +212,10 @@ func UpdateUser(c *gin.Context, db *gorm.DB) {
 			return
 		}
 
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"statusCode": http.StatusInternalServerError,
-			"success":    false,
-			"message":    "An error occurred while fetching the user.",
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while fetching the user.",
 		})
 		return
 	}
@@ -179,21 +225,33 @@ func UpdateUser(c *gin.Context, db *gorm.DB) {
 	if err := db.Save(&user).Error; err != nil {
 		log.Printf("Error updating user: %v", err)
 
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"statusCode": http.StatusInternalServerError,
-			"success":    false,
-			"message":    "An error occurred while updating the user.",
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while updating the user.",
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"statusCode": http.StatusOK,
-		"success":    true,
-		"message":    "User updated successfully.",
+	c.JSON(http.StatusOK, types.SuccessResponseStruct{
+		StatusCode: http.StatusOK,
+		Success:    true,
+		Message:    "User updated successfully.",
 	})
 }
 
+// DeleteUser godoc
+// @Summary Delete a user by ID
+// @Schemes
+// @Description Delete a user by their ID
+// @Tags users
+// @Produce json
+// @Param id path string true "User ID"
+// @Success 200 {object} types.SuccessResponseStruct
+// @Failure 400 {object} types.BadRequestErrorResponseStruct
+// @Failure 404 {object} types.NotFoundErrorResponseStruct
+// @Failure 500 {object} types.InternalServerErrorResponseStruct
+// @Router /users/{id} [delete]
 func DeleteUser(c *gin.Context, db *gorm.DB) {
 	id := c.Param("id")
 
@@ -201,10 +259,10 @@ func DeleteUser(c *gin.Context, db *gorm.DB) {
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 
-		c.JSON(http.StatusBadRequest, gin.H{
-			"statusCode": http.StatusBadRequest,
-			"success":    false,
-			"message":    "Invalid user ID format.",
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "Invalid user ID format.",
 		})
 		return
 	}
@@ -216,26 +274,26 @@ func DeleteUser(c *gin.Context, db *gorm.DB) {
 	if err != nil {
 		log.Printf("Error deleting user: %v", err)
 
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"statusCode": http.StatusInternalServerError,
-			"success":    false,
-			"message":    "An error occurred while deleting the user.",
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while deleting the user.",
 		})
 		return
 	}
 
 	if r <= 0 {
-		c.JSON(http.StatusNotFound, gin.H{
-			"statusCode": http.StatusNotFound,
-			"success":    false,
-			"message":    "User not found.",
+		c.JSON(http.StatusNotFound, types.NotFoundErrorResponseStruct{
+			StatusCode: http.StatusNotFound,
+			Success:    false,
+			Message:    "User not found.",
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"statusCode": http.StatusOK,
-		"success":    true,
-		"message":    "User deleted successfully.",
+	c.JSON(http.StatusOK, types.SuccessResponseStruct{
+		StatusCode: http.StatusOK,
+		Success:    true,
+		Message:    "User deleted successfully.",
 	})
 }
