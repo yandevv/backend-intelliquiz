@@ -1,4 +1,4 @@
-FROM golang:1.24.6-alpine3.22 AS base
+FROM golang:1.24.6-alpine3.22 AS base-image
 
 RUN apk add --no-cache \
     libwebp-dev \
@@ -8,6 +8,10 @@ RUN apk add --no-cache \
 
 ENV CGO_ENABLED=1
 ENV GOOS=linux
+
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+
+FROM base-image AS builder
 
 WORKDIR /build
 
@@ -19,7 +23,6 @@ COPY ./src ./src
 
 WORKDIR /build/src
 
-RUN go install github.com/swaggo/swag/cmd/swag@latest
 RUN swag init --parseDependency --parseInternal
 
 RUN go build -o main
