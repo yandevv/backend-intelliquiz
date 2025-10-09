@@ -106,6 +106,8 @@ func CreateQuizScore(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	quizScore.Quiz = nil
+	quizScore.User = nil
 	quizScore.CreatedAt = nil
 	quizScore.UpdatedAt = nil
 
