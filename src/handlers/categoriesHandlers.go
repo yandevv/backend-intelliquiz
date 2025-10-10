@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"intelliquiz/src/schemas"
+	"intelliquiz/src/types"
 	"log"
 	"net/http"
 
@@ -10,15 +11,24 @@ import (
 	"gorm.io/gorm"
 )
 
+// GetCategories godoc
+// @Summary Get all categories
+// @Schemes
+// @Description Retrieve a list of all categories
+// @Tags categories
+// @Produce json
+// @Success 200 {object} types.GetCategoriesSuccessResponseStruct
+// @Failure 500 {object} types.InternalServerErrorResponseStruct
+// @Router /categories [get]
 func GetCategories(c *gin.Context, db *gorm.DB) {
 	categories, err := gorm.G[schemas.Category](db).
 		Select("id, name").
 		Find(c)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"statusCode": http.StatusInternalServerError,
-			"success":    false,
-			"message":    "An error occurred while fetching categories",
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while fetching categories",
 		})
 		return
 	}
@@ -30,19 +40,26 @@ func GetCategories(c *gin.Context, db *gorm.DB) {
 	})
 }
 
+// CreateCategory godoc
+// @Summary Create a new category
+// @Schemes
+// @Description Create a new category
+// @Tags categories
+// @Produce json
+// @Param data body types.CreateCategoryRequestBody true "Create Category Request Body"
+// @Success 201 {object} types.CreateCategorySuccessResponseStruct
+// @Failure 400 {object} types.BadRequestErrorResponseStruct
+// @Failure 500 {object} types.InternalServerErrorResponseStruct
+// @Router /categories [post]
 func CreateCategory(c *gin.Context, db *gorm.DB) {
-	type CreateCategoryRequestBody struct {
-		Name string `json:"name" binding:"required"`
-	}
-
-	var reqBody CreateCategoryRequestBody
+	var reqBody types.CreateCategoryRequestBody
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
 		log.Printf("Error parsing request body: %v", err)
 
-		c.JSON(http.StatusBadRequest, gin.H{
-			"statusCode": http.StatusBadRequest,
-			"success":    false,
-			"message":    "An error occurred while parsing the request body.",
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "An error occurred while parsing the request body.",
 		})
 		return
 	}
@@ -54,10 +71,10 @@ func CreateCategory(c *gin.Context, db *gorm.DB) {
 	if err := gorm.G[schemas.Category](db).Create(c, &category); err != nil {
 		log.Printf("Error creating category: %v", err)
 
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"statusCode": http.StatusInternalServerError,
-			"success":    false,
-			"message":    "An error occurred while creating the category.",
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while creating the category.",
 		})
 		return
 	}
@@ -73,6 +90,18 @@ func CreateCategory(c *gin.Context, db *gorm.DB) {
 	})
 }
 
+// GetCategoryByID godoc
+// @Summary Get a category by ID
+// @Schemes
+// @Description Retrieve a category by its ID
+// @Tags categories
+// @Produce json
+// @Param id path string true "Category ID"
+// @Success 200 {object} types.GetCategorySuccessResponseStruct
+// @Failure 400 {object} types.BadRequestErrorResponseStruct
+// @Failure 404 {object} types.NotFoundErrorResponseStruct
+// @Failure 500 {object} types.InternalServerErrorResponseStruct
+// @Router /categories/{id} [get]
 func GetCategoryByID(c *gin.Context, db *gorm.DB) {
 	id := c.Param("id")
 
@@ -80,10 +109,10 @@ func GetCategoryByID(c *gin.Context, db *gorm.DB) {
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 
-		c.JSON(http.StatusBadRequest, gin.H{
-			"statusCode": http.StatusBadRequest,
-			"success":    false,
-			"message":    "Invalid category ID format.",
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "Invalid category ID format.",
 		})
 		return
 	}
@@ -97,18 +126,18 @@ func GetCategoryByID(c *gin.Context, db *gorm.DB) {
 		log.Printf("Error fetching category by ID: %v", err)
 
 		if err == gorm.ErrRecordNotFound {
-			c.JSON(http.StatusNotFound, gin.H{
-				"statusCode": http.StatusNotFound,
-				"success":    false,
-				"message":    "Category not found.",
+			c.JSON(http.StatusNotFound, types.NotFoundErrorResponseStruct{
+				StatusCode: http.StatusNotFound,
+				Success:    false,
+				Message:    "Category not found.",
 			})
 			return
 		}
 
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"statusCode": http.StatusInternalServerError,
-			"success":    false,
-			"message":    "An error occurred while fetching the category.",
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while fetching the category.",
 		})
 		return
 	}
@@ -120,6 +149,19 @@ func GetCategoryByID(c *gin.Context, db *gorm.DB) {
 	})
 }
 
+// UpdateCategory godoc
+// @Summary Update a category by ID
+// @Schemes
+// @Description Update a category's name by its ID
+// @Tags categories
+// @Produce json
+// @Param id path string true "Category ID"
+// @Param data body types.UpdateCategoryRequestBody true "Update Category Request Body"
+// @Success 200 {object} types.SuccessResponseStruct
+// @Failure 400 {object} types.BadRequestErrorResponseStruct
+// @Failure 404 {object} types.NotFoundErrorResponseStruct
+// @Failure 500 {object} types.InternalServerErrorResponseStruct
+// @Router /categories/{id} [patch]
 func UpdateCategory(c *gin.Context, db *gorm.DB) {
 	id := c.Param("id")
 
@@ -127,26 +169,22 @@ func UpdateCategory(c *gin.Context, db *gorm.DB) {
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 
-		c.JSON(http.StatusBadRequest, gin.H{
-			"statusCode": http.StatusBadRequest,
-			"success":    false,
-			"message":    "Invalid category ID format.",
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "Invalid category ID format.",
 		})
 		return
 	}
 
-	type UpdateCategoryRequestBody struct {
-		Name string `json:"name" binding:"required"`
-	}
-
-	var reqBody UpdateCategoryRequestBody
+	var reqBody types.UpdateCategoryRequestBody
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
 		log.Printf("Error parsing request body: %v", err)
 
-		c.JSON(http.StatusBadRequest, gin.H{
-			"statusCode": http.StatusBadRequest,
-			"success":    false,
-			"message":    "An error occurred while parsing the request body.",
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "An error occurred while parsing the request body.",
 		})
 		return
 	}
@@ -158,18 +196,18 @@ func UpdateCategory(c *gin.Context, db *gorm.DB) {
 		log.Printf("Error fetching category by ID: %v", err)
 
 		if err == gorm.ErrRecordNotFound {
-			c.JSON(http.StatusNotFound, gin.H{
-				"statusCode": http.StatusNotFound,
-				"success":    false,
-				"message":    "Category not found.",
+			c.JSON(http.StatusNotFound, types.NotFoundErrorResponseStruct{
+				StatusCode: http.StatusNotFound,
+				Success:    false,
+				Message:    "Category not found.",
 			})
 			return
 		}
 
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"statusCode": http.StatusInternalServerError,
-			"success":    false,
-			"message":    "An error occurred while fetching the category.",
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while fetching the category.",
 		})
 		return
 	}
@@ -179,10 +217,10 @@ func UpdateCategory(c *gin.Context, db *gorm.DB) {
 	if err := db.Save(&category).Error; err != nil {
 		log.Printf("Error updating category: %v", err)
 
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"statusCode": http.StatusInternalServerError,
-			"success":    false,
-			"message":    "An error occurred while updating the category.",
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while updating the category.",
 		})
 		return
 	}
@@ -194,6 +232,18 @@ func UpdateCategory(c *gin.Context, db *gorm.DB) {
 	})
 }
 
+// DeleteCategory godoc
+// @Summary Delete a category by ID
+// @Schemes
+// @Description Delete a category by its ID
+// @Tags categories
+// @Produce json
+// @Param id path string true "Category ID"
+// @Success 200 {object} types.SuccessResponseStruct
+// @Failure 400 {object} types.BadRequestErrorResponseStruct
+// @Failure 404 {object} types.NotFoundErrorResponseStruct
+// @Failure 500 {object} types.InternalServerErrorResponseStruct
+// @Router /categories/{id} [delete]
 func DeleteCategory(c *gin.Context, db *gorm.DB) {
 	id := c.Param("id")
 
@@ -201,10 +251,10 @@ func DeleteCategory(c *gin.Context, db *gorm.DB) {
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 
-		c.JSON(http.StatusBadRequest, gin.H{
-			"statusCode": http.StatusBadRequest,
-			"success":    false,
-			"message":    "Invalid category ID format.",
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "Invalid category ID format.",
 		})
 		return
 	}
@@ -214,19 +264,19 @@ func DeleteCategory(c *gin.Context, db *gorm.DB) {
 	if err != nil {
 		log.Printf("Error deleting category: %v", err)
 
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"statusCode": http.StatusInternalServerError,
-			"success":    false,
-			"message":    "An error occurred while deleting the category.",
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while deleting the category.",
 		})
 		return
 	}
 
 	if r <= 0 {
-		c.JSON(http.StatusNotFound, gin.H{
-			"statusCode": http.StatusNotFound,
-			"success":    false,
-			"message":    "Category not found.",
+		c.JSON(http.StatusNotFound, types.NotFoundErrorResponseStruct{
+			StatusCode: http.StatusNotFound,
+			Success:    false,
+			Message:    "Category not found.",
 		})
 		return
 	}
