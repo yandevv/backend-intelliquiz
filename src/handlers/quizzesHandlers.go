@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"intelliquiz/src/schemas"
+	"intelliquiz/src/types"
 	"log"
 	"net/http"
 
@@ -10,15 +11,24 @@ import (
 	"gorm.io/gorm"
 )
 
+// GetQuizzes godoc
+// @Summary Get all quizzes
+// @Schemes
+// @Description Retrieve a list of all quizzes
+// @Tags quizzes
+// @Produce json
+// @Success 200 {object} types.GetQuizzesSuccessResponseStruct
+// @Failure 500 {object} types.InternalServerErrorResponseStruct
+// @Router /quizzes [get]
 func GetQuizzes(c *gin.Context, db *gorm.DB) {
 	quizzes, err := gorm.G[schemas.Quiz](db).
 		Select("id, name, category_id, created_by").
 		Find(c.Request.Context())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"statusCode": http.StatusInternalServerError,
-			"success":    false,
-			"message":    "An error occurred while fetching quizzes",
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while fetching quizzes",
 		})
 		return
 	}
@@ -30,21 +40,26 @@ func GetQuizzes(c *gin.Context, db *gorm.DB) {
 	})
 }
 
+// CreateQuiz godoc
+// @Summary Create a new quiz
+// @Schemes
+// @Description Create a new quiz
+// @Tags quizzes
+// @Produce json
+// @Param data body types.CreateQuizRequestBody true "Create Quiz Request Body"
+// @Success 201 {object} types.CreateQuizSuccessResponseStruct
+// @Failure 400 {object} types.BadRequestErrorResponseStruct
+// @Failure 500 {object} types.InternalServerErrorResponseStruct
+// @Router /quizzes [post]
 func CreateQuiz(c *gin.Context, db *gorm.DB) {
-	type CreateQuizRequestBody struct {
-		Name       string `json:"name" binding:"required"`
-		CategoryID string `json:"category_id" binding:"required"`
-		CreatedBy  string `json:"created_by" binding:"required"`
-	}
-
-	var reqBody CreateQuizRequestBody
+	var reqBody types.CreateQuizRequestBody
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
 		log.Printf("Error parsing request body: %v", err)
 
-		c.JSON(http.StatusBadRequest, gin.H{
-			"statusCode": http.StatusBadRequest,
-			"success":    false,
-			"message":    "An error occurred while parsing the request body.",
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "An error occurred while parsing the request body.",
 		})
 		return
 	}
@@ -53,10 +68,10 @@ func CreateQuiz(c *gin.Context, db *gorm.DB) {
 	if err != nil {
 		log.Printf("Error parsing Category UUID: %v", err)
 
-		c.JSON(http.StatusBadRequest, gin.H{
-			"statusCode": http.StatusBadRequest,
-			"success":    false,
-			"message":    "Invalid category ID format.",
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "Invalid category ID format.",
 		})
 		return
 	}
@@ -65,10 +80,10 @@ func CreateQuiz(c *gin.Context, db *gorm.DB) {
 	if err != nil {
 		log.Printf("Error parsing CreatedBy UUID: %v", err)
 
-		c.JSON(http.StatusBadRequest, gin.H{
-			"statusCode": http.StatusBadRequest,
-			"success":    false,
-			"message":    "Invalid created_by ID format.",
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "Invalid created_by ID format.",
 		})
 		return
 	}
@@ -82,10 +97,10 @@ func CreateQuiz(c *gin.Context, db *gorm.DB) {
 	if err := gorm.G[schemas.Quiz](db).Create(c, &quiz); err != nil {
 		log.Printf("Error creating quiz: %v", err)
 
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"statusCode": http.StatusInternalServerError,
-			"success":    false,
-			"message":    "An error occurred while creating the quiz.",
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while creating the quiz.",
 		})
 		return
 	}
@@ -102,6 +117,18 @@ func CreateQuiz(c *gin.Context, db *gorm.DB) {
 	})
 }
 
+// GetQuizByID godoc
+// @Summary Get a quiz by ID
+// @Schemes
+// @Description Retrieve a quiz by its ID
+// @Tags quizzes
+// @Produce json
+// @Param id path string true "Quiz ID"
+// @Success 200 {object} types.GetQuizSuccessResponseStruct
+// @Failure 400 {object} types.BadRequestErrorResponseStruct
+// @Failure 404 {object} types.NotFoundErrorResponseStruct
+// @Failure 500 {object} types.InternalServerErrorResponseStruct
+// @Router /quizzes/{id} [get]
 func GetQuizByID(c *gin.Context, db *gorm.DB) {
 	id := c.Param("id")
 
@@ -109,10 +136,10 @@ func GetQuizByID(c *gin.Context, db *gorm.DB) {
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 
-		c.JSON(http.StatusBadRequest, gin.H{
-			"statusCode": http.StatusBadRequest,
-			"success":    false,
-			"message":    "Invalid quiz ID format.",
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "Invalid quiz ID format.",
 		})
 		return
 	}
@@ -124,18 +151,18 @@ func GetQuizByID(c *gin.Context, db *gorm.DB) {
 		log.Printf("Error fetching quiz by ID: %v", err)
 
 		if err == gorm.ErrRecordNotFound {
-			c.JSON(http.StatusNotFound, gin.H{
-				"statusCode": http.StatusNotFound,
-				"success":    false,
-				"message":    "Quiz not found.",
+			c.JSON(http.StatusNotFound, types.NotFoundErrorResponseStruct{
+				StatusCode: http.StatusNotFound,
+				Success:    false,
+				Message:    "Quiz not found.",
 			})
 			return
 		}
 
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"statusCode": http.StatusInternalServerError,
-			"success":    false,
-			"message":    "An error occurred while fetching the quiz.",
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while fetching the quiz.",
 		})
 		return
 	}
@@ -147,6 +174,20 @@ func GetQuizByID(c *gin.Context, db *gorm.DB) {
 	})
 }
 
+// UpdateQuiz godoc
+// @Summary Update a quiz by ID
+// @Schemes
+// @Description Update a quiz by its ID
+// @Tags quizzes
+// @Accept json
+// @Produce json
+// @Param id path string true "Quiz ID"
+// @Param data body types.UpdateQuizRequestBody true "Update Quiz Request Body"
+// @Success 200 {object} types.SuccessResponseStruct
+// @Failure 400 {object} types.BadRequestErrorResponseStruct
+// @Failure 404 {object} types.NotFoundErrorResponseStruct
+// @Failure 500 {object} types.InternalServerErrorResponseStruct
+// @Router /quizzes/{id} [patch]
 func UpdateQuiz(c *gin.Context, db *gorm.DB) {
 	id := c.Param("id")
 
@@ -154,28 +195,22 @@ func UpdateQuiz(c *gin.Context, db *gorm.DB) {
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 
-		c.JSON(http.StatusBadRequest, gin.H{
-			"statusCode": http.StatusBadRequest,
-			"success":    false,
-			"message":    "Invalid quiz ID format.",
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "Invalid quiz ID format.",
 		})
 		return
 	}
 
-	type UpdateQuizRequestBody struct {
-		Name       string `json:"name"`
-		CategoryID string `json:"category_id"`
-		CreatedBy  string `json:"created_by"`
-	}
-
-	var reqBody UpdateQuizRequestBody
+	var reqBody types.UpdateQuizRequestBody
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
 		log.Printf("Error parsing request body: %v", err)
 
-		c.JSON(http.StatusBadRequest, gin.H{
-			"statusCode": http.StatusBadRequest,
-			"success":    false,
-			"message":    "An error occurred while parsing the request body.",
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "An error occurred while parsing the request body.",
 		})
 		return
 	}
@@ -185,18 +220,18 @@ func UpdateQuiz(c *gin.Context, db *gorm.DB) {
 		log.Printf("Error fetching quiz by ID: %v", err)
 
 		if err == gorm.ErrRecordNotFound {
-			c.JSON(http.StatusNotFound, gin.H{
-				"statusCode": http.StatusNotFound,
-				"success":    false,
-				"message":    "Quiz not found.",
+			c.JSON(http.StatusNotFound, types.NotFoundErrorResponseStruct{
+				StatusCode: http.StatusNotFound,
+				Success:    false,
+				Message:    "Quiz not found.",
 			})
 			return
 		}
 
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"statusCode": http.StatusInternalServerError,
-			"success":    false,
-			"message":    "An error occurred while fetching the quiz.",
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while fetching the quiz.",
 		})
 		return
 	}
@@ -216,10 +251,10 @@ func UpdateQuiz(c *gin.Context, db *gorm.DB) {
 	if err := db.Save(&quiz).Error; err != nil {
 		log.Printf("Error updating quiz: %v", err)
 
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"statusCode": http.StatusInternalServerError,
-			"success":    false,
-			"message":    "An error occurred while updating the quiz.",
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while updating the quiz.",
 		})
 		return
 	}
@@ -231,6 +266,18 @@ func UpdateQuiz(c *gin.Context, db *gorm.DB) {
 	})
 }
 
+// DeleteQuiz godoc
+// @Summary Delete a quiz by ID
+// @Schemes
+// @Description Delete a quiz by its ID
+// @Tags quizzes
+// @Produce json
+// @Param id path string true "Quiz ID"
+// @Success 200 {object} types.SuccessResponseStruct
+// @Failure 400 {object} types.BadRequestErrorResponseStruct
+// @Failure 404 {object} types.NotFoundErrorResponseStruct
+// @Failure 500 {object} types.InternalServerErrorResponseStruct
+// @Router /quizzes/{id} [delete]
 func DeleteQuiz(c *gin.Context, db *gorm.DB) {
 	id := c.Param("id")
 
@@ -238,10 +285,10 @@ func DeleteQuiz(c *gin.Context, db *gorm.DB) {
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 
-		c.JSON(http.StatusBadRequest, gin.H{
-			"statusCode": http.StatusBadRequest,
-			"success":    false,
-			"message":    "Invalid quiz ID format.",
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "Invalid quiz ID format.",
 		})
 		return
 	}
@@ -251,19 +298,19 @@ func DeleteQuiz(c *gin.Context, db *gorm.DB) {
 	if err != nil {
 		log.Printf("Error deleting quiz: %v", err)
 
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"statusCode": http.StatusInternalServerError,
-			"success":    false,
-			"message":    "An error occurred while deleting the quiz.",
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while deleting the quiz.",
 		})
 		return
 	}
 
 	if r <= 0 {
-		c.JSON(http.StatusNotFound, gin.H{
-			"statusCode": http.StatusNotFound,
-			"success":    false,
-			"message":    "Quiz not found.",
+		c.JSON(http.StatusNotFound, types.NotFoundErrorResponseStruct{
+			StatusCode: http.StatusNotFound,
+			Success:    false,
+			Message:    "Quiz not found.",
 		})
 		return
 	}
