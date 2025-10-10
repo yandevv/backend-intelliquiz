@@ -1,18 +1,27 @@
 package main
 
 import (
-	"flag"
 	"intelliquiz/src/docs"
 	"intelliquiz/src/handlers"
 	"intelliquiz/src/schemas"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
+
+func dotEnvLoader() {
+	err := godotenv.Load()
+
+	if err != nil {
+		panic("Error loading .env file")
+	}
+}
 
 func setupRouter(db *gorm.DB) *gin.Engine {
 	// Disable Console Color
@@ -81,19 +90,19 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 // @externalDocs.description  OpenAPI
 // @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
-	dsn := "host=postgres user=pgadmin password=pgadmin dbname=intelliquiz port=5432 sslmode=disable TimeZone=America/Sao_Paulo"
+	dotEnvLoader()
+
+	dsn := "host=" + os.Getenv("DATABASE_HOST") + " user=" + os.Getenv("DATABASE_USER") + " password=" + os.Getenv("DATABASE_PASSWORD") + " dbname=" + os.Getenv("DATABASE_NAME") + " port=" + os.Getenv("DATABASE_PORT") + " sslmode=disable TimeZone=America/Sao_Paulo"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("An error occurred while connecting to the database")
 	}
 
-	migrate := flag.Bool("migrate", false, "Migrate schemas on database.")
-	freshMigrate := flag.Bool("fresh", false, "Fresh migrating schemas on database.")
+	migrate := os.Getenv("SCHEMA_MIGRATION") == "true"
+	freshMigrate := os.Getenv("SCHEMA_FRESH_MIGRATION") == "true"
 
-	flag.Parse()
-
-	if *migrate {
-		if *freshMigrate {
+	if migrate {
+		if freshMigrate {
 			db.Migrator().DropTable(&schemas.User{}, &schemas.Quiz{}, &schemas.Question{}, &schemas.Category{}, &schemas.QuizScore{}, &schemas.QuizScoreQuestion{})
 		}
 
@@ -102,5 +111,5 @@ func main() {
 
 	r := setupRouter(db)
 
-	r.Run(":8080")
+	r.Run(":" + os.Getenv("PORT"))
 }
