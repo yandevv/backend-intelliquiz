@@ -6,10 +6,10 @@ type SuccessResponseStruct struct {
 	Message    string `json:"message" example:"OK"`
 }
 
-type InternalServerErrorResponseStruct struct {
-	StatusCode int    `json:"statusCode" example:"500"`
-	Success    bool   `json:"success" example:"false"`
-	Message    string `json:"message" example:"Internal Server Error"`
+type ForbiddenErrorResponseStruct struct {
+	StatusCode int    `json:"statusCode" default:"403"`
+	Success    bool   `json:"success" default:"false"`
+	Message    string `json:"message" default:"Forbidden"`
 }
 
 type BadRequestErrorResponseStruct struct {
@@ -22,4 +22,10 @@ type NotFoundErrorResponseStruct struct {
 	StatusCode int    `json:"statusCode" example:"404"`
 	Success    bool   `json:"success" example:"false"`
 	Message    string `json:"message" example:"Not Found"`
+}
+
+type InternalServerErrorResponseStruct struct {
+	StatusCode int    `json:"statusCode" example:"500"`
+	Success    bool   `json:"success" example:"false"`
+	Message    string `json:"message" example:"Internal Server Error"`
 }
