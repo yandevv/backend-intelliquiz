@@ -7,9 +7,9 @@ type SuccessResponseStruct struct {
 }
 
 type ForbiddenErrorResponseStruct struct {
-	StatusCode int    `json:"statusCode" default:"403"`
-	Success    bool   `json:"success" default:"false"`
-	Message    string `json:"message" default:"Forbidden"`
+	StatusCode int    `json:"statusCode" example:"403"`
+	Success    bool   `json:"success" example:"false"`
+	Message    string `json:"message" example:"Forbidden"`
 }
 
 type BadRequestErrorResponseStruct struct {

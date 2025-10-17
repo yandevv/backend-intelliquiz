@@ -22,13 +22,21 @@ func JWTTokenMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenStr := bearerFromHeader(c)
 		if tokenStr == "" {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, types.ForbiddenErrorResponseStruct{})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, types.ForbiddenErrorResponseStruct{
+				StatusCode: http.StatusForbidden,
+				Success:    false,
+				Message:    "Forbidden",
+			})
 			return
 		}
 
 		claims, err := auth.ParseAccess(tokenStr)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, types.ForbiddenErrorResponseStruct{})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, types.ForbiddenErrorResponseStruct{
+				StatusCode: http.StatusUnauthorized,
+				Success:    false,
+				Message:    "Forbidden",
+			})
 			return
 		}
 

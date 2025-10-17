@@ -132,7 +132,11 @@ func Refresh(c *gin.Context, db *gorm.DB) {
 	claims, err := auth.ParseRefresh(reqBody.RefreshToken)
 	if err != nil {
 		_ = fmt.Errorf("error parsing refresh token: %v", err)
-		c.JSON(http.StatusUnauthorized, types.ForbiddenErrorResponseStruct{})
+		c.JSON(http.StatusUnauthorized, types.ForbiddenErrorResponseStruct{
+			StatusCode: http.StatusUnauthorized,
+			Success:    false,
+			Message:    "Invalid refresh token",
+		})
 		return
 	}
 
