@@ -170,7 +170,7 @@ func GetUserByID(c *gin.Context, db *gorm.DB) {
 func UpdateUser(c *gin.Context, db *gorm.DB) {
 	id := c.Param("id")
 
-	uuid, err := uuidG.Parse(id)
+	uuidUpdated, err := uuidG.Parse(id)
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 
@@ -182,8 +182,20 @@ func UpdateUser(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	if uuid != c.MustGet("userID").(uuidG.UUID) {
-		log.Printf("Unauthorized update attempt by user: %v", c.MustGet("userID").(uuidG.UUID))
+	userUuid, err := uuidG.Parse(c.MustGet("userID").(string))
+	if err != nil {
+		log.Printf("Error parsing UUID from token: %v", err)
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while processing the request.",
+		})
+		return
+	}
+
+	if uuidUpdated != userUuid {
+		log.Printf("Unauthorized update attempt by user: %v", c.MustGet("userID").(string))
 
 		c.JSON(http.StatusForbidden, types.ForbiddenErrorResponseStruct{
 			StatusCode: http.StatusForbidden,
@@ -206,16 +218,16 @@ func UpdateUser(c *gin.Context, db *gorm.DB) {
 	}
 
 	user, err := gorm.G[schemas.User](db).
-		Where("id = ?", uuid).
+		Where("id = ?", uuidUpdated.String()).
 		First(c)
 	if err != nil {
 		log.Printf("Error fetching user by ID: %v", err)
 
 		if err == gorm.ErrRecordNotFound {
-			c.JSON(http.StatusNotFound, gin.H{
-				"statusCode": http.StatusNotFound,
-				"success":    false,
-				"message":    "User not found.",
+			c.JSON(http.StatusNotFound, types.NotFoundErrorResponseStruct{
+				StatusCode: http.StatusNotFound,
+				Success:    false,
+				Message:    "User not found.",
 			})
 			return
 		}
@@ -228,7 +240,41 @@ func UpdateUser(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	user.Name = reqBody.Name
+	if reqBody.Username != "" {
+		var userWithUsername schemas.User
+		db.Find(&schemas.User{}, "username = ?", reqBody.Username).First(&userWithUsername)
+
+		if userWithUsername.ID != "" && userWithUsername.ID != user.ID {
+			c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+				StatusCode: http.StatusBadRequest,
+				Success:    false,
+				Message:    "Username already in use",
+			})
+			return
+		}
+
+		user.Username = reqBody.Username
+	}
+
+	if reqBody.Email != "" {
+		var userWithEmail schemas.User
+		db.Find(&schemas.User{}, "email = ?", reqBody.Email).First(&userWithEmail)
+
+		if userWithEmail.ID != "" && userWithEmail.ID != user.ID {
+			c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+				StatusCode: http.StatusBadRequest,
+				Success:    false,
+				Message:    "Email already in use",
+			})
+			return
+		}
+
+		user.Email = reqBody.Email
+	}
+
+	if reqBody.Name != "" {
+		user.Name = reqBody.Name
+	}
 
 	if err := db.Save(&user).Error; err != nil {
 		log.Printf("Error updating user: %v", err)
