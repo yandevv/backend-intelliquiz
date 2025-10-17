@@ -22,7 +22,7 @@ import (
 // @Router /users [get]
 func GetUsers(c *gin.Context, db *gorm.DB) {
 	users, err := gorm.G[schemas.User](db).
-		Select("id, username, email, name").
+		Select("id, username, name").
 		Find(c)
 	if err != nil {
 		log.Printf("Error fetching users: %v", err)
@@ -123,7 +123,7 @@ func GetUserByID(c *gin.Context, db *gorm.DB) {
 
 	user, err := gorm.G[schemas.User](db).
 		Where("id = ?", uuid).
-		Select("id, name").
+		Select("id, username, name").
 		First(c)
 
 	if err != nil {
