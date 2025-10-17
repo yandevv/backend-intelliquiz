@@ -28,5 +28,7 @@ type GetUserByIDSuccessResponseStruct struct {
 }
 
 type UpdateUserRequestBody struct {
-	Name string `json:"name" binding:"required"`
+	Username string `json:"username"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
 }

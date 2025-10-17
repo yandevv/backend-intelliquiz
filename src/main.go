@@ -3,6 +3,7 @@ package main
 import (
 	"intelliquiz/src/docs"
 	"intelliquiz/src/handlers"
+	"intelliquiz/src/middlewares"
 	"intelliquiz/src/schemas"
 	"os"
 
@@ -30,47 +31,54 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 
 	docs.SwaggerInfo.BasePath = "/"
 
+	// Authentication Routes
+	r.POST("/signup", func(c *gin.Context) { handlers.SignUp(c, db) })
+	r.POST("/login", func(c *gin.Context) { handlers.Login(c, db) })
+	r.POST("/refresh", func(c *gin.Context) { handlers.Refresh(c, db) })
+
+	jwtAuthorized := r.Group("", middlewares.JWTTokenMiddleware())
+
 	// User Routes
-	r.GET("/users", func(c *gin.Context) { handlers.GetUsers(c, db) })
-	r.POST("/users", func(c *gin.Context) { handlers.CreateUser(c, db) })
-	r.GET("/users/:id", func(c *gin.Context) { handlers.GetUserByID(c, db) })
-	r.PATCH("/users/:id", func(c *gin.Context) { handlers.UpdateUser(c, db) })
-	r.DELETE("/users/:id", func(c *gin.Context) { handlers.DeleteUser(c, db) })
+	jwtAuthorized.GET("/users", func(c *gin.Context) { handlers.GetUsers(c, db) })
+	// jwtAuthorized.POST("/users", func(c *gin.Context) { handlers.CreateUser(c, db) })
+	jwtAuthorized.GET("/users/:id", func(c *gin.Context) { handlers.GetUserByID(c, db) })
+	jwtAuthorized.PATCH("/users/:id", func(c *gin.Context) { handlers.UpdateUser(c, db) })
+	// jwtAuthorized.DELETE("/users/:id", func(c *gin.Context) { handlers.DeleteUser(c, db) })
 
 	// Category Routes
-	r.GET("/categories", func(c *gin.Context) { handlers.GetCategories(c, db) })
-	r.POST("/categories", func(c *gin.Context) { handlers.CreateCategory(c, db) })
-	r.GET("/categories/:id", func(c *gin.Context) { handlers.GetCategoryByID(c, db) })
-	r.PATCH("/categories/:id", func(c *gin.Context) { handlers.UpdateCategory(c, db) })
-	r.DELETE("/categories/:id", func(c *gin.Context) { handlers.DeleteCategory(c, db) })
+	jwtAuthorized.GET("/categories", func(c *gin.Context) { handlers.GetCategories(c, db) })
+	jwtAuthorized.POST("/categories", func(c *gin.Context) { handlers.CreateCategory(c, db) })
+	jwtAuthorized.GET("/categories/:id", func(c *gin.Context) { handlers.GetCategoryByID(c, db) })
+	jwtAuthorized.PATCH("/categories/:id", func(c *gin.Context) { handlers.UpdateCategory(c, db) })
+	jwtAuthorized.DELETE("/categories/:id", func(c *gin.Context) { handlers.DeleteCategory(c, db) })
 
 	// Quiz Routes
-	r.GET("/quizzes", func(c *gin.Context) { handlers.GetQuizzes(c, db) })
-	r.POST("/quizzes", func(c *gin.Context) { handlers.CreateQuiz(c, db) })
-	r.GET("/quizzes/:id", func(c *gin.Context) { handlers.GetQuizByID(c, db) })
-	r.PATCH("/quizzes/:id", func(c *gin.Context) { handlers.UpdateQuiz(c, db) })
-	r.DELETE("/quizzes/:id", func(c *gin.Context) { handlers.DeleteQuiz(c, db) })
+	jwtAuthorized.GET("/quizzes", func(c *gin.Context) { handlers.GetQuizzes(c, db) })
+	jwtAuthorized.POST("/quizzes", func(c *gin.Context) { handlers.CreateQuiz(c, db) })
+	jwtAuthorized.GET("/quizzes/:id", func(c *gin.Context) { handlers.GetQuizByID(c, db) })
+	jwtAuthorized.PATCH("/quizzes/:id", func(c *gin.Context) { handlers.UpdateQuiz(c, db) })
+	jwtAuthorized.DELETE("/quizzes/:id", func(c *gin.Context) { handlers.DeleteQuiz(c, db) })
 
 	// Question Routes
-	r.GET("/questions", func(c *gin.Context) { handlers.GetQuestions(c, db) })
-	r.POST("/questions", func(c *gin.Context) { handlers.CreateQuestion(c, db) })
-	r.GET("/questions/:id", func(c *gin.Context) { handlers.GetQuestionByID(c, db) })
-	r.PATCH("/questions/:id", func(c *gin.Context) { handlers.UpdateQuestion(c, db) })
-	r.DELETE("/questions/:id", func(c *gin.Context) { handlers.DeleteQuestion(c, db) })
+	jwtAuthorized.GET("/questions", func(c *gin.Context) { handlers.GetQuestions(c, db) })
+	jwtAuthorized.POST("/questions", func(c *gin.Context) { handlers.CreateQuestion(c, db) })
+	jwtAuthorized.GET("/questions/:id", func(c *gin.Context) { handlers.GetQuestionByID(c, db) })
+	jwtAuthorized.PATCH("/questions/:id", func(c *gin.Context) { handlers.UpdateQuestion(c, db) })
+	jwtAuthorized.DELETE("/questions/:id", func(c *gin.Context) { handlers.DeleteQuestion(c, db) })
 
 	// Quiz Score Routes
-	r.GET("/quizzesScores", func(c *gin.Context) { handlers.GetQuizzesScores(c, db) })
-	r.POST("/quizzesScores", func(c *gin.Context) { handlers.CreateQuizScore(c, db) })
-	r.GET("/quizzesScores/:id", func(c *gin.Context) { handlers.GetQuizScoreByID(c, db) })
-	r.PATCH("/quizzesScores/:id", func(c *gin.Context) { handlers.UpdateQuizScore(c, db) })
-	r.DELETE("/quizzesScores/:id", func(c *gin.Context) { handlers.DeleteQuizScore(c, db) })
+	jwtAuthorized.GET("/quizzesScores", func(c *gin.Context) { handlers.GetQuizzesScores(c, db) })
+	jwtAuthorized.POST("/quizzesScores", func(c *gin.Context) { handlers.CreateQuizScore(c, db) })
+	jwtAuthorized.GET("/quizzesScores/:id", func(c *gin.Context) { handlers.GetQuizScoreByID(c, db) })
+	jwtAuthorized.PATCH("/quizzesScores/:id", func(c *gin.Context) { handlers.UpdateQuizScore(c, db) })
+	jwtAuthorized.DELETE("/quizzesScores/:id", func(c *gin.Context) { handlers.DeleteQuizScore(c, db) })
 
 	// Quiz Score Question Routes
-	r.GET("/quizzesScoreQuestions", func(c *gin.Context) { handlers.GetQuizzesScoreQuestions(c, db) })
-	r.POST("/quizzesScoreQuestions", func(c *gin.Context) { handlers.CreateQuizScoreQuestion(c, db) })
-	r.GET("/quizzesScoreQuestions/:id", func(c *gin.Context) { handlers.GetQuizScoreQuestionByID(c, db) })
-	r.PATCH("/quizzesScoreQuestions/:id", func(c *gin.Context) { handlers.UpdateQuizScoreQuestion(c, db) })
-	r.DELETE("/quizzesScoreQuestions/:id", func(c *gin.Context) { handlers.DeleteQuizScoreQuestion(c, db) })
+	jwtAuthorized.GET("/quizzesScoreQuestions", func(c *gin.Context) { handlers.GetQuizzesScoreQuestions(c, db) })
+	jwtAuthorized.POST("/quizzesScoreQuestions", func(c *gin.Context) { handlers.CreateQuizScoreQuestion(c, db) })
+	jwtAuthorized.GET("/quizzesScoreQuestions/:id", func(c *gin.Context) { handlers.GetQuizScoreQuestionByID(c, db) })
+	jwtAuthorized.PATCH("/quizzesScoreQuestions/:id", func(c *gin.Context) { handlers.UpdateQuizScoreQuestion(c, db) })
+	jwtAuthorized.DELETE("/quizzesScoreQuestions/:id", func(c *gin.Context) { handlers.DeleteQuizScoreQuestion(c, db) })
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
@@ -90,7 +98,8 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 // @externalDocs.description  OpenAPI
 // @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
-	dotEnvLoader()
+	// Uncomment the following line if you isn't using Docker to run the application and load the .env file
+	// dotEnvLoader()
 
 	dsn := "host=" + os.Getenv("DATABASE_HOST") + " user=" + os.Getenv("DATABASE_USER") + " password=" + os.Getenv("DATABASE_PASSWORD") + " dbname=" + os.Getenv("DATABASE_NAME") + " port=" + os.Getenv("DATABASE_PORT") + " sslmode=disable TimeZone=America/Sao_Paulo"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
