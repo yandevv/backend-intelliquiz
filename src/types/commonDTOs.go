@@ -24,6 +24,12 @@ type NotFoundErrorResponseStruct struct {
 	Message    string `json:"message" example:"Not Found"`
 }
 
+type UnprocessableEntityErrorResponseStruct struct {
+	StatusCode int    `json:"statusCode" default:"422"`
+	Success    bool   `json:"success" default:"false"`
+	Message    string `json:"message" default:"Unprocessable request body"`
+}
+
 type InternalServerErrorResponseStruct struct {
 	StatusCode int    `json:"statusCode" example:"500"`
 	Success    bool   `json:"success" example:"false"`
