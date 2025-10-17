@@ -32,8 +32,8 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	docs.SwaggerInfo.BasePath = "/"
 
 	// Authentication Routes
-	r.POST("/signup", func(c *gin.Context) { handlers.SignUp(c) })
-	r.POST("/login", func(c *gin.Context) { handlers.Login(c) })
+	r.POST("/signup", func(c *gin.Context) { handlers.SignUp(c, db) })
+	r.POST("/login", func(c *gin.Context) { handlers.Login(c, db) })
 
 	jwtAuthorized := r.Group("", middlewares.JWTTokenMiddleware())
 
