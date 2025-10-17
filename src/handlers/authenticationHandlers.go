@@ -39,8 +39,29 @@ func SignUp(c *gin.Context, db *gorm.DB) {
 		Name:     reqBody.Name,
 	}
 
+	userWithUsername := schemas.User{}
+	db.Find(&schemas.User{}, "username = ?", reqBody.Username).First(&userWithUsername)
+	if userWithUsername.ID != "" {
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "Username already in use",
+		})
+		return
+	}
+
+	userWithSameEmail := schemas.User{}
+	db.Find(&schemas.User{}, "email = ?", reqBody.Email).First(&userWithSameEmail)
+	if userWithSameEmail.ID != "" {
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "Email already in use",
+		})
+		return
+	}
+
 	if err := db.Create(&newUser).Error; err != nil {
-		_ = fmt.Errorf("error creating user: %v", err)
 		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
 			StatusCode: http.StatusInternalServerError,
 			Success:    false,
