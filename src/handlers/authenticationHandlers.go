@@ -122,6 +122,18 @@ func Login(c *gin.Context, db *gorm.DB) {
 	})
 }
 
+// RefreshToken godoc
+// @Summary      Refresh access and refresh tokens
+// @Description  Refresh the access and refresh tokens using a valid refresh token
+// @Tags         authentication
+// @Accept       json
+// @Produce      json
+// @Param        data body types.RefreshRequestBody true "Refresh Token Data"
+// @Success      201  {object}  types.RefreshResponseStruct
+// @Failure      400  {object}  types.BadRequestErrorResponseStruct
+// @Failure      401  {object}  types.ForbiddenErrorResponseStruct
+// @Failure      500  {object}  types.InternalServerErrorResponseStruct
+// @Router       /refresh [post]
 func Refresh(c *gin.Context, db *gorm.DB) {
 	var reqBody types.RefreshRequestBody
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
