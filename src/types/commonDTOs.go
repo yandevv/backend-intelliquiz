@@ -31,7 +31,7 @@ type UnprocessableEntityErrorResponseStruct struct {
 }
 
 type InternalServerErrorResponseStruct struct {
-	StatusCode int    `json:"statusCode" example:"500"`
-	Success    bool   `json:"success" example:"false"`
-	Message    string `json:"message" example:"Internal Server Error"`
+	StatusCode int    `json:"statusCode" default:"500"`
+	Success    bool   `json:"success" default:"false"`
+	Message    string `json:"message" default:"Internal Server Error"`
 }
