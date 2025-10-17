@@ -40,10 +40,10 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 
 	// User Routes
 	jwtAuthorized.GET("/users", func(c *gin.Context) { handlers.GetUsers(c, db) })
-	jwtAuthorized.POST("/users", func(c *gin.Context) { handlers.CreateUser(c, db) })
+	// jwtAuthorized.POST("/users", func(c *gin.Context) { handlers.CreateUser(c, db) })
 	jwtAuthorized.GET("/users/:id", func(c *gin.Context) { handlers.GetUserByID(c, db) })
 	jwtAuthorized.PATCH("/users/:id", func(c *gin.Context) { handlers.UpdateUser(c, db) })
-	jwtAuthorized.DELETE("/users/:id", func(c *gin.Context) { handlers.DeleteUser(c, db) })
+	// jwtAuthorized.DELETE("/users/:id", func(c *gin.Context) { handlers.DeleteUser(c, db) })
 
 	// Category Routes
 	jwtAuthorized.GET("/categories", func(c *gin.Context) { handlers.GetCategories(c, db) })

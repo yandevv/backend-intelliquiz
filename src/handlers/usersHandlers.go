@@ -22,9 +22,11 @@ import (
 // @Router /users [get]
 func GetUsers(c *gin.Context, db *gorm.DB) {
 	users, err := gorm.G[schemas.User](db).
-		Select("id, name").
+		Select("id, username, email, name").
 		Find(c)
 	if err != nil {
+		log.Printf("Error fetching users: %v", err)
+
 		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
 			StatusCode: http.StatusInternalServerError,
 			Success:    false,
@@ -40,10 +42,11 @@ func GetUsers(c *gin.Context, db *gorm.DB) {
 	})
 }
 
+// ! Deactivated
 // CreateUser godoc
-// @Summary Create a new user
+// @Summary Create a new user (DEACTIVATED)
 // @Schemes
-// @Description Create a new user
+// @Description Create a new user. This endpoint is currently deactivated.
 // @Tags users
 // @Accept json
 // @Produce json
@@ -179,6 +182,17 @@ func UpdateUser(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	if uuid != c.MustGet("userID").(uuidG.UUID) {
+		log.Printf("Unauthorized update attempt by user: %v", c.MustGet("userID").(uuidG.UUID))
+
+		c.JSON(http.StatusForbidden, types.ForbiddenErrorResponseStruct{
+			StatusCode: http.StatusForbidden,
+			Success:    false,
+			Message:    "You are not authorized to update this user.",
+		})
+		return
+	}
+
 	var reqBody types.UpdateUserRequestBody
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
 		log.Printf("Error parsing request body: %v", err)
@@ -234,10 +248,11 @@ func UpdateUser(c *gin.Context, db *gorm.DB) {
 	})
 }
 
+// ! Deactivated
 // DeleteUser godoc
-// @Summary Delete a user by ID
+// @Summary Delete a user by ID (DEACTIVATED)
 // @Schemes
-// @Description Delete a user by their ID
+// @Description Delete a user by their ID. This endpoint is currently deactivated.
 // @Tags users
 // @Produce json
 // @Param id path string true "User ID"
