@@ -34,6 +34,7 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	// Authentication Routes
 	r.POST("/signup", func(c *gin.Context) { handlers.SignUp(c, db) })
 	r.POST("/login", func(c *gin.Context) { handlers.Login(c, db) })
+	r.POST("/refresh", func(c *gin.Context) { handlers.Refresh(c, db) })
 
 	jwtAuthorized := r.Group("", middlewares.JWTTokenMiddleware())
 
