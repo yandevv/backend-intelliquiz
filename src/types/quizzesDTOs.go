@@ -16,7 +16,6 @@ type GetQuizzesSuccessResponseStruct struct {
 type CreateQuizRequestBody struct {
 	Name       string `json:"name" binding:"required" example:"Sample Quiz"`
 	CategoryID string `json:"category_id" binding:"required" example:"d27b21ab-6177-4159-9e13-15dc50ffed29"`
-	CreatedBy  string `json:"created_by" binding:"required" example:"0fde5216-1bab-41f6-bd90-4c3f088ee91f"`
 }
 
 type CreateQuizSuccessResponseStruct struct {
@@ -34,5 +33,4 @@ type GetQuizSuccessResponseStruct struct {
 type UpdateQuizRequestBody struct {
 	Name       string `json:"name" example:"Sample Quiz"`
 	CategoryID string `json:"category_id" example:"d27b21ab-6177-4159-9e13-15dc50ffed29"`
-	CreatedBy  string `json:"created_by" example:"0fde5216-1bab-41f6-bd90-4c3f088ee91f"`
 }
