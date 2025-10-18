@@ -41,9 +41,9 @@ func GetCategories(c *gin.Context, db *gorm.DB) {
 }
 
 // CreateCategory godoc
-// @Summary Create a new category
+// @Summary Create a new category (DEACTIVATED)
 // @Schemes
-// @Description Create a new category
+// @Description Create a new category. This endpoint is currently deactivated.
 // @Tags categories
 // @Produce json
 // @Param data body types.CreateCategoryRequestBody true "Create Category Request Body"
@@ -150,9 +150,9 @@ func GetCategoryByID(c *gin.Context, db *gorm.DB) {
 }
 
 // UpdateCategory godoc
-// @Summary Update a category by ID
+// @Summary Update a category by ID (DEACTIVATED)
 // @Schemes
-// @Description Update a category's name by its ID
+// @Description Update a category's name by its ID. This endpoint is currently deactivated.
 // @Tags categories
 // @Produce json
 // @Param id path string true "Category ID"
@@ -233,9 +233,9 @@ func UpdateCategory(c *gin.Context, db *gorm.DB) {
 }
 
 // DeleteCategory godoc
-// @Summary Delete a category by ID
+// @Summary Delete a category by ID (DEACTIVATED)
 // @Schemes
-// @Description Delete a category by its ID
+// @Description Delete a category by its ID. This endpoint is currently deactivated.
 // @Tags categories
 // @Produce json
 // @Param id path string true "Category ID"
