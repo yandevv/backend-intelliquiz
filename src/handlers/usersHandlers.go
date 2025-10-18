@@ -18,6 +18,7 @@ import (
 // @Tags users
 // @Produce json
 // @Success 200 {object} types.GetUsersSuccessResponseStruct
+// @Failure 403 {object} types.ForbiddenErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
 // @Router /users [get]
 func GetUsers(c *gin.Context, db *gorm.DB) {
@@ -53,6 +54,7 @@ func GetUsers(c *gin.Context, db *gorm.DB) {
 // @Param data body types.CreateUserRequestBody true "Create User Request Body"
 // @Success 201 {object} types.CreateUserSuccessResponseStruct
 // @Failure 400 {object} types.BadRequestErrorResponseStruct
+// @Failure 403 {object} types.ForbiddenErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
 // @Router /users [post]
 func CreateUser(c *gin.Context, db *gorm.DB) {
@@ -103,7 +105,8 @@ func CreateUser(c *gin.Context, db *gorm.DB) {
 // @Param id path string true "User ID"
 // @Success 200 {object} types.UserResponseStruct
 // @Failure 400 {object} types.BadRequestErrorResponseStruct
-// @Failure 404 {object} types.BadRequestErrorResponseStruct
+// @Failure 403 {object} types.ForbiddenErrorResponseStruct
+// @Failure 404 {object} types.NotFoundErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
 // @Router /users/{id} [get]
 func GetUserByID(c *gin.Context, db *gorm.DB) {
@@ -164,6 +167,7 @@ func GetUserByID(c *gin.Context, db *gorm.DB) {
 // @Param data body types.UpdateUserRequestBody true "Update User Request Body"
 // @Success 200 {object} types.SuccessResponseStruct
 // @Failure 400 {object} types.BadRequestErrorResponseStruct
+// @Failure 403 {object} types.ForbiddenErrorResponseStruct
 // @Failure 404 {object} types.NotFoundErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
 // @Router /users/{id} [patch]
@@ -304,6 +308,7 @@ func UpdateUser(c *gin.Context, db *gorm.DB) {
 // @Param id path string true "User ID"
 // @Success 200 {object} types.SuccessResponseStruct
 // @Failure 400 {object} types.BadRequestErrorResponseStruct
+// @Failure 403 {object} types.ForbiddenErrorResponseStruct
 // @Failure 404 {object} types.NotFoundErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
 // @Router /users/{id} [delete]
