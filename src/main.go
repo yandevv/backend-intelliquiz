@@ -1,10 +1,11 @@
 package main
 
 import (
+	"intelliquiz/src/database/schemas"
+	"intelliquiz/src/database/seeders"
 	"intelliquiz/src/docs"
 	"intelliquiz/src/handlers"
 	"intelliquiz/src/middlewares"
-	"intelliquiz/src/schemas"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -110,11 +111,12 @@ func main() {
 	migrate := os.Getenv("SCHEMA_MIGRATION") == "true"
 	freshMigrate := os.Getenv("SCHEMA_FRESH_MIGRATION") == "true"
 
-	if migrate {
-		if freshMigrate {
-			db.Migrator().DropTable(&schemas.User{}, &schemas.Quiz{}, &schemas.Question{}, &schemas.Category{}, &schemas.QuizScore{}, &schemas.QuizScoreQuestion{})
-		}
+	if freshMigrate {
+		db.Migrator().DropTable(&schemas.User{}, &schemas.Quiz{}, &schemas.Question{}, &schemas.Category{}, &schemas.QuizScore{}, &schemas.QuizScoreQuestion{})
+		db.AutoMigrate(&schemas.User{}, &schemas.Quiz{}, &schemas.Question{}, &schemas.Category{}, &schemas.QuizScore{}, &schemas.QuizScoreQuestion{})
 
+		seeders.Run(db)
+	} else if migrate {
 		db.AutoMigrate(&schemas.User{}, &schemas.Quiz{}, &schemas.Question{}, &schemas.Category{}, &schemas.QuizScore{}, &schemas.QuizScoreQuestion{})
 	}
 
