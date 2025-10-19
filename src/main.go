@@ -67,6 +67,13 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	jwtAuthorized.PATCH("/questions/:id", func(c *gin.Context) { handlers.UpdateQuestion(c, db) })
 	jwtAuthorized.DELETE("/questions/:id", func(c *gin.Context) { handlers.DeleteQuestion(c, db) })
 
+	// Choice Routes
+	jwtAuthorized.GET("/choices", func(c *gin.Context) { handlers.GetChoices(c, db) })
+	jwtAuthorized.POST("/choices", func(c *gin.Context) { handlers.CreateChoice(c, db) })
+	jwtAuthorized.GET("/choices/:id", func(c *gin.Context) { handlers.GetChoiceByID(c, db) })
+	jwtAuthorized.PATCH("/choices/:id", func(c *gin.Context) { handlers.UpdateChoice(c, db) })
+	jwtAuthorized.DELETE("/choices/:id", func(c *gin.Context) { handlers.DeleteChoice(c, db) })
+
 	// Quiz Score Routes
 	jwtAuthorized.GET("/quizzesScores", func(c *gin.Context) { handlers.GetQuizzesScores(c, db) })
 	jwtAuthorized.POST("/quizzesScores", func(c *gin.Context) { handlers.CreateQuizScore(c, db) })
@@ -112,12 +119,11 @@ func main() {
 	freshMigrate := os.Getenv("SCHEMA_FRESH_MIGRATION") == "true"
 
 	if freshMigrate {
-		db.Migrator().DropTable(&schemas.User{}, &schemas.Quiz{}, &schemas.Question{}, &schemas.Category{}, &schemas.QuizScore{}, &schemas.QuizScoreQuestion{})
-		db.AutoMigrate(&schemas.User{}, &schemas.Quiz{}, &schemas.Question{}, &schemas.Category{}, &schemas.QuizScore{}, &schemas.QuizScoreQuestion{})
+		schemas.Run(db, &freshMigrate)
 
 		seeders.Run(db)
 	} else if migrate {
-		db.AutoMigrate(&schemas.User{}, &schemas.Quiz{}, &schemas.Question{}, &schemas.Category{}, &schemas.QuizScore{}, &schemas.QuizScoreQuestion{})
+		schemas.Run(db, &freshMigrate)
 	}
 
 	r := setupRouter(db)
