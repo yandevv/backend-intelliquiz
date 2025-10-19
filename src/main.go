@@ -68,8 +68,8 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	jwtAuthorized.DELETE("/questions/:id", func(c *gin.Context) { handlers.DeleteQuestion(c, db) })
 
 	// Choice Routes
-	jwtAuthorized.GET("/choices", func(c *gin.Context) { handlers.GetChoices(c, db) })
-	jwtAuthorized.POST("/choices", func(c *gin.Context) { handlers.CreateChoice(c, db) })
+	jwtAuthorized.GET("/questions/:id/choices", func(c *gin.Context) { handlers.GetChoices(c, db) })
+	jwtAuthorized.POST("/questions/:id/choices", func(c *gin.Context) { handlers.CreateChoice(c, db) })
 	jwtAuthorized.GET("/choices/:id", func(c *gin.Context) { handlers.GetChoiceByID(c, db) })
 	jwtAuthorized.PATCH("/choices/:id", func(c *gin.Context) { handlers.UpdateChoice(c, db) })
 	jwtAuthorized.DELETE("/choices/:id", func(c *gin.Context) { handlers.DeleteChoice(c, db) })
