@@ -13,6 +13,8 @@ type QuizScoreQuestion struct {
 	QuizScore   *QuizScore `json:"quiz_score,omitempty"`
 	QuestionID  string     `json:"question_id,omitempty" gorm:"not null"`
 	Question    *Question  `json:"question,omitempty"`
+	ChoiceID    string     `json:"choice_id,omitempty" gorm:"not null"`
+	Choice      *Choice    `json:"choice,omitempty"`
 	IsCorrect   bool       `json:"is_correct" gorm:"not null"`
 	CreatedAt   *time.Time `json:"created_at,omitempty"`
 	UpdatedAt   *time.Time `json:"updated_at,omitempty"`
