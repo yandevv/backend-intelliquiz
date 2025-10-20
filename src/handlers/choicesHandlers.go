@@ -23,9 +23,18 @@ import (
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
 // @Router /questions/{id}/choices [get]
 func GetChoices(c *gin.Context, db *gorm.DB) {
-	questionID := c.Param("id")
+	userUuid, err := uuid.Parse(c.MustGet("userID").(string))
+	if err != nil {
+		log.Printf("Error parsing User UUID from context: %v", err)
+		c.JSON(http.StatusBadRequest, types.ForbiddenErrorResponseStruct{
+			StatusCode: http.StatusForbidden,
+			Success:    false,
+			Message:    "Invalid user ID format on claims.",
+		})
+		return
+	}
 
-	questionUuid, err := uuid.Parse(questionID)
+	questionUuid, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		log.Printf("Error parsing Question UUID: %v", err)
 		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
@@ -36,7 +45,9 @@ func GetChoices(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	_, err = gorm.G[schemas.Question](db).Where("id = ?", questionUuid).First(c)
+	question, err := gorm.G[schemas.Question](db).Where("id = ?", questionUuid).
+		Preload("Quiz", nil).
+		First(c)
 	if err != nil {
 		log.Printf("Error fetching question by ID: %v", err)
 		if err == gorm.ErrRecordNotFound {
@@ -56,8 +67,13 @@ func GetChoices(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	selectStr := "id, question_id, content, created_at, updated_at"
+	if question.Quiz.CreatedBy == userUuid.String() {
+		selectStr = "id, question_id, content, created_at, updated_at, is_correct"
+	}
+
 	choices, err := gorm.G[schemas.Choice](db).
-		Select("id, question_id, content, created_at, updated_at").
+		Select(selectStr).
 		Where("question_id = ?", questionUuid.String()).
 		Find(c.Request.Context())
 	if err != nil {
@@ -199,6 +215,18 @@ func CreateChoice(c *gin.Context, db *gorm.DB) {
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
 // @Router /choices/{id} [get]
 func GetChoiceByID(c *gin.Context, db *gorm.DB) {
+	userUuid, err := uuid.Parse(c.MustGet("userID").(string))
+	if err != nil {
+		log.Printf("Error parsing User UUID from context: %v", err)
+
+		c.JSON(http.StatusBadRequest, types.ForbiddenErrorResponseStruct{
+			StatusCode: http.StatusForbidden,
+			Success:    false,
+			Message:    "Invalid user ID format on claims.",
+		})
+		return
+	}
+
 	choiceUuid, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
@@ -212,7 +240,8 @@ func GetChoiceByID(c *gin.Context, db *gorm.DB) {
 	}
 
 	choice, err := gorm.G[schemas.Choice](db).Where("id = ?", choiceUuid).
-		Select("id, question_id, content, created_at, updated_at").
+		Select("id, question_id, content, created_at, updated_at, is_correct").
+		Preload("Question.Quiz", nil).
 		First(c)
 	if err != nil {
 		log.Printf("Error fetching choice by ID: %v", err)
@@ -232,6 +261,10 @@ func GetChoiceByID(c *gin.Context, db *gorm.DB) {
 			Message:    "An error occurred while fetching the choice.",
 		})
 		return
+	}
+
+	if choice.Question.Quiz.CreatedBy != userUuid.String() {
+		choice.IsCorrect = nil
 	}
 
 	c.JSON(http.StatusOK, gin.H{
