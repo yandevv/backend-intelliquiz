@@ -14,6 +14,7 @@ type Quiz struct {
 	Category   *Category  `json:"category,omitempty"`
 	CreatedBy  string     `json:"created_by,omitempty"`
 	User       *User      `json:"user,omitempty" gorm:"foreignKey:CreatedBy"`
+	Questions  []Question `json:"questions,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	CreatedAt  *time.Time `json:"created_at,omitempty"`
 	UpdatedAt  *time.Time `json:"updated_at,omitempty"`
 }
