@@ -10,8 +10,9 @@ import (
 type Choice struct {
 	ID         string          `json:"id,omitempty" gorm:"type:uuid;primaryKey"`
 	QuestionID string          `json:"question_id,omitempty" gorm:"not null"`
-	Question   *Question       `json:"question,omitempty" gorm:"foreignKey:QuestionID"`
+	Question   *Question       `json:"question,omitempty"`
 	Content    string          `json:"content,omitempty" gorm:"not null"`
+	IsCorrect  *bool           `json:"is_correct,omitempty" gorm:"not null;default:false"`
 	CreatedAt  *time.Time      `json:"created_at,omitempty"`
 	UpdatedAt  *time.Time      `json:"updated_at,omitempty"`
 	DeletedAt  *gorm.DeletedAt `json:"deleted_at,omitempty" gorm:"index"`
