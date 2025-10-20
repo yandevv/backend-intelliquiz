@@ -36,6 +36,26 @@ func GetChoices(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	_, err = gorm.G[schemas.Question](db).Where("id = ?", questionUuid).First(c)
+	if err != nil {
+		log.Printf("Error fetching question by ID: %v", err)
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, types.NotFoundErrorResponseStruct{
+				StatusCode: http.StatusNotFound,
+				Success:    false,
+				Message:    "Question not found.",
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while fetching the question.",
+		})
+		return
+	}
+
 	choices, err := gorm.G[schemas.Choice](db).
 		Select("id, question_id, content, created_at, updated_at").
 		Where("question_id = ?", questionUuid.String()).
