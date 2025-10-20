@@ -30,6 +30,12 @@ type UnprocessableEntityErrorResponseStruct struct {
 	Message    string `json:"message" default:"Unprocessable request body"`
 }
 
+type TooManyRequestsErrorResponseStruct struct {
+	StatusCode int    `json:"statusCode" default:"429"`
+	Success    bool   `json:"success" default:"false"`
+	Message    string `json:"message" default:"Too many requests"`
+}
+
 type InternalServerErrorResponseStruct struct {
 	StatusCode int    `json:"statusCode" default:"500"`
 	Success    bool   `json:"success" default:"false"`
