@@ -31,16 +31,14 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	// gin.DisableConsoleColor()
 	r := gin.Default()
 
-	r.Use(middlewares.RateLimiterMiddleware())
-
-	docs.SwaggerInfo.BasePath = "/"
+	rateLimited := r.Group("", middlewares.RateLimiterMiddleware())
 
 	// Authentication Routes
-	r.POST("/signup", func(c *gin.Context) { handlers.SignUp(c, db) })
-	r.POST("/login", func(c *gin.Context) { handlers.Login(c, db) })
-	r.POST("/refresh", func(c *gin.Context) { handlers.Refresh(c, db) })
+	rateLimited.POST("/signup", func(c *gin.Context) { handlers.SignUp(c, db) })
+	rateLimited.POST("/login", func(c *gin.Context) { handlers.Login(c, db) })
+	rateLimited.POST("/refresh", func(c *gin.Context) { handlers.Refresh(c, db) })
 
-	jwtAuthorized := r.Group("", middlewares.JWTTokenMiddleware())
+	jwtAuthorized := rateLimited.Group("", middlewares.JWTTokenMiddleware())
 
 	// User Routes
 	jwtAuthorized.GET("/users", func(c *gin.Context) { handlers.GetUsers(c, db) })
@@ -91,7 +89,10 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	jwtAuthorized.PATCH("/quizzesScoreQuestions/:id", func(c *gin.Context) { handlers.UpdateQuizScoreQuestion(c, db) })
 	jwtAuthorized.DELETE("/quizzesScoreQuestions/:id", func(c *gin.Context) { handlers.DeleteQuizScoreQuestion(c, db) })
 
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	if os.Getenv("GIN_MODE") != "production" {
+		docs.SwaggerInfo.BasePath = "/"
+		r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	}
 
 	return r
 }
