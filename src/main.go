@@ -6,6 +6,7 @@ import (
 	"intelliquiz/src/docs"
 	"intelliquiz/src/handlers"
 	"intelliquiz/src/middlewares"
+	"log"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -29,6 +30,8 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	// Disable Console Color
 	// gin.DisableConsoleColor()
 	r := gin.Default()
+
+	r.Use(middlewares.RateLimiterMiddleware())
 
 	docs.SwaggerInfo.BasePath = "/"
 
@@ -112,7 +115,8 @@ func main() {
 	dsn := "host=" + os.Getenv("DATABASE_HOST") + " user=" + os.Getenv("DATABASE_USER") + " password=" + os.Getenv("DATABASE_PASSWORD") + " dbname=" + os.Getenv("DATABASE_NAME") + " port=" + os.Getenv("DATABASE_PORT") + " sslmode=disable TimeZone=America/Sao_Paulo"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic("An error occurred while connecting to the database")
+		log.Fatal("Failed to connect to database: " + err.Error())
+		return
 	}
 
 	migrate := os.Getenv("SCHEMA_MIGRATION") == "true"
