@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	uuidG "github.com/google/uuid"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -74,7 +74,7 @@ func CreateQuiz(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	categoryUuid, err := uuidG.Parse(reqBody.CategoryID)
+	categoryUuid, err := uuid.Parse(reqBody.CategoryID)
 	if err != nil {
 		log.Printf("Error parsing Category UUID: %v", err)
 
@@ -86,7 +86,7 @@ func CreateQuiz(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	userUuid, err := uuidG.Parse(c.MustGet("userID").(string))
+	userUuid, err := uuid.Parse(c.MustGet("userID").(string))
 	if err != nil {
 		log.Printf("Error parsing User UUID from context: %v", err)
 
@@ -98,10 +98,59 @@ func CreateQuiz(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	questions := []schemas.Question{}
+	for _, q := range reqBody.Questions {
+		hasCorrectChoice := false
+		choices := []schemas.Choice{}
+
+		for _, choice := range q.Choices {
+			if choice.IsCorrect {
+				if hasCorrectChoice {
+					log.Printf("Multiple correct choices found for question: %v", q.Content)
+
+					errMessage := "Only one correct choice can be specified for the question: " + q.Content
+					c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+						StatusCode: http.StatusBadRequest,
+						Success:    false,
+						Message:    errMessage,
+					})
+					return
+				}
+
+				hasCorrectChoice = true
+			}
+
+			choices = append(choices, schemas.Choice{
+				Content:   choice.Content,
+				IsCorrect: &choice.IsCorrect,
+			})
+		}
+
+		if !hasCorrectChoice {
+			log.Printf("No correct choice found for question: %v", q.Content)
+
+			errMessage := "A correct choice must be specified for the question: " + q.Content
+			c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+				StatusCode: http.StatusBadRequest,
+				Success:    false,
+				Message:    errMessage,
+			})
+			return
+		}
+
+		question := schemas.Question{
+			Content: q.Content,
+			Choices: choices,
+		}
+
+		questions = append(questions, question)
+	}
+
 	quiz := schemas.Quiz{
 		Name:       reqBody.Name,
 		CategoryID: categoryUuid.String(),
 		CreatedBy:  userUuid.String(),
+		Questions:  questions,
 	}
 
 	if err := gorm.G[schemas.Quiz](db).Create(c, &quiz); err != nil {
@@ -141,9 +190,7 @@ func CreateQuiz(c *gin.Context, db *gorm.DB) {
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
 // @Router /quizzes/{id} [get]
 func GetQuizByID(c *gin.Context, db *gorm.DB) {
-	id := c.Param("id")
-
-	uuid, err := uuidG.Parse(id)
+	quizUuid, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 
@@ -155,7 +202,7 @@ func GetQuizByID(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	quiz, err := gorm.G[schemas.Quiz](db).Where("id = ?", uuid).
+	quiz, err := gorm.G[schemas.Quiz](db).Where("id = ?", quizUuid).
 		Select("id, name, category_id, created_by").
 		Preload("Category", func(db gorm.PreloadBuilder) error {
 			db.Select("id, name")
@@ -211,7 +258,7 @@ func GetQuizByID(c *gin.Context, db *gorm.DB) {
 func UpdateQuiz(c *gin.Context, db *gorm.DB) {
 	id := c.Param("id")
 
-	uuid, err := uuidG.Parse(id)
+	quizUuid, err := uuid.Parse(id)
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 
@@ -223,7 +270,7 @@ func UpdateQuiz(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	userUuid, err := uuidG.Parse(c.MustGet("userID").(string))
+	userUuid, err := uuid.Parse(c.MustGet("userID").(string))
 	if err != nil {
 		log.Printf("Error parsing User UUID from context: %v", err)
 
@@ -247,7 +294,7 @@ func UpdateQuiz(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	quiz, err := gorm.G[schemas.Quiz](db).Where("id = ?", uuid).First(c)
+	quiz, err := gorm.G[schemas.Quiz](db).Where("id = ?", quizUuid).First(c)
 	if err != nil {
 		log.Printf("Error fetching quiz by ID: %v", err)
 
@@ -319,7 +366,7 @@ func UpdateQuiz(c *gin.Context, db *gorm.DB) {
 func DeleteQuiz(c *gin.Context, db *gorm.DB) {
 	id := c.Param("id")
 
-	uuid, err := uuidG.Parse(id)
+	quizUuid, err := uuid.Parse(id)
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 
@@ -331,7 +378,7 @@ func DeleteQuiz(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	userUuid, err := uuidG.Parse(c.MustGet("userID").(string))
+	userUuid, err := uuid.Parse(c.MustGet("userID").(string))
 	if err != nil {
 		log.Printf("Error parsing User UUID from context: %v", err)
 
@@ -343,7 +390,7 @@ func DeleteQuiz(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	quiz, err := gorm.G[schemas.Quiz](db).Where("id = ?", uuid).First(c)
+	quiz, err := gorm.G[schemas.Quiz](db).Where("id = ?", quizUuid).First(c)
 	if err != nil {
 		log.Printf("Error fetching quiz by ID: %v", err)
 
@@ -373,7 +420,7 @@ func DeleteQuiz(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	_, err = gorm.G[schemas.Quiz](db).Where("id = ?", uuid).Delete(c)
+	_, err = gorm.G[schemas.Quiz](db).Where("id = ?", quizUuid).Delete(c)
 
 	if err != nil {
 		log.Printf("Error deleting quiz: %v", err)
