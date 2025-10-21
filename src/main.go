@@ -1,10 +1,12 @@
 package main
 
 import (
+	"intelliquiz/src/database/schemas"
+	"intelliquiz/src/database/seeders"
 	"intelliquiz/src/docs"
 	"intelliquiz/src/handlers"
 	"intelliquiz/src/middlewares"
-	"intelliquiz/src/schemas"
+	"log"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -29,14 +31,14 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	// gin.DisableConsoleColor()
 	r := gin.Default()
 
-	docs.SwaggerInfo.BasePath = "/"
+	rateLimited := r.Group("", middlewares.RateLimiterMiddleware())
 
 	// Authentication Routes
-	r.POST("/signup", func(c *gin.Context) { handlers.SignUp(c, db) })
-	r.POST("/login", func(c *gin.Context) { handlers.Login(c, db) })
-	r.POST("/refresh", func(c *gin.Context) { handlers.Refresh(c, db) })
+	rateLimited.POST("/signup", func(c *gin.Context) { handlers.SignUp(c, db) })
+	rateLimited.POST("/login", func(c *gin.Context) { handlers.Login(c, db) })
+	rateLimited.POST("/refresh", func(c *gin.Context) { handlers.Refresh(c, db) })
 
-	jwtAuthorized := r.Group("", middlewares.JWTTokenMiddleware())
+	jwtAuthorized := rateLimited.Group("", middlewares.JWTTokenMiddleware())
 
 	// User Routes
 	jwtAuthorized.GET("/users", func(c *gin.Context) { handlers.GetUsers(c, db) })
@@ -47,10 +49,10 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 
 	// Category Routes
 	jwtAuthorized.GET("/categories", func(c *gin.Context) { handlers.GetCategories(c, db) })
-	jwtAuthorized.POST("/categories", func(c *gin.Context) { handlers.CreateCategory(c, db) })
+	// jwtAuthorized.POST("/categories", func(c *gin.Context) { handlers.CreateCategory(c, db) })
 	jwtAuthorized.GET("/categories/:id", func(c *gin.Context) { handlers.GetCategoryByID(c, db) })
-	jwtAuthorized.PATCH("/categories/:id", func(c *gin.Context) { handlers.UpdateCategory(c, db) })
-	jwtAuthorized.DELETE("/categories/:id", func(c *gin.Context) { handlers.DeleteCategory(c, db) })
+	// jwtAuthorized.PATCH("/categories/:id", func(c *gin.Context) { handlers.UpdateCategory(c, db) })
+	// jwtAuthorized.DELETE("/categories/:id", func(c *gin.Context) { handlers.DeleteCategory(c, db) })
 
 	// Quiz Routes
 	jwtAuthorized.GET("/quizzes", func(c *gin.Context) { handlers.GetQuizzes(c, db) })
@@ -66,6 +68,13 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	jwtAuthorized.PATCH("/questions/:id", func(c *gin.Context) { handlers.UpdateQuestion(c, db) })
 	jwtAuthorized.DELETE("/questions/:id", func(c *gin.Context) { handlers.DeleteQuestion(c, db) })
 
+	// Choice Routes
+	jwtAuthorized.GET("/questions/:id/choices", func(c *gin.Context) { handlers.GetChoices(c, db) })
+	jwtAuthorized.POST("/questions/:id/choices", func(c *gin.Context) { handlers.CreateChoice(c, db) })
+	jwtAuthorized.GET("/choices/:id", func(c *gin.Context) { handlers.GetChoiceByID(c, db) })
+	jwtAuthorized.PATCH("/choices/:id", func(c *gin.Context) { handlers.UpdateChoice(c, db) })
+	jwtAuthorized.DELETE("/choices/:id", func(c *gin.Context) { handlers.DeleteChoice(c, db) })
+
 	// Quiz Score Routes
 	jwtAuthorized.GET("/quizzesScores", func(c *gin.Context) { handlers.GetQuizzesScores(c, db) })
 	jwtAuthorized.POST("/quizzesScores", func(c *gin.Context) { handlers.CreateQuizScore(c, db) })
@@ -80,7 +89,10 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	jwtAuthorized.PATCH("/quizzesScoreQuestions/:id", func(c *gin.Context) { handlers.UpdateQuizScoreQuestion(c, db) })
 	jwtAuthorized.DELETE("/quizzesScoreQuestions/:id", func(c *gin.Context) { handlers.DeleteQuizScoreQuestion(c, db) })
 
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	if os.Getenv("GIN_MODE") != "production" {
+		docs.SwaggerInfo.BasePath = "/"
+		r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	}
 
 	return r
 }
@@ -104,18 +116,19 @@ func main() {
 	dsn := "host=" + os.Getenv("DATABASE_HOST") + " user=" + os.Getenv("DATABASE_USER") + " password=" + os.Getenv("DATABASE_PASSWORD") + " dbname=" + os.Getenv("DATABASE_NAME") + " port=" + os.Getenv("DATABASE_PORT") + " sslmode=disable TimeZone=America/Sao_Paulo"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic("An error occurred while connecting to the database")
+		log.Fatal("Failed to connect to database: " + err.Error())
+		return
 	}
 
 	migrate := os.Getenv("SCHEMA_MIGRATION") == "true"
 	freshMigrate := os.Getenv("SCHEMA_FRESH_MIGRATION") == "true"
 
-	if migrate {
-		if freshMigrate {
-			db.Migrator().DropTable(&schemas.User{}, &schemas.Quiz{}, &schemas.Question{}, &schemas.Category{}, &schemas.QuizScore{}, &schemas.QuizScoreQuestion{})
-		}
+	if freshMigrate {
+		schemas.Run(db, &freshMigrate)
 
-		db.AutoMigrate(&schemas.User{}, &schemas.Quiz{}, &schemas.Question{}, &schemas.Category{}, &schemas.QuizScore{}, &schemas.QuizScoreQuestion{})
+		seeders.Run(db)
+	} else if migrate {
+		schemas.Run(db, &freshMigrate)
 	}
 
 	r := setupRouter(db)

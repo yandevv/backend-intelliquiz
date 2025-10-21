@@ -13,10 +13,20 @@ type GetQuizzesSuccessResponseStruct struct {
 	Data       []QuizResponseDTO `json:"data"`
 }
 
+type CreateQuizQuestionChoiceStruct struct {
+	Content   string `json:"content" default:"Paris"`
+	IsCorrect bool   `json:"is_correct" default:"true"`
+}
+
+type CreateQuizQuestionsStruct struct {
+	Content string                           `json:"content" binding:"required" default:"What is the capital of France?"`
+	Choices []CreateQuizQuestionChoiceStruct `json:"choices" binding:"required"`
+}
+
 type CreateQuizRequestBody struct {
-	Name       string `json:"name" binding:"required" example:"Sample Quiz"`
-	CategoryID string `json:"category_id" binding:"required" example:"d27b21ab-6177-4159-9e13-15dc50ffed29"`
-	CreatedBy  string `json:"created_by" binding:"required" example:"0fde5216-1bab-41f6-bd90-4c3f088ee91f"`
+	Name       string                      `json:"name" binding:"required" example:"Sample Quiz"`
+	CategoryID string                      `json:"category_id" binding:"required" example:"d27b21ab-6177-4159-9e13-15dc50ffed29"`
+	Questions  []CreateQuizQuestionsStruct `json:"questions" binding:"required"`
 }
 
 type CreateQuizSuccessResponseStruct struct {
@@ -34,5 +44,4 @@ type GetQuizSuccessResponseStruct struct {
 type UpdateQuizRequestBody struct {
 	Name       string `json:"name" example:"Sample Quiz"`
 	CategoryID string `json:"category_id" example:"d27b21ab-6177-4159-9e13-15dc50ffed29"`
-	CreatedBy  string `json:"created_by" example:"0fde5216-1bab-41f6-bd90-4c3f088ee91f"`
 }

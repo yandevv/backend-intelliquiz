@@ -12,6 +12,7 @@ type Question struct {
 	Content   string          `json:"content,omitempty" gorm:"not null"`
 	QuizID    string          `json:"quiz_id,omitempty" gorm:"not null"`
 	Quiz      *Quiz           `json:"quiz,omitempty"`
+	Choices   []Choice        `json:"choices,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	CreatedAt *time.Time      `json:"created_at,omitempty"`
 	UpdatedAt *time.Time      `json:"updated_at,omitempty"`
 	DeletedAt *gorm.DeletedAt `json:"deleted_at,omitempty" gorm:"index"`

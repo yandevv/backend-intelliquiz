@@ -3,7 +3,7 @@ package handlers
 import (
 	"fmt"
 	"intelliquiz/src/auth"
-	"intelliquiz/src/schemas"
+	"intelliquiz/src/database/schemas"
 	"intelliquiz/src/types"
 	"intelliquiz/src/utils"
 	"net/http"

@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"intelliquiz/src/schemas"
+	"intelliquiz/src/database/schemas"
 	"intelliquiz/src/types"
 	"log"
 	"net/http"
