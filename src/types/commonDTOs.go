@@ -1,0 +1,43 @@
+package types
+
+type SuccessResponseStruct struct {
+	StatusCode int    `json:"statusCode" example:"200"`
+	Success    bool   `json:"success" example:"true"`
+	Message    string `json:"message" example:"OK"`
+}
+
+type ForbiddenErrorResponseStruct struct {
+	StatusCode int    `json:"statusCode" example:"403"`
+	Success    bool   `json:"success" example:"false"`
+	Message    string `json:"message" example:"Forbidden"`
+}
+
+type BadRequestErrorResponseStruct struct {
+	StatusCode int    `json:"statusCode" example:"400"`
+	Success    bool   `json:"success" example:"false"`
+	Message    string `json:"message" example:"Bad Request"`
+}
+
+type NotFoundErrorResponseStruct struct {
+	StatusCode int    `json:"statusCode" example:"404"`
+	Success    bool   `json:"success" example:"false"`
+	Message    string `json:"message" example:"Not Found"`
+}
+
+type UnprocessableEntityErrorResponseStruct struct {
+	StatusCode int    `json:"statusCode" default:"422"`
+	Success    bool   `json:"success" default:"false"`
+	Message    string `json:"message" default:"Unprocessable request body"`
+}
+
+type TooManyRequestsErrorResponseStruct struct {
+	StatusCode int    `json:"statusCode" default:"429"`
+	Success    bool   `json:"success" default:"false"`
+	Message    string `json:"message" default:"Too many requests"`
+}
+
+type InternalServerErrorResponseStruct struct {
+	StatusCode int    `json:"statusCode" default:"500"`
+	Success    bool   `json:"success" default:"false"`
+	Message    string `json:"message" default:"Internal Server Error"`
+}
