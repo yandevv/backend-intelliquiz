@@ -86,6 +86,26 @@ func CreateQuiz(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	if _, err := gorm.G[schemas.Category](db).Where("id = ?", categoryUuid).First(c); err != nil {
+		log.Printf("Error fetching category by ID: %v", err)
+
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+				StatusCode: http.StatusBadRequest,
+				Success:    false,
+				Message:    "Category not found.",
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while verifying the category.",
+		})
+		return
+	}
+
 	userUuid, err := uuid.Parse(c.MustGet("userID").(string))
 	if err != nil {
 		log.Printf("Error parsing User UUID from context: %v", err)
