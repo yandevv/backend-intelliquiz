@@ -69,7 +69,7 @@ func GetChoices(c *gin.Context, db *gorm.DB) {
 
 	selectStr := "id, question_id, content, created_at, updated_at"
 	if question.Quiz.CreatedBy == userUuid.String() {
-		selectStr = "id, question_id, content, created_at, updated_at, is_correct"
+		selectStr = "id, question_id, content, created_at, updated_at"
 	}
 
 	choices, err := gorm.G[schemas.Choice](db).
@@ -252,7 +252,7 @@ func GetChoiceByID(c *gin.Context, db *gorm.DB) {
 	}
 
 	choice, err := gorm.G[schemas.Choice](db).Where("id = ?", choiceUuid).
-		Select("id, question_id, content, created_at, updated_at, is_correct").
+		Select("id, question_id, content, created_at, updated_at").
 		Preload("Question.Quiz", nil).
 		First(c)
 	if err != nil {
@@ -278,6 +278,8 @@ func GetChoiceByID(c *gin.Context, db *gorm.DB) {
 	if choice.Question.Quiz.CreatedBy != userUuid.String() {
 		choice.IsCorrect = nil
 	}
+
+	choice.Question = nil
 
 	c.JSON(http.StatusOK, gin.H{
 		"statusCode": http.StatusOK,
