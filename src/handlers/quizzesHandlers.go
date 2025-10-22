@@ -440,7 +440,7 @@ func DeleteQuiz(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	_, err = gorm.G[schemas.Quiz](db).Where("id = ?", quizUuid).Delete(c)
+	err = db.Where("id = ?", quizUuid.String()).Delete(&schemas.Quiz{ID: quizUuid.String()}).Error
 
 	if err != nil {
 		log.Printf("Error deleting quiz: %v", err)
