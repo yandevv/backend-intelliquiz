@@ -16,6 +16,7 @@ type Quiz struct {
 	CreatedBy  string          `json:"created_by,omitempty"`
 	User       *User           `json:"user,omitempty" gorm:"foreignKey:CreatedBy"`
 	Questions  []Question      `json:"questions,omitempty"`
+	UserScores []QuizScore     `json:"user_scores,omitempty"`
 	CreatedAt  *time.Time      `json:"created_at,omitempty"`
 	UpdatedAt  *time.Time      `json:"updated_at,omitempty"`
 	DeletedAt  *gorm.DeletedAt `json:"deleted_at,omitempty" gorm:"index"`
