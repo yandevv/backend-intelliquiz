@@ -69,7 +69,7 @@ func GetChoices(c *gin.Context, db *gorm.DB) {
 
 	selectStr := "id, question_id, content, created_at, updated_at"
 	if question.Quiz.CreatedBy == userUuid.String() {
-		selectStr = "id, question_id, content, created_at, updated_at, is_correct"
+		selectStr = "id, question_id, content, created_at, updated_at"
 	}
 
 	choices, err := gorm.G[schemas.Choice](db).
@@ -143,6 +143,7 @@ func CreateChoice(c *gin.Context, db *gorm.DB) {
 
 	question, err := gorm.G[schemas.Question](db).Where("id = ?", questionUuid).
 		Preload("Quiz", nil).
+		Preload("Choices", nil).
 		First(c)
 
 	if err != nil {
@@ -170,6 +171,17 @@ func CreateChoice(c *gin.Context, db *gorm.DB) {
 			StatusCode: http.StatusForbidden,
 			Success:    false,
 			Message:    "You do not have permission to add choices to this question.",
+		})
+		return
+	}
+
+	if len(question.Choices) >= 6 {
+		log.Printf("Too many choices for question: %v", question.Content)
+
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "A maximum of 6 choices can be specified for the question: " + question.Content,
 		})
 		return
 	}
@@ -240,7 +252,7 @@ func GetChoiceByID(c *gin.Context, db *gorm.DB) {
 	}
 
 	choice, err := gorm.G[schemas.Choice](db).Where("id = ?", choiceUuid).
-		Select("id, question_id, content, created_at, updated_at, is_correct").
+		Select("id, question_id, content, created_at, updated_at").
 		Preload("Question.Quiz", nil).
 		First(c)
 	if err != nil {
@@ -266,6 +278,8 @@ func GetChoiceByID(c *gin.Context, db *gorm.DB) {
 	if choice.Question.Quiz.CreatedBy != userUuid.String() {
 		choice.IsCorrect = nil
 	}
+
+	choice.Question = nil
 
 	c.JSON(http.StatusOK, gin.H{
 		"statusCode": http.StatusOK,

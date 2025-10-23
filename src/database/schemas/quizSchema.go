@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type Quiz struct {
@@ -14,7 +15,8 @@ type Quiz struct {
 	Category   *Category       `json:"category,omitempty"`
 	CreatedBy  string          `json:"created_by,omitempty"`
 	User       *User           `json:"user,omitempty" gorm:"foreignKey:CreatedBy"`
-	Questions  []Question      `json:"questions,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Questions  []Question      `json:"questions,omitempty"`
+	UserScores []QuizScore     `json:"user_scores,omitempty"`
 	CreatedAt  *time.Time      `json:"created_at,omitempty"`
 	UpdatedAt  *time.Time      `json:"updated_at,omitempty"`
 	DeletedAt  *gorm.DeletedAt `json:"deleted_at,omitempty" gorm:"index"`
@@ -24,5 +26,10 @@ func (q *Quiz) BeforeCreate(tx *gorm.DB) (err error) {
 	if q.ID == "" {
 		q.ID = uuid.New().String()
 	}
+	return
+}
+
+func (q *Quiz) AfterDelete(tx *gorm.DB) (err error) {
+	tx.Clauses(clause.Returning{}).Where("quiz_id = ?", q.ID).Delete(&Question{})
 	return
 }

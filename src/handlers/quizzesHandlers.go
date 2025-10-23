@@ -86,6 +86,26 @@ func CreateQuiz(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	if _, err := gorm.G[schemas.Category](db).Where("id = ?", categoryUuid).First(c); err != nil {
+		log.Printf("Error fetching category by ID: %v", err)
+
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+				StatusCode: http.StatusBadRequest,
+				Success:    false,
+				Message:    "Category not found.",
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while verifying the category.",
+		})
+		return
+	}
+
 	userUuid, err := uuid.Parse(c.MustGet("userID").(string))
 	if err != nil {
 		log.Printf("Error parsing User UUID from context: %v", err)
@@ -120,6 +140,18 @@ func CreateQuiz(c *gin.Context, db *gorm.DB) {
 				hasCorrectChoice = true
 			}
 
+			if len(choices) == 6 {
+				log.Printf("Too many choices for question: %v", q.Content)
+
+				errMessage := "A maximum of 6 choices can be specified for the question: " + q.Content
+				c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+					StatusCode: http.StatusBadRequest,
+					Success:    false,
+					Message:    errMessage,
+				})
+				return
+			}
+
 			choices = append(choices, schemas.Choice{
 				Content:   choice.Content,
 				IsCorrect: &choice.IsCorrect,
@@ -138,12 +170,35 @@ func CreateQuiz(c *gin.Context, db *gorm.DB) {
 			return
 		}
 
+		if len(choices) < 2 {
+			log.Printf("Not enough choices for question: %v", q.Content)
+
+			errMessage := "At least two choices must be specified for the question: " + q.Content
+			c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+				StatusCode: http.StatusBadRequest,
+				Success:    false,
+				Message:    errMessage,
+			})
+			return
+		}
+
 		question := schemas.Question{
 			Content: q.Content,
 			Choices: choices,
 		}
 
 		questions = append(questions, question)
+	}
+
+	if len(questions) == 0 {
+		log.Printf("No questions provided for the quiz")
+
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "At least one question must be provided for the quiz.",
+		})
+		return
 	}
 
 	quiz := schemas.Quiz{
@@ -420,7 +475,7 @@ func DeleteQuiz(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	_, err = gorm.G[schemas.Quiz](db).Where("id = ?", quizUuid).Delete(c)
+	err = db.Where("id = ?", quizUuid.String()).Delete(&schemas.Quiz{ID: quizUuid.String()}).Error
 
 	if err != nil {
 		log.Printf("Error deleting quiz: %v", err)
