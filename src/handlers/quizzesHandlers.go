@@ -32,6 +32,7 @@ func GetQuizzes(c *gin.Context, db *gorm.DB) {
 			db.Select("id, username, name")
 			return nil
 		}).
+		Preload("UserScores", nil).
 		Find(c.Request.Context())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
@@ -40,6 +41,11 @@ func GetQuizzes(c *gin.Context, db *gorm.DB) {
 			Message:    "An error occurred while fetching quizzes",
 		})
 		return
+	}
+
+	for i := range quizzes {
+		quizzes[i].UsersPlayed = len(quizzes[i].UserScores)
+		quizzes[i].UserScores = nil
 	}
 
 	c.JSON(http.StatusOK, gin.H{
