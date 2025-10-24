@@ -267,6 +267,7 @@ func GetQuizByID(c *gin.Context, db *gorm.DB) {
 			db.Select("id, username, name")
 			return nil
 		}).
+		Preload("UserScores", nil).
 		First(c)
 	if err != nil {
 		log.Printf("Error fetching quiz by ID: %v", err)
@@ -287,6 +288,10 @@ func GetQuizByID(c *gin.Context, db *gorm.DB) {
 		})
 		return
 	}
+
+	quiz.UsersPlayed = len(quiz.UserScores)
+
+	quiz.UserScores = nil
 
 	c.JSON(http.StatusOK, gin.H{
 		"statusCode": http.StatusOK,
