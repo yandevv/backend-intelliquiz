@@ -322,3 +322,112 @@ func AnswerQuestion(c *gin.Context, db *gorm.DB) {
 		},
 	})
 }
+
+// GameResult godoc
+// @Summary Get game result
+// @Schemes
+// @Description Retrieve the result of a finished game session
+// @Param gameId path string true "Game ID"
+// @Tags games
+// @Produce json
+// @Success 200 {object} types.GameResultDetailedResponseStruct
+// @Failure 400 {object} types.BadRequestErrorResponseStruct
+// @Failure 403 {object} types.ForbiddenErrorResponseStruct
+// @Failure 404 {object} types.NotFoundErrorResponseStruct
+// @Failure 500 {object} types.InternalServerErrorResponseStruct
+// @Router /games/{gameId}/result [get]
+func GameResult(c *gin.Context, db *gorm.DB) {
+	userUuid, err := uuid.Parse(c.MustGet("userID").(string))
+	if err != nil {
+		log.Printf("Error parsing User UUID from context: %v", err)
+
+		c.JSON(http.StatusBadRequest, types.ForbiddenErrorResponseStruct{
+			StatusCode: http.StatusForbidden,
+			Success:    false,
+			Message:    "Invalid user ID format on claims.",
+		})
+		return
+	}
+
+	gameUuid, err := uuid.Parse(c.Param("gameId"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "Invalid game ID format.",
+		})
+		return
+	}
+
+	game, err := gorm.G[schemas.Game](db).Where("id = ?", gameUuid).
+		Select("id, user_id, created_at, updated_at, is_finished").
+		Preload("GameQuestions", nil).
+		Preload("GameQuestions.Question", func(db gorm.PreloadBuilder) error {
+			db.Select("id, content")
+			return nil
+		}).
+		Preload("GameQuestions.Choice", func(db gorm.PreloadBuilder) error {
+			db.Select("id, content")
+			return nil
+		}).
+		First(c)
+	if err != nil {
+		log.Printf("Error retrieving game from database: %v", err)
+
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, types.NotFoundErrorResponseStruct{
+				StatusCode: http.StatusNotFound,
+				Success:    false,
+				Message:    "Game not found.",
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "Internal server error while retrieving game.",
+		})
+		return
+	}
+
+	if game.UserID != userUuid.String() {
+		c.JSON(http.StatusForbidden, types.ForbiddenErrorResponseStruct{
+			StatusCode: http.StatusForbidden,
+			Success:    false,
+			Message:    "You do not have permission to view this game.",
+		})
+		return
+	}
+	if !game.IsFinished {
+		c.JSON(http.StatusForbidden, types.ForbiddenErrorResponseStruct{
+			StatusCode: http.StatusForbidden,
+			Success:    false,
+			Message:    "This game is not finished yet.",
+		})
+		return
+	}
+
+	var correctAnswersCount int = 0
+	for i, gameQuestion := range game.GameQuestions {
+		if gameQuestion.IsCorrect {
+			correctAnswersCount++
+		}
+
+		if i == 0 {
+			game.GameQuestions[i].SecondsTaken = uint(gameQuestion.AnsweredAt.Sub(*game.CreatedAt).Seconds())
+		} else {
+			game.GameQuestions[i].SecondsTaken = uint(gameQuestion.AnsweredAt.Sub(*game.GameQuestions[i-1].AnsweredAt).Seconds())
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status_code": http.StatusOK,
+		"success":     true,
+		"data": gin.H{
+			"total_questions": len(game.GameQuestions),
+			"correct_answers": correctAnswersCount,
+			"game":            game,
+		},
+	})
+}
