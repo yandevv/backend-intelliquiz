@@ -23,3 +23,15 @@ type StartGameResponseStruct struct {
 	Success    bool                `json:"success" example:"true"`
 	Data       StartGameDataStruct `json:"data"`
 }
+
+type AnswerQuestionDataStruct struct {
+	IsCorrect    bool             `json:"is_correct" example:"true"`
+	IsFinished   bool             `json:"is_finished" example:"false"`
+	NextQuestion *GameQuestionDTO `json:"next_question,omitempty"`
+}
+
+type AnswerQuestionResponseStruct struct {
+	StatusCode int                      `json:"status_code" example:"200"`
+	Success    bool                     `json:"success" example:"true"`
+	Data       AnswerQuestionDataStruct `json:"data"`
+}
