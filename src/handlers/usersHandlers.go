@@ -43,59 +43,6 @@ func GetUsers(c *gin.Context, db *gorm.DB) {
 	})
 }
 
-// ! Deactivated
-// CreateUser godoc
-// @Summary Create a new user (DEACTIVATED)
-// @Schemes
-// @Description Create a new user. This endpoint is currently deactivated.
-// @Tags users
-// @Accept json
-// @Produce json
-// @Param data body types.CreateUserRequestBody true "Create User Request Body"
-// @Success 201 {object} types.CreateUserSuccessResponseStruct
-// @Failure 400 {object} types.BadRequestErrorResponseStruct
-// @Failure 403 {object} types.ForbiddenErrorResponseStruct
-// @Failure 500 {object} types.InternalServerErrorResponseStruct
-// @Router /users [post]
-func CreateUser(c *gin.Context, db *gorm.DB) {
-	var reqBody types.CreateUserRequestBody
-	if err := c.ShouldBindJSON(&reqBody); err != nil {
-		log.Printf("Error parsing request body: %v", err)
-
-		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
-			StatusCode: http.StatusBadRequest,
-			Success:    false,
-			Message:    "An error occurred while parsing the request body.",
-		})
-		return
-	}
-
-	user := schemas.User{
-		Name: reqBody.Name,
-	}
-
-	if err := gorm.G[schemas.User](db).Create(c, &user); err != nil {
-		log.Printf("Error creating user: %v", err)
-
-		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
-			StatusCode: http.StatusInternalServerError,
-			Success:    false,
-			Message:    "An error occurred while creating the user.",
-		})
-		return
-	}
-
-	user.CreatedAt = nil
-	user.UpdatedAt = nil
-	user.DeletedAt = nil
-
-	c.JSON(http.StatusCreated, gin.H{
-		"statusCode": http.StatusCreated,
-		"success":    true,
-		"data":       user,
-	})
-}
-
 // GetUserByID godoc
 // @Summary Get a user by ID
 // @Schemes
@@ -295,65 +242,5 @@ func UpdateUser(c *gin.Context, db *gorm.DB) {
 		StatusCode: http.StatusOK,
 		Success:    true,
 		Message:    "User updated successfully.",
-	})
-}
-
-// ! Deactivated
-// DeleteUser godoc
-// @Summary Delete a user by ID (DEACTIVATED)
-// @Schemes
-// @Description Delete a user by their ID. This endpoint is currently deactivated.
-// @Tags users
-// @Produce json
-// @Param id path string true "User ID"
-// @Success 200 {object} types.SuccessResponseStruct
-// @Failure 400 {object} types.BadRequestErrorResponseStruct
-// @Failure 403 {object} types.ForbiddenErrorResponseStruct
-// @Failure 404 {object} types.NotFoundErrorResponseStruct
-// @Failure 500 {object} types.InternalServerErrorResponseStruct
-// @Router /users/{id} [delete]
-func DeleteUser(c *gin.Context, db *gorm.DB) {
-	id := c.Param("id")
-
-	uuid, err := uuidG.Parse(id)
-	if err != nil {
-		log.Printf("Error parsing UUID: %v", err)
-
-		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
-			StatusCode: http.StatusBadRequest,
-			Success:    false,
-			Message:    "Invalid user ID format.",
-		})
-		return
-	}
-
-	r, err := gorm.G[schemas.User](db).
-		Where("id = ?", uuid).
-		Delete(c)
-
-	if err != nil {
-		log.Printf("Error deleting user: %v", err)
-
-		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
-			StatusCode: http.StatusInternalServerError,
-			Success:    false,
-			Message:    "An error occurred while deleting the user.",
-		})
-		return
-	}
-
-	if r <= 0 {
-		c.JSON(http.StatusNotFound, types.NotFoundErrorResponseStruct{
-			StatusCode: http.StatusNotFound,
-			Success:    false,
-			Message:    "User not found.",
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, types.SuccessResponseStruct{
-		StatusCode: http.StatusOK,
-		Success:    true,
-		Message:    "User deleted successfully.",
 	})
 }

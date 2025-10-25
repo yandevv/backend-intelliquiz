@@ -11,16 +11,6 @@ type GetUsersSuccessResponseStruct struct {
 	Data       []UserResponseStruct `json:"data"`
 }
 
-type CreateUserRequestBody struct {
-	Name string `json:"name" binding:"required"`
-}
-
-type CreateUserSuccessResponseStruct struct {
-	StatusCode int                `json:"statusCode" example:"201"`
-	Success    bool               `json:"success" example:"true"`
-	Data       UserResponseStruct `json:"data"`
-}
-
 type GetUserByIDSuccessResponseStruct struct {
 	StatusCode int                `json:"statusCode" example:"200"`
 	Success    bool               `json:"success" example:"true"`
