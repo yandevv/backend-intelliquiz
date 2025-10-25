@@ -75,20 +75,6 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	jwtAuthorized.PATCH("/choices/:id", func(c *gin.Context) { handlers.UpdateChoice(c, db) })
 	jwtAuthorized.DELETE("/choices/:id", func(c *gin.Context) { handlers.DeleteChoice(c, db) })
 
-	// Quiz Score Routes
-	jwtAuthorized.GET("/quizzesScores", func(c *gin.Context) { handlers.GetQuizzesScores(c, db) })
-	jwtAuthorized.POST("/quizzesScores", func(c *gin.Context) { handlers.CreateQuizScore(c, db) })
-	jwtAuthorized.GET("/quizzesScores/:id", func(c *gin.Context) { handlers.GetQuizScoreByID(c, db) })
-	jwtAuthorized.PATCH("/quizzesScores/:id", func(c *gin.Context) { handlers.UpdateQuizScore(c, db) })
-	jwtAuthorized.DELETE("/quizzesScores/:id", func(c *gin.Context) { handlers.DeleteQuizScore(c, db) })
-
-	// Quiz Score Question Routes
-	jwtAuthorized.GET("/quizzesScoreQuestions", func(c *gin.Context) { handlers.GetQuizzesScoreQuestions(c, db) })
-	jwtAuthorized.POST("/quizzesScoreQuestions", func(c *gin.Context) { handlers.CreateQuizScoreQuestion(c, db) })
-	jwtAuthorized.GET("/quizzesScoreQuestions/:id", func(c *gin.Context) { handlers.GetQuizScoreQuestionByID(c, db) })
-	jwtAuthorized.PATCH("/quizzesScoreQuestions/:id", func(c *gin.Context) { handlers.UpdateQuizScoreQuestion(c, db) })
-	jwtAuthorized.DELETE("/quizzesScoreQuestions/:id", func(c *gin.Context) { handlers.DeleteQuizScoreQuestion(c, db) })
-
 	if os.Getenv("GIN_MODE") != "production" {
 		docs.SwaggerInfo.BasePath = "/"
 		r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
