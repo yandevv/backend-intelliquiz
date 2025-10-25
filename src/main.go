@@ -49,10 +49,7 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 
 	// Category Routes
 	jwtAuthorized.GET("/categories", func(c *gin.Context) { handlers.GetCategories(c, db) })
-	// jwtAuthorized.POST("/categories", func(c *gin.Context) { handlers.CreateCategory(c, db) })
 	jwtAuthorized.GET("/categories/:id", func(c *gin.Context) { handlers.GetCategoryByID(c, db) })
-	// jwtAuthorized.PATCH("/categories/:id", func(c *gin.Context) { handlers.UpdateCategory(c, db) })
-	// jwtAuthorized.DELETE("/categories/:id", func(c *gin.Context) { handlers.DeleteCategory(c, db) })
 
 	// Quiz Routes
 	jwtAuthorized.GET("/quizzes", func(c *gin.Context) { handlers.GetQuizzes(c, db) })
