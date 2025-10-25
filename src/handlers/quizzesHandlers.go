@@ -160,7 +160,7 @@ func CreateQuiz(c *gin.Context, db *gorm.DB) {
 
 			choices = append(choices, schemas.Choice{
 				Content:   choice.Content,
-				IsCorrect: choice.IsCorrect,
+				IsCorrect: &choice.IsCorrect,
 			})
 		}
 
