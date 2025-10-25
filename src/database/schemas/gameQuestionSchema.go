@@ -15,6 +15,7 @@ type GameQuestion struct {
 	Question   *Question  `json:"question,omitempty"`
 	ChoiceID   *string    `json:"choice_id,omitempty"`
 	Choice     *Choice    `json:"choice,omitempty"`
+	Position   uint8      `json:"position" gorm:"not null"`
 	AnsweredAt *time.Time `json:"answered_at,omitempty"`
 	IsCorrect  bool       `json:"is_correct" gorm:"not null default:false"`
 	CreatedAt  *time.Time `json:"created_at,omitempty"`

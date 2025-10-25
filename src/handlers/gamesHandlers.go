@@ -94,12 +94,15 @@ func StartGame(c *gin.Context, db *gorm.DB) {
 		gameId = game.ID
 
 		var gameQuestions []schemas.GameQuestion
+		var position uint8 = 0
 		for _, question := range quiz.Questions {
 			gameQuestions = append(gameQuestions, schemas.GameQuestion{
 				GameID:     game.ID,
 				QuestionID: question.ID,
 				ChoiceID:   nil,
+				Position:   position,
 			})
+			position++
 		}
 
 		err = gorm.G[[]schemas.GameQuestion](tx).Create(c, &gameQuestions)
