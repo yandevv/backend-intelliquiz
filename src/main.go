@@ -70,6 +70,10 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	jwtAuthorized.PATCH("/choices/:id", func(c *gin.Context) { handlers.UpdateChoice(c, db) })
 	jwtAuthorized.DELETE("/choices/:id", func(c *gin.Context) { handlers.DeleteChoice(c, db) })
 
+	// Game Routes
+	jwtAuthorized.POST("/quizzes/:id/play", func(c *gin.Context) { handlers.StartGame(c, db) })
+	jwtAuthorized.POST("/games/:id/answer", func(c *gin.Context) { handlers.AnswerQuestion(c, db) })
+
 	if os.Getenv("GIN_MODE") != "production" {
 		docs.SwaggerInfo.BasePath = "/"
 		r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
