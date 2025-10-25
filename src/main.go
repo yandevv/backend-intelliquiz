@@ -42,37 +42,37 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 
 	// User Routes
 	jwtAuthorized.GET("/users", func(c *gin.Context) { handlers.GetUsers(c, db) })
-	jwtAuthorized.GET("/users/:id", func(c *gin.Context) { handlers.GetUserByID(c, db) })
-	jwtAuthorized.PATCH("/users/:id", func(c *gin.Context) { handlers.UpdateUser(c, db) })
+	jwtAuthorized.GET("/users/:userId", func(c *gin.Context) { handlers.GetUserByID(c, db) })
+	jwtAuthorized.PATCH("/users/:userId", func(c *gin.Context) { handlers.UpdateUser(c, db) })
 
 	// Category Routes
 	jwtAuthorized.GET("/categories", func(c *gin.Context) { handlers.GetCategories(c, db) })
-	jwtAuthorized.GET("/categories/:id", func(c *gin.Context) { handlers.GetCategoryByID(c, db) })
+	jwtAuthorized.GET("/categories/:categoryId", func(c *gin.Context) { handlers.GetCategoryByID(c, db) })
 
 	// Quiz Routes
 	jwtAuthorized.GET("/quizzes", func(c *gin.Context) { handlers.GetQuizzes(c, db) })
 	jwtAuthorized.POST("/quizzes", func(c *gin.Context) { handlers.CreateQuiz(c, db) })
-	jwtAuthorized.GET("/quizzes/:id", func(c *gin.Context) { handlers.GetQuizByID(c, db) })
-	jwtAuthorized.PATCH("/quizzes/:id", func(c *gin.Context) { handlers.UpdateQuiz(c, db) })
-	jwtAuthorized.DELETE("/quizzes/:id", func(c *gin.Context) { handlers.DeleteQuiz(c, db) })
+	jwtAuthorized.GET("/quizzes/:quizId", func(c *gin.Context) { handlers.GetQuizByID(c, db) })
+	jwtAuthorized.PATCH("/quizzes/:quizId", func(c *gin.Context) { handlers.UpdateQuiz(c, db) })
+	jwtAuthorized.DELETE("/quizzes/:quizId", func(c *gin.Context) { handlers.DeleteQuiz(c, db) })
 
 	// Question Routes
 	jwtAuthorized.GET("/questions", func(c *gin.Context) { handlers.GetQuestions(c, db) })
 	jwtAuthorized.POST("/questions", func(c *gin.Context) { handlers.CreateQuestion(c, db) })
-	jwtAuthorized.GET("/questions/:id", func(c *gin.Context) { handlers.GetQuestionByID(c, db) })
-	jwtAuthorized.PATCH("/questions/:id", func(c *gin.Context) { handlers.UpdateQuestion(c, db) })
-	jwtAuthorized.DELETE("/questions/:id", func(c *gin.Context) { handlers.DeleteQuestion(c, db) })
+	jwtAuthorized.GET("/questions/:questionId", func(c *gin.Context) { handlers.GetQuestionByID(c, db) })
+	jwtAuthorized.PATCH("/questions/:questionId", func(c *gin.Context) { handlers.UpdateQuestion(c, db) })
+	jwtAuthorized.DELETE("/questions/:questionId", func(c *gin.Context) { handlers.DeleteQuestion(c, db) })
 
 	// Choice Routes
-	jwtAuthorized.GET("/questions/:id/choices", func(c *gin.Context) { handlers.GetChoices(c, db) })
-	jwtAuthorized.POST("/questions/:id/choices", func(c *gin.Context) { handlers.CreateChoice(c, db) })
-	jwtAuthorized.GET("/choices/:id", func(c *gin.Context) { handlers.GetChoiceByID(c, db) })
-	jwtAuthorized.PATCH("/choices/:id", func(c *gin.Context) { handlers.UpdateChoice(c, db) })
-	jwtAuthorized.DELETE("/choices/:id", func(c *gin.Context) { handlers.DeleteChoice(c, db) })
+	jwtAuthorized.GET("/questions/:questionId/choices", func(c *gin.Context) { handlers.GetChoices(c, db) })
+	jwtAuthorized.POST("/questions/:questionId/choices", func(c *gin.Context) { handlers.CreateChoice(c, db) })
+	jwtAuthorized.GET("/choices/:choiceId", func(c *gin.Context) { handlers.GetChoiceByID(c, db) })
+	jwtAuthorized.PATCH("/choices/:choiceId", func(c *gin.Context) { handlers.UpdateChoice(c, db) })
+	jwtAuthorized.DELETE("/choices/:choiceId", func(c *gin.Context) { handlers.DeleteChoice(c, db) })
 
 	// Game Routes
-	jwtAuthorized.POST("/quizzes/:id/play", func(c *gin.Context) { handlers.StartGame(c, db) })
-	jwtAuthorized.POST("/games/:id/answer", func(c *gin.Context) { handlers.AnswerQuestion(c, db) })
+	jwtAuthorized.POST("/quizzes/:quizId/play", func(c *gin.Context) { handlers.StartGame(c, db) })
+	jwtAuthorized.POST("/games/:gameId/answer", func(c *gin.Context) { handlers.AnswerQuestion(c, db) })
 
 	if os.Getenv("GIN_MODE") != "production" {
 		docs.SwaggerInfo.BasePath = "/"

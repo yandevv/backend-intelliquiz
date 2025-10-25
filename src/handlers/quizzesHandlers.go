@@ -249,9 +249,9 @@ func CreateQuiz(c *gin.Context, db *gorm.DB) {
 // @Failure 403 {object} types.ForbiddenErrorResponseStruct
 // @Failure 404 {object} types.NotFoundErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
-// @Router /quizzes/{id} [get]
+// @Router /quizzes/{quizId} [get]
 func GetQuizByID(c *gin.Context, db *gorm.DB) {
-	quizUuid, err := uuid.Parse(c.Param("id"))
+	quizUuid, err := uuid.Parse(c.Param("quizId"))
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 
@@ -320,11 +320,11 @@ func GetQuizByID(c *gin.Context, db *gorm.DB) {
 // @Failure 403 {object} types.ForbiddenErrorResponseStruct
 // @Failure 404 {object} types.NotFoundErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
-// @Router /quizzes/{id} [patch]
+// @Router /quizzes/{quizId} [patch]
 func UpdateQuiz(c *gin.Context, db *gorm.DB) {
-	id := c.Param("id")
+	quizId := c.Param("quizId")
 
-	quizUuid, err := uuid.Parse(id)
+	quizUuid, err := uuid.Parse(quizId)
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 
@@ -428,11 +428,11 @@ func UpdateQuiz(c *gin.Context, db *gorm.DB) {
 // @Failure 403 {object} types.ForbiddenErrorResponseStruct
 // @Failure 404 {object} types.NotFoundErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
-// @Router /quizzes/{id} [delete]
+// @Router /quizzes/{quizId} [delete]
 func DeleteQuiz(c *gin.Context, db *gorm.DB) {
-	id := c.Param("id")
+	quizId := c.Param("quizId")
 
-	quizUuid, err := uuid.Parse(id)
+	quizUuid, err := uuid.Parse(quizId)
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 

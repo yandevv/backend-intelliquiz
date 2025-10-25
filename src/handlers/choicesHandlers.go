@@ -21,7 +21,7 @@ import (
 // @Success 200 {object} types.GetChoicesSuccessResponseStruct
 // @Failure 403 {object} types.ForbiddenErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
-// @Router /questions/{id}/choices [get]
+// @Router /questions/{questionId}/choices [get]
 func GetChoices(c *gin.Context, db *gorm.DB) {
 	userUuid, err := uuid.Parse(c.MustGet("userID").(string))
 	if err != nil {
@@ -34,7 +34,7 @@ func GetChoices(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	questionUuid, err := uuid.Parse(c.Param("id"))
+	questionUuid, err := uuid.Parse(c.Param("questionId"))
 	if err != nil {
 		log.Printf("Error parsing Question UUID: %v", err)
 		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
@@ -107,7 +107,7 @@ func GetChoices(c *gin.Context, db *gorm.DB) {
 // @Failure 400 {object} types.BadRequestErrorResponseStruct
 // @Failure 403 {object} types.ForbiddenErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
-// @Router /questions/{id}/choices [post]
+// @Router /questions/{questionId}/choices [post]
 func CreateChoice(c *gin.Context, db *gorm.DB) {
 	var reqBody types.CreateChoiceRequestBody
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
@@ -121,7 +121,7 @@ func CreateChoice(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	questionUuid, err := uuid.Parse(c.Param("id"))
+	questionUuid, err := uuid.Parse(c.Param("questionId"))
 	if err != nil {
 		log.Printf("Error parsing Question UUID: %v", err)
 
@@ -229,7 +229,7 @@ func CreateChoice(c *gin.Context, db *gorm.DB) {
 // @Failure 403 {object} types.ForbiddenErrorResponseStruct
 // @Failure 404 {object} types.NotFoundErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
-// @Router /choices/{id} [get]
+// @Router /choices/{choiceId} [get]
 func GetChoiceByID(c *gin.Context, db *gorm.DB) {
 	userUuid, err := uuid.Parse(c.MustGet("userID").(string))
 	if err != nil {
@@ -243,7 +243,7 @@ func GetChoiceByID(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	choiceUuid, err := uuid.Parse(c.Param("id"))
+	choiceUuid, err := uuid.Parse(c.Param("choiceId"))
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 
@@ -311,9 +311,9 @@ func GetChoiceByID(c *gin.Context, db *gorm.DB) {
 // @Failure 403 {object} types.ForbiddenErrorResponseStruct
 // @Failure 404 {object} types.NotFoundErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
-// @Router /choices/{id} [patch]
+// @Router /choices/{choiceId} [patch]
 func UpdateChoice(c *gin.Context, db *gorm.DB) {
-	choiceUuid, err := uuid.Parse(c.Param("id"))
+	choiceUuid, err := uuid.Parse(c.Param("choiceId"))
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 
@@ -413,9 +413,9 @@ func UpdateChoice(c *gin.Context, db *gorm.DB) {
 // @Failure 403 {object} types.ForbiddenErrorResponseStruct
 // @Failure 404 {object} types.NotFoundErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
-// @Router /choices/{id} [delete]
+// @Router /choices/{choiceId} [delete]
 func DeleteChoice(c *gin.Context, db *gorm.DB) {
-	choiceUuid, err := uuid.Parse(c.Param("id"))
+	choiceUuid, err := uuid.Parse(c.Param("choiceId"))
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 

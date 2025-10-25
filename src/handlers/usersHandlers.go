@@ -55,11 +55,11 @@ func GetUsers(c *gin.Context, db *gorm.DB) {
 // @Failure 403 {object} types.ForbiddenErrorResponseStruct
 // @Failure 404 {object} types.NotFoundErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
-// @Router /users/{id} [get]
+// @Router /users/{userId} [get]
 func GetUserByID(c *gin.Context, db *gorm.DB) {
-	id := c.Param("id")
+	userId := c.Param("userId")
 
-	uuid, err := uuidG.Parse(id)
+	uuid, err := uuidG.Parse(userId)
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 
@@ -117,11 +117,11 @@ func GetUserByID(c *gin.Context, db *gorm.DB) {
 // @Failure 403 {object} types.ForbiddenErrorResponseStruct
 // @Failure 404 {object} types.NotFoundErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
-// @Router /users/{id} [patch]
+// @Router /users/{userId} [patch]
 func UpdateUser(c *gin.Context, db *gorm.DB) {
-	id := c.Param("id")
+	userId := c.Param("userId")
 
-	uuidUpdated, err := uuidG.Parse(id)
+	uuidUpdated, err := uuidG.Parse(userId)
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 

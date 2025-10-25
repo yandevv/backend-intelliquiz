@@ -57,11 +57,11 @@ func GetCategories(c *gin.Context, db *gorm.DB) {
 // @Failure 403 {object} types.ForbiddenErrorResponseStruct
 // @Failure 404 {object} types.NotFoundErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
-// @Router /categories/{id} [get]
+// @Router /categories/{categoryId} [get]
 func GetCategoryByID(c *gin.Context, db *gorm.DB) {
-	id := c.Param("id")
+	categoryId := c.Param("categoryId")
 
-	uuid, err := uuidG.Parse(id)
+	uuid, err := uuidG.Parse(categoryId)
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 

@@ -24,7 +24,7 @@ import (
 // @Failure 403 {object} types.ForbiddenErrorResponseStruct
 // @Failure 404 {object} types.NotFoundErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
-// @Router /quizzes/{id}/play [post]
+// @Router /quizzes/{quizId}/play [post]
 func StartGame(c *gin.Context, db *gorm.DB) {
 	userUuid, err := uuid.Parse(c.MustGet("userID").(string))
 	if err != nil {
@@ -38,7 +38,7 @@ func StartGame(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	quizUuid, err := uuid.Parse(c.Param("id"))
+	quizUuid, err := uuid.Parse(c.Param("quizId"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
 			StatusCode: http.StatusBadRequest,
