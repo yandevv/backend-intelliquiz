@@ -67,13 +67,17 @@ func GetChoices(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	selectStr := "id, question_id, content, created_at, updated_at"
 	if question.Quiz.CreatedBy == userUuid.String() {
-		selectStr = "id, question_id, content, created_at, updated_at"
+		c.JSON(http.StatusForbidden, types.ForbiddenErrorResponseStruct{
+			StatusCode: http.StatusForbidden,
+			Success:    false,
+			Message:    "You do not have permission to view choices for this question.",
+		})
+		return
 	}
 
 	choices, err := gorm.G[schemas.Choice](db).
-		Select(selectStr).
+		Select("id, question_id, content, is_correct, created_at, updated_at").
 		Where("question_id = ?", questionUuid.String()).
 		Find(c.Request.Context())
 	if err != nil {
@@ -276,7 +280,12 @@ func GetChoiceByID(c *gin.Context, db *gorm.DB) {
 	}
 
 	if choice.Question.Quiz.CreatedBy != userUuid.String() {
-		choice.IsCorrect = nil
+		c.JSON(http.StatusForbidden, types.ForbiddenErrorResponseStruct{
+			StatusCode: http.StatusForbidden,
+			Success:    false,
+			Message:    "You do not have permission to view this choice.",
+		})
+		return
 	}
 
 	choice.Question = nil
