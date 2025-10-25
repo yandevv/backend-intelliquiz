@@ -9,8 +9,8 @@ func Run(db *gorm.DB, fresh *bool) error {
 			&Quiz{},
 			&Question{},
 			&Category{},
-			&QuizScore{},
-			&QuizScoreQuestion{},
+			&Game{},
+			&GameQuestion{},
 			&Choice{},
 		)
 	}
@@ -20,8 +20,8 @@ func Run(db *gorm.DB, fresh *bool) error {
 		&Quiz{},
 		&Question{},
 		&Category{},
-		&QuizScore{},
-		&QuizScoreQuestion{},
+		&Game{},
+		&GameQuestion{},
 		&Choice{},
 	)
 }
