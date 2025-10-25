@@ -32,7 +32,7 @@ func GetQuizzes(c *gin.Context, db *gorm.DB) {
 			db.Select("id, username, name")
 			return nil
 		}).
-		Preload("UserScores", nil).
+		Preload("Games", nil).
 		Find(c.Request.Context())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
@@ -44,8 +44,8 @@ func GetQuizzes(c *gin.Context, db *gorm.DB) {
 	}
 
 	for i := range quizzes {
-		quizzes[i].UsersPlayed = len(quizzes[i].UserScores)
-		quizzes[i].UserScores = nil
+		quizzes[i].GamesPlayed = len(quizzes[i].Games)
+		quizzes[i].Games = nil
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -273,7 +273,7 @@ func GetQuizByID(c *gin.Context, db *gorm.DB) {
 			db.Select("id, username, name")
 			return nil
 		}).
-		Preload("UserScores", nil).
+		Preload("Games", nil).
 		First(c)
 	if err != nil {
 		log.Printf("Error fetching quiz by ID: %v", err)
@@ -295,9 +295,9 @@ func GetQuizByID(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	quiz.UsersPlayed = len(quiz.UserScores)
+	quiz.GamesPlayed = len(quiz.Games)
 
-	quiz.UserScores = nil
+	quiz.Games = nil
 
 	c.JSON(http.StatusOK, gin.H{
 		"statusCode": http.StatusOK,
