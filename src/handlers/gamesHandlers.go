@@ -95,6 +95,13 @@ func StartGame(c *gin.Context, db *gorm.DB) {
 
 		var gameQuestions []schemas.GameQuestion
 		var position uint8 = 0
+
+		// Shuffle questions
+		for i := range quiz.Questions {
+			j := rand.Intn(i + 1)
+			quiz.Questions[i], quiz.Questions[j] = quiz.Questions[j], quiz.Questions[i]
+		}
+
 		for _, question := range quiz.Questions {
 			gameQuestions = append(gameQuestions, schemas.GameQuestion{
 				GameID:     game.ID,
@@ -122,6 +129,7 @@ func StartGame(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	// Shuffle choices of the first question
 	for i := range quiz.Questions[0].Choices {
 		j := rand.Intn(i + 1)
 		quiz.Questions[0].Choices[i], quiz.Questions[0].Choices[j] = quiz.Questions[0].Choices[j], quiz.Questions[0].Choices[i]
