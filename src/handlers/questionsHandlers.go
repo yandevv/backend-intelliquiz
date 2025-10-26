@@ -114,11 +114,11 @@ func CreateQuestion(c *gin.Context, db *gorm.DB) {
 // @Failure 400 {object} types.BadRequestErrorResponseStruct
 // @Failure 404 {object} types.NotFoundErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
-// @Router /questions/{id} [get]
+// @Router /questions/{questionId} [get]
 func GetQuestionByID(c *gin.Context, db *gorm.DB) {
-	id := c.Param("id")
+	questionId := c.Param("questionId")
 
-	uuid, err := uuidG.Parse(id)
+	uuid, err := uuidG.Parse(questionId)
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 
@@ -172,11 +172,11 @@ func GetQuestionByID(c *gin.Context, db *gorm.DB) {
 // @Failure 400 {object} types.BadRequestErrorResponseStruct
 // @Failure 404 {object} types.NotFoundErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
-// @Router /questions/{id} [patch]
+// @Router /questions/{questionId} [patch]
 func UpdateQuestion(c *gin.Context, db *gorm.DB) {
-	id := c.Param("id")
+	questionId := c.Param("questionId")
 
-	uuid, err := uuidG.Parse(id)
+	uuid, err := uuidG.Parse(questionId)
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 
@@ -264,11 +264,11 @@ func UpdateQuestion(c *gin.Context, db *gorm.DB) {
 // @Failure 400 {object} types.BadRequestErrorResponseStruct
 // @Failure 404 {object} types.NotFoundErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
-// @Router /questions/{id} [delete]
+// @Router /questions/{questionId} [delete]
 func DeleteQuestion(c *gin.Context, db *gorm.DB) {
-	id := c.Param("id")
+	questionId := c.Param("questionId")
 
-	uuid, err := uuidG.Parse(id)
+	uuid, err := uuidG.Parse(questionId)
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 
