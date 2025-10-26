@@ -236,7 +236,7 @@ func AnswerQuestion(c *gin.Context, db *gorm.DB) {
 		})
 		return
 	}
-	if game.IsFinished {
+	if game.FinishedAt != nil {
 		c.JSON(http.StatusForbidden, types.ForbiddenErrorResponseStruct{
 			StatusCode: http.StatusForbidden,
 			Success:    false,
@@ -279,7 +279,9 @@ func AnswerQuestion(c *gin.Context, db *gorm.DB) {
 
 		// If there are no more questions, finish the game
 		if len(game.GameQuestions) == 1 {
-			game.IsFinished = true
+			finishTime := time.Now()
+
+			game.FinishedAt = &finishTime
 
 			_, err := gorm.G[schemas.Game](tx).Where("id = ?", game.ID).
 				Updates(c, game)
@@ -300,13 +302,13 @@ func AnswerQuestion(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	if game.IsFinished {
+	if game.FinishedAt != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"status_code": http.StatusOK,
 			"success":     true,
 			"data": gin.H{
 				"is_correct":  isAnswerCorrect,
-				"is_finished": game.IsFinished,
+				"is_finished": game.FinishedAt != nil,
 			},
 		})
 		return
@@ -317,9 +319,92 @@ func AnswerQuestion(c *gin.Context, db *gorm.DB) {
 		"success":     true,
 		"data": gin.H{
 			"is_correct":    isAnswerCorrect,
-			"is_finished":   game.IsFinished,
+			"is_finished":   game.FinishedAt != nil,
 			"next_question": game.GameQuestions[1].Question,
 		},
+	})
+}
+
+// GamesResults godoc
+// @Summary Get user's finished games
+// @Schemes
+// @Description Retrieve all finished game sessions for the authenticated user
+// @Tags games
+// @Produce json
+// @Success 200 {object} types.GamesResultsResponseStruct
+// @Failure 400 {object} types.BadRequestErrorResponseStruct
+// @Failure 403 {object} types.ForbiddenErrorResponseStruct
+// @Failure 500 {object} types.InternalServerErrorResponseStruct
+// @Router /me/games [get]
+func GamesResults(c *gin.Context, db *gorm.DB) {
+	userUuid, err := uuid.Parse(c.MustGet("userID").(string))
+	if err != nil {
+		log.Printf("Error parsing User UUID from context: %v", err)
+
+		c.JSON(http.StatusBadRequest, types.ForbiddenErrorResponseStruct{
+			StatusCode: http.StatusForbidden,
+			Success:    false,
+			Message:    "Invalid user ID format on claims.",
+		})
+		return
+	}
+
+	games, err := gorm.G[schemas.Game](db).Where("user_id = ? AND finished_at IS NOT NULL", userUuid.String()).
+		Select("id, user_id, created_at, updated_at, finished_at").
+		Preload("GameQuestions", nil).
+		Preload("GameQuestions.Question", func(db gorm.PreloadBuilder) error {
+			db.Select("id, content")
+			return nil
+		}).
+		Preload("GameQuestions.Choice", func(db gorm.PreloadBuilder) error {
+			db.Select("id, content")
+			return nil
+		}).
+		Find(c)
+	if err != nil {
+		log.Printf("Error retrieving games from database: %v", err)
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "Internal server error while retrieving games.",
+		})
+		return
+	}
+
+	if len(games) == 0 {
+		c.JSON(http.StatusOK, gin.H{
+			"status_code": http.StatusOK,
+			"success":     true,
+			"data":        []schemas.Game{},
+		})
+		return
+	}
+
+	var correctAnswersCount uint = 0
+	for i, game := range games {
+		for _, gameQuestion := range game.GameQuestions {
+			if gameQuestion.IsCorrect {
+				correctAnswersCount++
+			}
+		}
+
+		games[i].CorrectAnswers = correctAnswersCount
+		games[i].TotalQuestions = uint(len(game.GameQuestions))
+		games[i].TotalSecondsTaken = 0
+		if game.FinishedAt != nil {
+			games[i].TotalSecondsTaken = uint(game.FinishedAt.Sub(*game.CreatedAt).Seconds())
+		}
+
+		games[i].GameQuestions = nil
+
+		correctAnswersCount = 0
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status_code": http.StatusOK,
+		"success":     true,
+		"data":        games,
 	})
 }
 
@@ -336,7 +421,7 @@ func AnswerQuestion(c *gin.Context, db *gorm.DB) {
 // @Failure 404 {object} types.NotFoundErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
 // @Router /games/{gameId}/result [get]
-func GameResult(c *gin.Context, db *gorm.DB) {
+func GameResultById(c *gin.Context, db *gorm.DB) {
 	userUuid, err := uuid.Parse(c.MustGet("userID").(string))
 	if err != nil {
 		log.Printf("Error parsing User UUID from context: %v", err)
@@ -360,7 +445,7 @@ func GameResult(c *gin.Context, db *gorm.DB) {
 	}
 
 	game, err := gorm.G[schemas.Game](db).Where("id = ?", gameUuid).
-		Select("id, user_id, created_at, updated_at, is_finished").
+		Select("id, user_id, created_at, updated_at, finished_at").
 		Preload("GameQuestions", nil).
 		Preload("GameQuestions.Question", func(db gorm.PreloadBuilder) error {
 			db.Select("id, content")
@@ -399,7 +484,7 @@ func GameResult(c *gin.Context, db *gorm.DB) {
 		})
 		return
 	}
-	if !game.IsFinished {
+	if game.FinishedAt == nil {
 		c.JSON(http.StatusForbidden, types.ForbiddenErrorResponseStruct{
 			StatusCode: http.StatusForbidden,
 			Success:    false,
@@ -408,7 +493,7 @@ func GameResult(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	var correctAnswersCount int = 0
+	var correctAnswersCount uint = 0
 	for i, gameQuestion := range game.GameQuestions {
 		if gameQuestion.IsCorrect {
 			correctAnswersCount++
@@ -421,13 +506,13 @@ func GameResult(c *gin.Context, db *gorm.DB) {
 		}
 	}
 
+	game.TotalQuestions = uint(len(game.GameQuestions))
+	game.CorrectAnswers = correctAnswersCount
+	game.TotalSecondsTaken = uint(game.FinishedAt.Sub(*game.CreatedAt).Seconds())
+
 	c.JSON(http.StatusOK, gin.H{
 		"status_code": http.StatusOK,
 		"success":     true,
-		"data": gin.H{
-			"total_questions": len(game.GameQuestions),
-			"correct_answers": correctAnswersCount,
-			"game":            game,
-		},
+		"data":        game,
 	})
 }

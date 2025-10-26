@@ -73,7 +73,8 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	// Game Routes
 	jwtAuthorized.POST("/quizzes/:quizId/play", func(c *gin.Context) { handlers.StartGame(c, db) })
 	jwtAuthorized.POST("/games/:gameId/answer/:choiceId", func(c *gin.Context) { handlers.AnswerQuestion(c, db) })
-	jwtAuthorized.GET("/games/:gameId/result", func(c *gin.Context) { handlers.GameResult(c, db) })
+	jwtAuthorized.GET("/games/:gameId/result", func(c *gin.Context) { handlers.GameResultById(c, db) })
+	jwtAuthorized.GET("/me/games", func(c *gin.Context) { handlers.GamesResults(c, db) })
 
 	if os.Getenv("GIN_MODE") != "production" {
 		docs.SwaggerInfo.BasePath = "/"

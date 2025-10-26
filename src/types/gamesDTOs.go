@@ -1,5 +1,7 @@
 package types
 
+import "time"
+
 type GameQuestionChoiceDTO struct {
 	ID         string `json:"id" example:"550e8400-e29b-41d4-a716-446655440000"`
 	QuestionID string `json:"question_id" example:"550e8400-e29b-41d4-a716-446655440001"`
@@ -62,22 +64,40 @@ type GameQuestionResultDTO struct {
 }
 
 type GameResultGameDTO struct {
-	ID            string                  `json:"id" example:"38822b7e-1a36-492e-bfc3-8c26131a278f"`
-	UserID        string                  `json:"user_id" example:"4b97df8d-7616-47da-858f-acddb95d675a"`
-	IsFinished    bool                    `json:"is_finished" example:"true"`
-	GameQuestions []GameQuestionResultDTO `json:"game_questions"`
-	CreatedAt     string                  `json:"created_at" example:"2025-10-25T18:45:10.256695Z"`
-	UpdatedAt     string                  `json:"updated_at" example:"2025-10-25T18:45:45.67655Z"`
+	ID                string                  `json:"id" example:"38822b7e-1a36-492e-bfc3-8c26131a278f"`
+	UserID            string                  `json:"user_id" example:"4b97df8d-7616-47da-858f-acddb95d675a"`
+	FinishedAt        *time.Time              `json:"finished_at" example:"2025-10-25T18:45:27.849543Z"`
+	GameQuestions     []GameQuestionResultDTO `json:"game_questions"`
+	TotalQuestions    uint                    `json:"total_questions" example:"2"`
+	CorrectAnswers    uint                    `json:"correct_answers" example:"1"`
+	TotalSecondsTaken uint                    `json:"total_seconds_taken" example:"24"`
+	CreatedAt         string                  `json:"created_at" example:"2025-10-25T18:45:10.256695Z"`
+	UpdatedAt         string                  `json:"updated_at" example:"2025-10-25T18:45:45.67655Z"`
 }
 
 type GameResultDetailedDataStruct struct {
-	CorrectAnswers int               `json:"correct_answers" example:"1"`
-	Game           GameResultGameDTO `json:"game"`
-	TotalQuestions int               `json:"total_questions" example:"2"`
+	Game GameResultGameDTO `json:"game"`
 }
 
 type GameResultDetailedResponseStruct struct {
 	StatusCode int                          `json:"status_code" example:"200"`
 	Success    bool                         `json:"success" example:"true"`
 	Data       GameResultDetailedDataStruct `json:"data"`
+}
+
+type GamesResultsDataStruct struct {
+	ID                string     `json:"id" example:"38822b7e-1a36-492e-bfc3-8c26131a278f"`
+	UserID            string     `json:"user_id" example:"4b97df8d-7616-47da-858f-acddb95d675a"`
+	FinishedAt        *time.Time `json:"finished_at" example:"2025-10-25T18:45:27.849543Z"`
+	TotalQuestions    uint       `json:"total_questions" example:"2"`
+	CorrectAnswers    uint       `json:"correct_answers" example:"1"`
+	TotalSecondsTaken uint       `json:"total_seconds_taken" example:"24"`
+	CreatedAt         string     `json:"created_at" example:"2025-10-25T18:45:10.256695Z"`
+	UpdatedAt         string     `json:"updated_at" example:"2025-10-25T18:45:45.67655Z"`
+}
+
+type GamesResultsResponseStruct struct {
+	StatusCode int                      `json:"status_code" example:"200"`
+	Success    bool                     `json:"success" example:"true"`
+	Data       []GamesResultsDataStruct `json:"data"`
 }
