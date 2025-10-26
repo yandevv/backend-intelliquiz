@@ -55,6 +55,61 @@ func GetQuizzes(c *gin.Context, db *gorm.DB) {
 	})
 }
 
+// GetOwnQuizzes godoc
+// @Summary Get own quizzes
+// @Schemes
+// @Description Retrieve a list of quizzes created by the authenticated user
+// @Tags quizzes
+// @Produce json
+// @Success 200 {object} types.GetQuizzesSuccessResponseStruct
+// @Failure 403 {object} types.ForbiddenErrorResponseStruct
+// @Failure 500 {object} types.InternalServerErrorResponseStruct
+// @Router /me/quizzes [get]
+func GetOwnQuizzes(c *gin.Context, db *gorm.DB) {
+	userUuid, err := uuid.Parse(c.MustGet("userID").(string))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, types.ForbiddenErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "Invalid user ID format on claims.",
+		})
+		return
+	}
+
+	quizzes, err := gorm.G[schemas.Quiz](db).
+		Select("id, name, category_id, created_by, created_at, updated_at").
+		Where("created_by = ?", userUuid).
+		Preload("Category", func(db gorm.PreloadBuilder) error {
+			db.Select("id, name")
+			return nil
+		}).
+		Preload("User", func(db gorm.PreloadBuilder) error {
+			db.Select("id, username, name")
+			return nil
+		}).
+		Preload("Games", nil).
+		Find(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while fetching quizzes",
+		})
+		return
+	}
+
+	for i := range quizzes {
+		quizzes[i].GamesPlayed = len(quizzes[i].Games)
+		quizzes[i].Games = nil
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"statusCode": http.StatusOK,
+		"success":    true,
+		"data":       quizzes,
+	})
+}
+
 // CreateQuiz godoc
 // @Summary Create a new quiz
 // @Schemes

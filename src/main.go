@@ -51,6 +51,7 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 
 	// Quiz Routes
 	jwtAuthorized.GET("/quizzes", func(c *gin.Context) { handlers.GetQuizzes(c, db) })
+	jwtAuthorized.GET("/me/quizzes", func(c *gin.Context) { handlers.GetOwnQuizzes(c, db) })
 	jwtAuthorized.POST("/quizzes", func(c *gin.Context) { handlers.CreateQuiz(c, db) })
 	jwtAuthorized.GET("/quizzes/:quizId", func(c *gin.Context) { handlers.GetQuizByID(c, db) })
 	jwtAuthorized.PATCH("/quizzes/:quizId", func(c *gin.Context) { handlers.UpdateQuiz(c, db) })
