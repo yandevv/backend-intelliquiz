@@ -68,8 +68,8 @@ func GetQuizzes(c *gin.Context, db *gorm.DB) {
 func GetOwnQuizzes(c *gin.Context, db *gorm.DB) {
 	userUuid, err := uuid.Parse(c.MustGet("userID").(string))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, types.ForbiddenErrorResponseStruct{
-			StatusCode: http.StatusBadRequest,
+		c.JSON(http.StatusForbidden, types.ForbiddenErrorResponseStruct{
+			StatusCode: http.StatusForbidden,
 			Success:    false,
 			Message:    "Invalid user ID format on claims.",
 		})
