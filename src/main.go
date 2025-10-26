@@ -41,6 +41,7 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	jwtAuthorized := rateLimited.Group("", middlewares.JWTTokenMiddleware())
 
 	// User Routes
+	jwtAuthorized.GET("/me", func(c *gin.Context) { handlers.GetOwnUser(c, db) })
 	jwtAuthorized.GET("/users", func(c *gin.Context) { handlers.GetUsers(c, db) })
 	jwtAuthorized.GET("/users/:userId", func(c *gin.Context) { handlers.GetUserByID(c, db) })
 	jwtAuthorized.PATCH("/users/:userId", func(c *gin.Context) { handlers.UpdateUser(c, db) })

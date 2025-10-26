@@ -103,6 +103,62 @@ func GetUserByID(c *gin.Context, db *gorm.DB) {
 	})
 }
 
+// GetOwnUser godoc
+// @Summary Get own user data
+// @Schemes
+// @Description Retrieve the authenticated user's data
+// @Tags users
+// @Produce json
+// @Success 200 {object} types.GetOwnUserSuccessResponseStruct
+// @Failure 403 {object} types.ForbiddenErrorResponseStruct
+// @Failure 404 {object} types.NotFoundErrorResponseStruct
+// @Failure 500 {object} types.InternalServerErrorResponseStruct
+// @Router /me [get]
+func GetOwnUser(c *gin.Context, db *gorm.DB) {
+	userUuid, err := uuidG.Parse(c.MustGet("userID").(string))
+	if err != nil {
+		log.Printf("Error parsing UUID from token: %v", err)
+
+		c.JSON(http.StatusForbidden, types.ForbiddenErrorResponseStruct{
+			StatusCode: http.StatusForbidden,
+			Success:    false,
+			Message:    "Invalid user ID format on claims.",
+		})
+		return
+	}
+
+	user, err := gorm.G[schemas.User](db).
+		Where("id = ?", userUuid.String()).
+		Select("id, username, name, email").
+		First(c)
+
+	if err != nil {
+		log.Printf("Error fetching user by ID: %v", err)
+
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, types.NotFoundErrorResponseStruct{
+				StatusCode: http.StatusNotFound,
+				Success:    false,
+				Message:    "User not found.",
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while fetching the user.",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"statusCode": http.StatusOK,
+		"success":    true,
+		"data":       user,
+	})
+}
+
 // UpdateUser godoc
 // @Summary Update a user by ID
 // @Schemes
