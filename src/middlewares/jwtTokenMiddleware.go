@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func bearerFromHeader(c *gin.Context) string {
+func BearerFromHeader(c *gin.Context) string {
 	h := c.GetHeader("Authorization")
 	if after, ok := strings.CutPrefix(h, "Bearer "); ok {
 		return after
@@ -20,9 +20,9 @@ func bearerFromHeader(c *gin.Context) string {
 
 func JWTTokenMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		tokenStr := bearerFromHeader(c)
+		tokenStr := BearerFromHeader(c)
 		if tokenStr == "" {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, types.ForbiddenErrorResponseStruct{
+			c.AbortWithStatusJSON(http.StatusForbidden, types.ForbiddenErrorResponseStruct{
 				StatusCode: http.StatusForbidden,
 				Success:    false,
 				Message:    "Forbidden",
@@ -32,8 +32,8 @@ func JWTTokenMiddleware() gin.HandlerFunc {
 
 		claims, err := auth.ParseAccess(tokenStr)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, types.ForbiddenErrorResponseStruct{
-				StatusCode: http.StatusUnauthorized,
+			c.AbortWithStatusJSON(http.StatusForbidden, types.ForbiddenErrorResponseStruct{
+				StatusCode: http.StatusForbidden,
 				Success:    false,
 				Message:    "Forbidden",
 			})
