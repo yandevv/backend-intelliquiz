@@ -1,4 +1,4 @@
-FROM golang:1.24.6-alpine3.22 AS base-image
+FROM golang:1.25.3-alpine3.22 AS base-image
 
 RUN apk add --no-cache \
     libwebp-dev \
@@ -9,11 +9,12 @@ RUN apk add --no-cache \
 ENV CGO_ENABLED=1
 ENV GOOS=linux
 
+RUN go install github.com/air-verse/air@latest
 RUN go install github.com/swaggo/swag/cmd/swag@latest
 
-FROM base-image AS builder
+FROM base-image AS deps
 
-WORKDIR /build
+WORKDIR /intelliquiz
 
 COPY go.mod go.sum ./
 
@@ -21,12 +22,22 @@ RUN go mod download
 
 COPY ./src ./src
 
-WORKDIR /build/src
+WORKDIR /intelliquiz/src
 
 RUN swag init --parseDependency --parseInternal
+
+FROM deps AS build
 
 RUN go build -o main
 
 EXPOSE 8080
 
-CMD ["/build/src/main", "--migrate=true", "--fresh=true"]
+CMD ["/intelliquiz/src/main", "--migrate=true", "--fresh=true"]
+
+FROM deps AS development
+
+WORKDIR /intelliquiz/src
+
+EXPOSE 8080
+
+CMD ["air"]
