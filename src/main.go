@@ -38,6 +38,9 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	rateLimited.POST("/login", func(c *gin.Context) { handlers.Login(c, db) })
 	rateLimited.POST("/refresh", func(c *gin.Context) { handlers.Refresh(c, db) })
 
+	// Home Page Routes
+	rateLimited.GET("/homepage", func(c *gin.Context) { handlers.HomePage(c, db) })
+
 	jwtAuthorized := rateLimited.Group("", middlewares.JWTTokenMiddleware())
 
 	// User Routes
@@ -51,10 +54,13 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	jwtAuthorized.GET("/categories/:categoryId", func(c *gin.Context) { handlers.GetCategoryByID(c, db) })
 
 	// Quiz Routes
-	jwtAuthorized.GET("/quizzes", func(c *gin.Context) { handlers.GetQuizzes(c, db) })
+	// Public Quiz Routes
+	rateLimited.GET("/quizzes", func(c *gin.Context) { handlers.GetQuizzes(c, db) })
+	rateLimited.GET("/quizzes/:quizId", func(c *gin.Context) { handlers.GetQuizByID(c, db) })
+
+	// Protected Quiz Routes
 	jwtAuthorized.GET("/me/quizzes", func(c *gin.Context) { handlers.GetOwnQuizzes(c, db) })
 	jwtAuthorized.POST("/quizzes", func(c *gin.Context) { handlers.CreateQuiz(c, db) })
-	jwtAuthorized.GET("/quizzes/:quizId", func(c *gin.Context) { handlers.GetQuizByID(c, db) })
 	jwtAuthorized.PATCH("/quizzes/:quizId", func(c *gin.Context) { handlers.UpdateQuiz(c, db) })
 	jwtAuthorized.DELETE("/quizzes/:quizId", func(c *gin.Context) { handlers.DeleteQuiz(c, db) })
 
