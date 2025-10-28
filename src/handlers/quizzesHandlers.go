@@ -18,7 +18,6 @@ import (
 // @Tags quizzes
 // @Produce json
 // @Success 200 {object} types.GetQuizzesSuccessResponseStruct
-// @Failure 403 {object} types.ForbiddenErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
 // @Router /quizzes [get]
 func GetQuizzes(c *gin.Context, db *gorm.DB) {
@@ -301,7 +300,6 @@ func CreateQuiz(c *gin.Context, db *gorm.DB) {
 // @Param id path string true "Quiz ID"
 // @Success 200 {object} types.GetQuizSuccessResponseStruct
 // @Failure 400 {object} types.BadRequestErrorResponseStruct
-// @Failure 403 {object} types.ForbiddenErrorResponseStruct
 // @Failure 404 {object} types.NotFoundErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
 // @Router /quizzes/{quizId} [get]
