@@ -31,5 +31,5 @@ go.work
 
 main
 
-tmp/*
-tmp/**/*
+src/tmp/*
+src/tmp/**/*
