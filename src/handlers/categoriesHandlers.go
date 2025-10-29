@@ -25,7 +25,7 @@ func GetCategories(c *gin.Context, db *gorm.DB) {
 	categories, err := gorm.G[schemas.Category](db).
 		Select("id, name").
 		Preload("Quizzes", func(db gorm.PreloadBuilder) error {
-			db.Select("id, name, category_id, created_by").
+			db.Select("id", "name", "category_id", "created_by").
 				LimitPerRecord(20)
 			return nil
 		}).
@@ -78,7 +78,7 @@ func GetCategoryByID(c *gin.Context, db *gorm.DB) {
 		Where("id = ?", uuid).
 		Select("id, name").
 		Preload("Quizzes", func(db gorm.PreloadBuilder) error {
-			db.Select("id, name, category_id, created_by").
+			db.Select("id", "name", "category_id", "created_by").
 				LimitPerRecord(20)
 			return nil
 		}).
