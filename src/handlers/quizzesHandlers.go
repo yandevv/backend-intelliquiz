@@ -22,7 +22,7 @@ import (
 // @Router /quizzes [get]
 func GetQuizzes(c *gin.Context, db *gorm.DB) {
 	quizzes, err := gorm.G[schemas.Quiz](db).
-		Select("id, name, category_id, created_by, created_at, updated_at").
+		Select("id, name, category_id, created_by, curator_pick, likes, created_at, updated_at").
 		Preload("Category", func(db gorm.PreloadBuilder) error {
 			db.Select("id, name")
 			return nil
@@ -76,7 +76,7 @@ func GetOwnQuizzes(c *gin.Context, db *gorm.DB) {
 	}
 
 	quizzes, err := gorm.G[schemas.Quiz](db).
-		Select("id, name, category_id, created_by, created_at, updated_at").
+		Select("id, name, category_id, created_by, curator_pick, likes, created_at, updated_at").
 		Where("created_by = ?", userUuid).
 		Preload("Category", func(db gorm.PreloadBuilder) error {
 			db.Select("id, name")
@@ -317,7 +317,7 @@ func GetQuizByID(c *gin.Context, db *gorm.DB) {
 	}
 
 	quiz, err := gorm.G[schemas.Quiz](db).Where("id = ?", quizUuid).
-		Select("id, name, category_id, created_by").
+		Select("id, name, category_id, created_by, curator_pick, likes").
 		Preload("Category", func(db gorm.PreloadBuilder) error {
 			db.Select("id, name")
 			return nil
