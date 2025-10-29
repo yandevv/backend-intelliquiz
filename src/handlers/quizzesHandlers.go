@@ -558,3 +558,50 @@ func DeleteQuiz(c *gin.Context, db *gorm.DB) {
 		"message":    "Quiz deleted successfully.",
 	})
 }
+
+func LikeQuiz(c *gin.Context, db *gorm.DB) {
+	// userUuid, err := uuid.Parse(c.MustGet("userID").(string))
+	// if err != nil {
+	// 	c.JSON(http.StatusForbidden, types.ForbiddenErrorResponseStruct{
+	// 		StatusCode: http.StatusForbidden,
+	// 		Success:    false,
+	// 		Message:    "Invalid user ID format on claims.",
+	// 	})
+	// 	return
+	// }
+
+	quizUuid, err := uuid.Parse(c.Param("quizId"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "Invalid quiz ID format.",
+		})
+		return
+	}
+
+	err = db.Transaction(func(tx *gorm.DB) error {
+		quiz, err := gorm.G[schemas.Quiz](tx).Where("id = ?", quizUuid).First(c)
+		if err != nil {
+			return err
+		}
+
+		db.Model(&quiz).UpdateColumn("likes", gorm.Expr("likes + ?", 1))
+
+		return nil
+	})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while liking the quiz.",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"statusCode": http.StatusOK,
+		"success":    true,
+		"message":    "Quiz liked successfully.",
+	})
+}
