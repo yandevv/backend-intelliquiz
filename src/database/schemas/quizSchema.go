@@ -15,6 +15,8 @@ type Quiz struct {
 	Category    *Category       `json:"category,omitempty"`
 	CreatedBy   string          `json:"created_by,omitempty"`
 	User        *User           `json:"user,omitempty" gorm:"foreignKey:CreatedBy"`
+	Likes       int             `json:"likes,omitempty" gorm:"not null;default:0"`
+	CuratorPick bool            `json:"curator_pick,omitempty" gorm:"not null;default:false"`
 	Questions   []Question      `json:"questions,omitempty"`
 	Games       []Game          `json:"games,omitempty"`
 	GamesPlayed int             `json:"games_played" gorm:"-"`
