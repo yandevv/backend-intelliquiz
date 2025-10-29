@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"intelliquiz/src/database/schemas"
 	"intelliquiz/src/types"
 	"net/http"
@@ -52,13 +51,6 @@ func HomePage(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	// Após a query, adicione:
-	if err == nil {
-		for i, quiz := range mostPlayedQuizzes {
-			fmt.Printf("Quiz %d: ID=%s, GamesPlayed=%d\n", i, quiz.ID, quiz.GamesPlayed)
-		}
-	}
-
 	newlyAddedQuizzes, err := gorm.G[schemas.Quiz](db).
 		Preload("Category", func(db gorm.PreloadBuilder) error {
 			db.Select("id, name")
@@ -80,6 +72,28 @@ func HomePage(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	curatedQuizzes, err := gorm.G[schemas.Quiz](db).
+		Preload("Category", func(db gorm.PreloadBuilder) error {
+			db.Select("id, name")
+			return nil
+		}).
+		Preload("User", func(db gorm.PreloadBuilder) error {
+			db.Select("id, username")
+			return nil
+		}).
+		Where("curator_pick = ?", true).
+		Order("likes DESC").
+		Limit(20).
+		Find(c)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "Could not fetch quizzes",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"statusCode": http.StatusOK,
 		"success":    true,
@@ -87,6 +101,7 @@ func HomePage(c *gin.Context, db *gorm.DB) {
 		"data": gin.H{
 			"mostPlayedQuizzes": mostPlayedQuizzes,
 			"newlyAddedQuizzes": newlyAddedQuizzes,
+			"curatedQuizzes":    curatedQuizzes,
 		},
 	})
 }
