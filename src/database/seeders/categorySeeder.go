@@ -15,7 +15,7 @@ func CategoriesSeeding(db *gorm.DB) {
 		"Geografia",
 		"Literatura",
 		"Arte",
-		"úsica",
+		"Música",
 		"Esportes",
 		"Tecnologia",
 		"Filmes e TV",
