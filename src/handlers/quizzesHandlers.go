@@ -638,7 +638,7 @@ func LikeQuiz(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	err = db.Model(&quiz).Association("Likes").Append(&user)
+	err = db.Model(&quiz).Association("UserLikes").Append(&user)
 	if err != nil {
 		log.Printf("Error liking quiz: %v", err)
 
@@ -654,5 +654,85 @@ func LikeQuiz(c *gin.Context, db *gorm.DB) {
 		"statusCode": http.StatusOK,
 		"success":    true,
 		"message":    "Quiz liked successfully.",
+	})
+}
+
+func DislikeQuiz(c *gin.Context, db *gorm.DB) {
+	userUuid, err := uuid.Parse(c.MustGet("userID").(string))
+	if err != nil {
+		c.JSON(http.StatusForbidden, types.ForbiddenErrorResponseStruct{
+			StatusCode: http.StatusForbidden,
+			Success:    false,
+			Message:    "Invalid user ID format on claims.",
+		})
+		return
+	}
+
+	user, err := gorm.G[schemas.User](db).Where("id = ?", userUuid).First(c)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusForbidden, types.ForbiddenErrorResponseStruct{
+				StatusCode: http.StatusForbidden,
+				Success:    false,
+				Message:    "Authenticated user not found.",
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while fetching the user.",
+		})
+		return
+	}
+
+	quizUuid, err := uuid.Parse(c.Param("quizId"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "Invalid quiz ID format.",
+		})
+		return
+	}
+
+	quiz, err := gorm.G[schemas.Quiz](db).Where("id = ?", quizUuid).First(c)
+	if err != nil {
+		log.Printf("Error fetching quiz by ID: %v", err)
+
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, types.NotFoundErrorResponseStruct{
+				StatusCode: http.StatusNotFound,
+				Success:    false,
+				Message:    "Quiz not found.",
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while fetching the quiz.",
+		})
+		return
+	}
+
+	err = db.Model(&quiz).Association("UserLikes").Delete(&user)
+	if err != nil {
+		log.Printf("Error unliking quiz: %v", err)
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while unliking the quiz.",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"statusCode": http.StatusOK,
+		"success":    true,
+		"message":    "Quiz disliked successfully.",
 	})
 }
