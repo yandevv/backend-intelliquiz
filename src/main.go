@@ -92,6 +92,7 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	jwtAuthorized.PATCH("/quizzes/:quizId", func(c *gin.Context) { handlers.UpdateQuiz(c, db) })
 	jwtAuthorized.DELETE("/quizzes/:quizId", func(c *gin.Context) { handlers.DeleteQuiz(c, db) })
 	jwtAuthorized.POST("/quizzes/:quizId/like", func(c *gin.Context) { handlers.LikeQuiz(c, db) })
+	jwtAuthorized.POST("/quizzes/:quizId/dislike", func(c *gin.Context) { handlers.DislikeQuiz(c, db) })
 
 	// Question Routes
 	jwtAuthorized.GET("/questions", func(c *gin.Context) { handlers.GetQuestions(c, db) })
