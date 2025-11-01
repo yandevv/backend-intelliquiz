@@ -1,27 +1,49 @@
 package schemas
 
-import "gorm.io/gorm"
+import (
+	"fmt"
+
+	"gorm.io/gorm"
+)
 
 func Run(db *gorm.DB, fresh *bool) error {
 	if *fresh {
-		db.Migrator().DropTable(
+		err := db.Migrator().DropTable(
 			&User{},
 			&Quiz{},
+			&QuizUserLike{},
 			&Question{},
 			&Category{},
 			&Game{},
 			&GameQuestion{},
 			&Choice{},
 		)
+		if err != nil {
+			fmt.Println("Error dropping tables:", err)
+			return err
+		}
 	}
 
-	return db.AutoMigrate(
+	err := db.AutoMigrate(
 		&User{},
 		&Quiz{},
+		&QuizUserLike{},
 		&Question{},
 		&Category{},
 		&Game{},
 		&GameQuestion{},
 		&Choice{},
 	)
+	if err != nil {
+		fmt.Println("Error during auto migration:", err)
+		return err
+	}
+
+	err = db.SetupJoinTable(&Quiz{}, "UserLikes", &QuizUserLike{})
+	if err != nil {
+		fmt.Println("Error setting up join table:", err)
+		return err
+	}
+
+	return nil
 }
