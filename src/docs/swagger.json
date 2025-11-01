@@ -13,21 +13,546 @@
     "host": "localhost:8080",
     "basePath": "/",
     "paths": {
-        "/users": {
+        "/categories": {
             "get": {
-                "description": "Retrieve a list of all users",
+                "description": "Retrieve a list of all categories",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "categories"
+                ],
+                "summary": "Get all categories",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.GetCategoriesSuccessResponseStruct"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            }
+        },
+        "/categories/{categoryId}": {
+            "get": {
+                "description": "Retrieve a category by its ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "categories"
+                ],
+                "summary": "Get a category by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Category ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.GetCategorySuccessResponseStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.NotFoundErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            }
+        },
+        "/choices/{choiceId}": {
+            "get": {
+                "description": "Retrieve a choice by its ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "choices"
+                ],
+                "summary": "Get a choice by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Choice ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.GetChoiceSuccessResponseStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.NotFoundErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a choice by its ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "choices"
+                ],
+                "summary": "Delete a choice by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Choice ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.SuccessResponseStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.NotFoundErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Update a choice by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "choices"
+                ],
+                "summary": "Update a choice by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Choice ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update Choice Request Body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.UpdateChoiceRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.SuccessResponseStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.NotFoundErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            }
+        },
+        "/games/{gameId}/answer/{choiceId}": {
+            "post": {
+                "description": "Submit an answer for the current question in a game session",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "games"
+                ],
+                "summary": "Answer a question in a game",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Game ID",
+                        "name": "gameId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Choice ID",
+                        "name": "choiceId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.AnswerQuestionResponseStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.NotFoundErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            }
+        },
+        "/games/{gameId}/result": {
+            "get": {
+                "description": "Retrieve the result of a finished game session",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "games"
+                ],
+                "summary": "Get game result",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Game ID",
+                        "name": "gameId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.GameResultDetailedResponseStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.NotFoundErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "Authenticate a user and return access and refresh tokens",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "authentication"
+                ],
+                "summary": "Log in a user",
+                "parameters": [
+                    {
+                        "description": "Login Data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.LoginRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.LoginResponseStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            }
+        },
+        "/me": {
+            "get": {
+                "description": "Retrieve the authenticated user's data",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "users"
                 ],
-                "summary": "Get all users",
+                "summary": "Get own user data",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.GetUsersSuccessResponseStruct"
+                            "$ref": "#/definitions/types.GetOwnUserSuccessResponseStruct"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.NotFoundErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            }
+        },
+        "/me/games": {
+            "get": {
+                "description": "Retrieve all finished game sessions for the authenticated user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "games"
+                ],
+                "summary": "Get user's finished games",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.GamesResultsResponseStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            }
+        },
+        "/me/quizzes": {
+            "get": {
+                "description": "Retrieve a list of quizzes created by the authenticated user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "quizzes"
+                ],
+                "summary": "Get own quizzes",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.GetQuizzesSuccessResponseStruct"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            }
+        },
+        "/questions": {
+            "get": {
+                "description": "Retrieve a list of all questions",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "questions"
+                ],
+                "summary": "Get all questions",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.GetQuestionsSuccessResponseStruct"
                         }
                     },
                     "500": {
@@ -39,22 +564,30 @@
                 }
             },
             "post": {
-                "description": "Create a new user",
-                "consumes": [
-                    "application/json"
-                ],
+                "description": "Create a new question",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "questions"
                 ],
-                "summary": "Create a new user",
+                "summary": "Create a new question",
+                "parameters": [
+                    {
+                        "description": "Create Question Request Body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.CreateQuestionRequestBody"
+                        }
+                    }
+                ],
                 "responses": {
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/types.CreateUserSuccessResponseStruct"
+                            "$ref": "#/definitions/types.CreateQuestionSuccessResponseStruct"
                         }
                     },
                     "400": {
@@ -72,7 +605,658 @@
                 }
             }
         },
-        "/users/{id}": {
+        "/questions/{questionId}": {
+            "get": {
+                "description": "Retrieve a question by its ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "questions"
+                ],
+                "summary": "Get a question by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Question ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.GetQuestionSuccessResponseStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.NotFoundErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a question by its ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "questions"
+                ],
+                "summary": "Delete a question by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Question ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.SuccessResponseStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.NotFoundErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Update a question by its ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "questions"
+                ],
+                "summary": "Update a question by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Question ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update Question Request Body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.UpdateQuestionRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.SuccessResponseStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.NotFoundErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            }
+        },
+        "/questions/{questionId}/choices": {
+            "get": {
+                "description": "Retrieve a list of all choices for a specific question",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "choices"
+                ],
+                "summary": "Get all choices",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Question ID",
+                        "name": "questionID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.GetChoicesSuccessResponseStruct"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new choice",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "choices"
+                ],
+                "summary": "Create a new choice",
+                "parameters": [
+                    {
+                        "description": "Create Choice Request Body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.CreateChoiceRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/types.CreateChoiceSuccessResponseStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            }
+        },
+        "/quizzes": {
+            "get": {
+                "description": "Retrieve a list of all quizzes",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "quizzes"
+                ],
+                "summary": "Get all quizzes",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.GetQuizzesSuccessResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new quiz",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "quizzes"
+                ],
+                "summary": "Create a new quiz",
+                "parameters": [
+                    {
+                        "description": "Create Quiz Request Body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.CreateQuizRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/types.CreateQuizSuccessResponseStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            }
+        },
+        "/quizzes/{quizId}": {
+            "get": {
+                "description": "Retrieve a quiz by its ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "quizzes"
+                ],
+                "summary": "Get a quiz by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Quiz ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.GetQuizSuccessResponseStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.NotFoundErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a quiz by its ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "quizzes"
+                ],
+                "summary": "Delete a quiz by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Quiz ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.SuccessResponseStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.NotFoundErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Update a quiz by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "quizzes"
+                ],
+                "summary": "Update a quiz by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Quiz ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update Quiz Request Body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.UpdateQuizRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.SuccessResponseStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.NotFoundErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            }
+        },
+        "/quizzes/{quizId}/play": {
+            "post": {
+                "description": "Start a new game session for a specific quiz",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "games"
+                ],
+                "summary": "Start a new game",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Quiz ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.StartGameResponseStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.NotFoundErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            }
+        },
+        "/refresh": {
+            "post": {
+                "description": "Refresh the access and refresh tokens using a valid refresh token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "authentication"
+                ],
+                "summary": "Refresh access and refresh tokens",
+                "parameters": [
+                    {
+                        "description": "Refresh Token Data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.RefreshRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/types.RefreshResponseStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            }
+        },
+        "/signup": {
+            "post": {
+                "description": "Create a new user account and return access and refresh tokens",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "authentication"
+                ],
+                "summary": "Register a new user",
+                "parameters": [
+                    {
+                        "description": "User Data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.SignUpRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/types.SignUpResponseStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "description": "Retrieve a list of all users",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get all users",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.GetUsersSuccessResponseStruct"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{userId}": {
             "get": {
                 "description": "Retrieve a user by their ID",
                 "produces": [
@@ -104,49 +1288,10 @@
                             "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
+                    "403": {
+                        "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete a user by their ID",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "Delete a user by ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/types.SuccessResponseStruct"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
                         }
                     },
                     "404": {
@@ -182,19 +1327,34 @@
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Update User Request Body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.UpdateUserRequestBody"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/gin.H"
+                            "$ref": "#/definitions/types.SuccessResponseStruct"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
                         }
                     },
                     "404": {
@@ -214,9 +1374,37 @@
         }
     },
     "definitions": {
-        "gin.H": {
+        "types.AnswerQuestionDataStruct": {
             "type": "object",
-            "additionalProperties": {}
+            "properties": {
+                "is_correct": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "is_finished": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "next_question": {
+                    "$ref": "#/definitions/types.GameQuestionDTO"
+                }
+            }
+        },
+        "types.AnswerQuestionResponseStruct": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/types.AnswerQuestionDataStruct"
+                },
+                "status_code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
         },
         "types.BadRequestErrorResponseStruct": {
             "type": "object",
@@ -235,15 +1423,627 @@
                 }
             }
         },
-        "types.CreateUserSuccessResponseStruct": {
+        "types.CategoryQuizResponseDTOStruct": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "d27b21ab-6177-4159-9e13-15dc50ffed29"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "General Knowledge"
+                }
+            }
+        },
+        "types.CategoryResponseStruct": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Science"
+                },
+                "quizzes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.GetCategoryQuizDTO"
+                    }
+                }
+            }
+        },
+        "types.ChoiceDTO": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "example": "Paris"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2024-01-01T00:00:00Z"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "4fdb53f5-74d2-4d0e-8267-43f893a51aca"
+                },
+                "is_correct": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "question_id": {
+                    "type": "string",
+                    "example": "d27b21ab-6177-4159-9e13-15dc50ffed29"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2024-01-01T00:00:00Z"
+                }
+            }
+        },
+        "types.CreateChoiceRequestBody": {
+            "type": "object",
+            "required": [
+                "content"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "example": "Paris"
+                }
+            }
+        },
+        "types.CreateChoiceSuccessResponseStruct": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/types.UserResponseStruct"
+                    "$ref": "#/definitions/types.ChoiceDTO"
                 },
                 "statusCode": {
                     "type": "integer",
                     "example": 201
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "types.CreateQuestionRequestBody": {
+            "type": "object",
+            "required": [
+                "content",
+                "quiz_id"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "example": "What is the capital of France?"
+                },
+                "quiz_id": {
+                    "type": "string",
+                    "example": "4fdb53f5-74d2-4d0e-8267-43f893a51aca"
+                }
+            }
+        },
+        "types.CreateQuestionSuccessResponseStruct": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/types.QuestionResponseDTO"
+                },
+                "statusCode": {
+                    "type": "integer",
+                    "default": 201
+                },
+                "success": {
+                    "type": "boolean",
+                    "default": true
+                }
+            }
+        },
+        "types.CreateQuizQuestionChoiceStruct": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "example": "Paris"
+                },
+                "is_correct": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "types.CreateQuizQuestionsStruct": {
+            "type": "object",
+            "required": [
+                "choices",
+                "content"
+            ],
+            "properties": {
+                "choices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.CreateQuizQuestionChoiceStruct"
+                    }
+                },
+                "content": {
+                    "type": "string",
+                    "example": "What is the capital of France?"
+                }
+            }
+        },
+        "types.CreateQuizRequestBody": {
+            "type": "object",
+            "required": [
+                "category_id",
+                "name",
+                "questions"
+            ],
+            "properties": {
+                "category_id": {
+                    "type": "string",
+                    "example": "d27b21ab-6177-4159-9e13-15dc50ffed29"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Sample Quiz"
+                },
+                "questions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.CreateQuizQuestionsStruct"
+                    }
+                }
+            }
+        },
+        "types.CreateQuizSuccessResponseStruct": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/types.QuizResponseDTO"
+                },
+                "statusCode": {
+                    "type": "integer",
+                    "example": 201
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "types.ForbiddenErrorResponseStruct": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "Forbidden"
+                },
+                "statusCode": {
+                    "type": "integer",
+                    "example": 403
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "types.GameQuestionChoiceDTO": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "example": "Choice content"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                },
+                "question_id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440001"
+                }
+            }
+        },
+        "types.GameQuestionDTO": {
+            "type": "object",
+            "properties": {
+                "choices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.GameQuestionChoiceDTO"
+                    }
+                },
+                "content": {
+                    "type": "string",
+                    "example": "Question content"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440002"
+                },
+                "quiz_id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440002"
+                }
+            }
+        },
+        "types.GameQuestionResultDTO": {
+            "type": "object",
+            "properties": {
+                "answered_at": {
+                    "type": "string",
+                    "example": "2025-10-25T18:45:27.849543Z"
+                },
+                "choice": {
+                    "$ref": "#/definitions/types.GameResultChoiceDTO"
+                },
+                "choice_id": {
+                    "type": "string",
+                    "example": "04da923c-314a-41c6-98fc-8a39a992d5c0"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2025-10-25T18:45:10.258139Z"
+                },
+                "game_id": {
+                    "type": "string",
+                    "example": "38822b7e-1a36-492e-bfc3-8c26131a278f"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "047bdcd1-fd82-43f2-895a-8ad7fc7206e3"
+                },
+                "is_correct": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "position": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "question": {
+                    "$ref": "#/definitions/types.GameResultQuestionDTO"
+                },
+                "question_id": {
+                    "type": "string",
+                    "example": "c9118e52-e912-4396-9f66-f8976f84e935"
+                },
+                "seconds_taken": {
+                    "type": "integer",
+                    "example": 17
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2025-10-25T18:45:27.84965Z"
+                }
+            }
+        },
+        "types.GameResultChoiceDTO": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "example": "Paris"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "04da923c-314a-41c6-98fc-8a39a992d5c0"
+                }
+            }
+        },
+        "types.GameResultDetailedDataStruct": {
+            "type": "object",
+            "properties": {
+                "game": {
+                    "$ref": "#/definitions/types.GameResultGameDTO"
+                }
+            }
+        },
+        "types.GameResultDetailedResponseStruct": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/types.GameResultDetailedDataStruct"
+                },
+                "status_code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "types.GameResultGameDTO": {
+            "type": "object",
+            "properties": {
+                "correct_answers": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2025-10-25T18:45:10.256695Z"
+                },
+                "finished_at": {
+                    "type": "string",
+                    "example": "2025-10-25T18:45:27.849543Z"
+                },
+                "game_questions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.GameQuestionResultDTO"
+                    }
+                },
+                "id": {
+                    "type": "string",
+                    "example": "38822b7e-1a36-492e-bfc3-8c26131a278f"
+                },
+                "total_questions": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "total_seconds_taken": {
+                    "type": "integer",
+                    "example": 24
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2025-10-25T18:45:45.67655Z"
+                },
+                "user_id": {
+                    "type": "string",
+                    "example": "4b97df8d-7616-47da-858f-acddb95d675a"
+                }
+            }
+        },
+        "types.GameResultQuestionDTO": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "example": "Qual a capital da França?"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "c9118e52-e912-4396-9f66-f8976f84e935"
+                }
+            }
+        },
+        "types.GamesResultsDataStruct": {
+            "type": "object",
+            "properties": {
+                "correct_answers": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2025-10-25T18:45:10.256695Z"
+                },
+                "finished_at": {
+                    "type": "string",
+                    "example": "2025-10-25T18:45:27.849543Z"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "38822b7e-1a36-492e-bfc3-8c26131a278f"
+                },
+                "total_questions": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "total_seconds_taken": {
+                    "type": "integer",
+                    "example": 24
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2025-10-25T18:45:45.67655Z"
+                },
+                "user_id": {
+                    "type": "string",
+                    "example": "4b97df8d-7616-47da-858f-acddb95d675a"
+                }
+            }
+        },
+        "types.GamesResultsResponseStruct": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.GamesResultsDataStruct"
+                    }
+                },
+                "status_code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "types.GetCategoriesSuccessResponseStruct": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.CategoryResponseStruct"
+                    }
+                },
+                "statusCode": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "types.GetCategoryQuizDTO": {
+            "type": "object",
+            "properties": {
+                "category_id": {
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                "created_by": {
+                    "type": "string",
+                    "example": "user123"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "General Knowledge Quiz"
+                }
+            }
+        },
+        "types.GetCategorySuccessResponseStruct": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/types.CategoryResponseStruct"
+                },
+                "statusCode": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "types.GetChoiceSuccessResponseStruct": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/types.ChoiceDTO"
+                },
+                "statusCode": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "types.GetChoicesSuccessResponseStruct": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.ChoiceDTO"
+                    }
+                },
+                "statusCode": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "types.GetOwnUserSuccessResponseStruct": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/types.UserWithEmailResponseStruct"
+                },
+                "statusCode": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "types.GetQuestionSuccessResponseStruct": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/types.QuestionResponseDTO"
+                },
+                "statusCode": {
+                    "type": "integer",
+                    "default": 200
+                },
+                "success": {
+                    "type": "boolean",
+                    "default": true
+                }
+            }
+        },
+        "types.GetQuestionsSuccessResponseStruct": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.QuestionResponseDTO"
+                    }
+                },
+                "statusCode": {
+                    "type": "integer",
+                    "default": 200
+                },
+                "success": {
+                    "type": "boolean",
+                    "default": true
+                }
+            }
+        },
+        "types.GetQuizSuccessResponseStruct": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/types.QuizResponseDTO"
+                },
+                "statusCode": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "types.GetQuizzesSuccessResponseStruct": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.QuizResponseDTO"
+                    }
+                },
+                "statusCode": {
+                    "type": "integer",
+                    "example": 200
                 },
                 "success": {
                     "type": "boolean",
@@ -275,15 +2075,61 @@
             "properties": {
                 "message": {
                     "type": "string",
-                    "example": "Internal Server Error"
+                    "default": "Internal Server Error"
                 },
                 "statusCode": {
                     "type": "integer",
-                    "example": 500
+                    "default": 500
                 },
                 "success": {
                     "type": "boolean",
-                    "example": false
+                    "default": false
+                }
+            }
+        },
+        "types.LoginRequestBody": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "example": "password123"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "johndoe"
+                }
+            }
+        },
+        "types.LoginResponseData": {
+            "type": "object",
+            "properties": {
+                "refreshToken": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjY0Y2I3Y2E3Y2I3Y2E3Y2I3Y2E3Y2E3Y2E3Y2E3Y2EifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJpbnRlbGxpcXVpei1jMjczNCIsImF1dGhfdGltZSI6MTcwMTIzNzM5NSwidXNlcl9pZCI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsInN1YiI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsImlhdCI6MTcwMTIzNzM5NSwiZXhwIjoxNzAxMjQxOTk1LCJlbWFpbCI6InlhbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0.XYZ"
+                },
+                "token": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjY0Y2I3Y2E3Y2I3Y2E3Y2I3Y2E3Y2E3Y2E3Y2E3Y2EifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJpbnRlbGxpcXVpei1jMjczNCIsImF1dGhfdGltZSI6MTcwMTIzNzM5NSwidXNlcl9pZCI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsInN1YiI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsImlhdCI6MTcwMTIzNzM5NSwiZXhwIjoxNzAxMjQxOTk1LCJlbWFpbCI6InlhbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0.XYZ"
+                }
+            }
+        },
+        "types.LoginResponseStruct": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/types.LoginResponseData"
+                },
+                "statusCode": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
                 }
             }
         },
@@ -304,6 +2150,180 @@
                 }
             }
         },
+        "types.QuestionResponseDTO": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "default": "What is the capital of France?"
+                },
+                "id": {
+                    "type": "string",
+                    "default": "4fdb53f5-74d2-4d0e-8267-43f893a51aca"
+                },
+                "quiz_id": {
+                    "type": "string",
+                    "default": "d27b21ab-6177-4159-9e13-15dc50ffed29"
+                }
+            }
+        },
+        "types.QuizResponseDTO": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "$ref": "#/definitions/types.CategoryQuizResponseDTOStruct"
+                },
+                "category_id": {
+                    "type": "string",
+                    "example": "d27b21ab-6177-4159-9e13-15dc50ffed29"
+                },
+                "created_by": {
+                    "type": "string",
+                    "example": "0fde5216-1bab-41f6-bd90-4c3f088ee91f"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "4fdb53f5-74d2-4d0e-8267-43f893a51aca"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Sample Quiz"
+                },
+                "user": {
+                    "$ref": "#/definitions/types.UserQuizResponseDTOStruct"
+                },
+                "users_played": {
+                    "type": "integer",
+                    "example": 0
+                }
+            }
+        },
+        "types.RefreshRequestBody": {
+            "type": "object",
+            "required": [
+                "refreshToken"
+            ],
+            "properties": {
+                "refreshToken": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjY0Y2I3Y2E3Y2I3Y2E3Y2I3Y2E3Y2E3Y2E3Y2E3Y2EifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJpbnRlbGxpcXVpei1jMjczNCIsImF1dGhfdGltZSI6MTcwMTIzNzM5NSwidXNlcl9pZCI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsInN1YiI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsImlhdCI6MTcwMTIzNzM5NSwiZXhwIjoxNzAxMjQxOTk1LCJlbWFpbCI6InlhbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0.XYZ"
+                }
+            }
+        },
+        "types.RefreshResponseData": {
+            "type": "object",
+            "properties": {
+                "refreshToken": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjY0Y2I3Y2E3Y2I3Y2E3Y2I3Y2E3Y2E3Y2E3Y2E3Y2EifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJpbnRlbGxpcXVpei1jMjczNCIsImF1dGhfdGltZSI6MTcwMTIzNzM5NSwidXNlcl9pZCI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsInN1YiI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsImlhdCI6MTcwMTIzNzM5NSwiZXhwIjoxNzAxMjQxOTk1LCJlbWFpbCI6InlhbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0.XYZ"
+                },
+                "token": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjY0Y2I3Y2E3Y2I3Y2E3Y2I3Y2E3Y2E3Y2E3Y2E3Y2EifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJpbnRlbGxpcXVpei1jMjczNCIsImF1dGhfdGltZSI6MTcwMTIzNzM5NSwidXNlcl9pZCI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsInN1YiI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsImlhdCI6MTcwMTIzNzM5NSwiZXhwIjoxNzAxMjQxOTk1LCJlbWFpbCI6InlhbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0.XYZ"
+                }
+            }
+        },
+        "types.RefreshResponseStruct": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/types.RefreshResponseData"
+                },
+                "statusCode": {
+                    "type": "integer",
+                    "example": 201
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "types.SignUpRequestBody": {
+            "type": "object",
+            "required": [
+                "email",
+                "name",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "johndoe@example.com"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 6,
+                    "example": "password123"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "johndoe"
+                }
+            }
+        },
+        "types.SignUpResponseData": {
+            "type": "object",
+            "properties": {
+                "refreshToken": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjY0Y2I3Y2E3Y2I3Y2E3Y2I3Y2E3Y2E3Y2E3Y2E3Y2EifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJpbnRlbGxpcXVpei1jMjczNCIsImF1dGhfdGltZSI6MTcwMTIzNzM5NSwidXNlcl9pZCI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsInN1YiI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsImlhdCI6MTcwMTIzNzM5NSwiZXhwIjoxNzAxMjQxOTk1LCJlbWFpbCI6InlhbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0.XYZ"
+                },
+                "token": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjY0Y2I3Y2E3Y2I3Y2E3Y2I3Y2E3Y2E3Y2E3Y2E3Y2EifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJpbnRlbGxpcXVpei1jMjczNCIsImF1dGhfdGltZSI6MTcwMTIzNzM5NSwidXNlcl9pZCI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsInN1YiI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsImlhdCI6MTcwMTIzNzM5NSwiZXhwIjoxNzAxMjQxOTk1LCJlbWFpbCI6InlhbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0.XYZ"
+                }
+            }
+        },
+        "types.SignUpResponseStruct": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/types.SignUpResponseData"
+                },
+                "statusCode": {
+                    "type": "integer",
+                    "example": 201
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "types.StartGameDataStruct": {
+            "type": "object",
+            "properties": {
+                "game_id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440003"
+                },
+                "question": {
+                    "$ref": "#/definitions/types.GameQuestionDTO"
+                }
+            }
+        },
+        "types.StartGameResponseStruct": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/types.StartGameDataStruct"
+                },
+                "status_code": {
+                    "type": "integer",
+                    "example": 201
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
         "types.SuccessResponseStruct": {
             "type": "object",
             "properties": {
@@ -321,6 +2341,75 @@
                 }
             }
         },
+        "types.UpdateChoiceRequestBody": {
+            "type": "object",
+            "required": [
+                "content"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "example": "Paris"
+                }
+            }
+        },
+        "types.UpdateQuestionRequestBody": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "example": "What is the capital of France?"
+                },
+                "quiz_id": {
+                    "type": "string",
+                    "example": "4fdb53f5-74d2-4d0e-8267-43f893a51aca"
+                }
+            }
+        },
+        "types.UpdateQuizRequestBody": {
+            "type": "object",
+            "properties": {
+                "category_id": {
+                    "type": "string",
+                    "example": "d27b21ab-6177-4159-9e13-15dc50ffed29"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Sample Quiz"
+                }
+            }
+        },
+        "types.UpdateUserRequestBody": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.UserQuizResponseDTOStruct": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "john_doe@example.com"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "0fde5216-1bab-41f6-bd90-4c3f088ee91f"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "john_doe"
+                }
+            }
+        },
         "types.UserResponseStruct": {
             "type": "object",
             "properties": {
@@ -331,6 +2420,31 @@
                 "name": {
                     "type": "string",
                     "example": "John Doe"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "johndoe"
+                }
+            }
+        },
+        "types.UserWithEmailResponseStruct": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "johndoe@example.com"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "c6c45f7c-107b-4454-8bdf-a9cff7d3089b"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "johndoe"
                 }
             }
         }
