@@ -8,7 +8,9 @@ import (
 	"intelliquiz/src/middlewares"
 	"log"
 	"os"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -30,6 +32,32 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	// Disable Console Color
 	// gin.DisableConsoleColor()
 	r := gin.Default()
+
+	isProduction := os.Getenv("GIN_MODE") == "production"
+	if isProduction {
+		productionAllowedOrigins := []string{
+			"http://localhost:3000",
+			"http://127.0.0.1:3000",
+		}
+
+		r.Use(cors.New(cors.Config{
+			AllowOrigins:     productionAllowedOrigins,
+			AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+			AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+			ExposeHeaders:    []string{"Content-Length"},
+			AllowCredentials: true,
+			MaxAge:           12 * time.Hour,
+		}))
+	} else {
+		r.Use(cors.New(cors.Config{
+			AllowAllOrigins:  true,
+			AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+			AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+			ExposeHeaders:    []string{"Content-Length"},
+			AllowCredentials: true,
+			MaxAge:           12 * time.Hour,
+		}))
+	}
 
 	rateLimited := r.Group("", middlewares.RateLimiterMiddleware())
 
