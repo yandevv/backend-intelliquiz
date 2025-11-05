@@ -7,8 +7,8 @@ import (
 )
 
 type QuizUserLike struct {
-	QuizID    string    `json:"quiz_id" gorm:"primaryKey;not null"`
-	UserID    string    `json:"user_id" gorm:"primaryKey;not null"`
+	QuizID    string    `json:"quiz_id" gorm:"type:uuid;primaryKey;not null"`
+	UserID    string    `json:"user_id" gorm:"type:uuid;primaryKey;not null"`
 	CreatedAt time.Time `json:"created_at" gorm:"not null"`
 }
 
