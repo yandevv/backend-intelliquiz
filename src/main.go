@@ -8,7 +8,9 @@ import (
 	"intelliquiz/src/middlewares"
 	"log"
 	"os"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -31,12 +33,41 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	// gin.DisableConsoleColor()
 	r := gin.Default()
 
+	isProduction := os.Getenv("GIN_MODE") == "production"
+	if isProduction {
+		productionAllowedOrigins := []string{
+			"http://localhost:3000",
+			"http://127.0.0.1:3000",
+		}
+
+		r.Use(cors.New(cors.Config{
+			AllowOrigins:     productionAllowedOrigins,
+			AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+			AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+			ExposeHeaders:    []string{"Content-Length"},
+			AllowCredentials: true,
+			MaxAge:           12 * time.Hour,
+		}))
+	} else {
+		r.Use(cors.New(cors.Config{
+			AllowAllOrigins:  true,
+			AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+			AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+			ExposeHeaders:    []string{"Content-Length"},
+			AllowCredentials: true,
+			MaxAge:           12 * time.Hour,
+		}))
+	}
+
 	rateLimited := r.Group("", middlewares.RateLimiterMiddleware())
 
 	// Authentication Routes
 	rateLimited.POST("/signup", func(c *gin.Context) { handlers.SignUp(c, db) })
 	rateLimited.POST("/login", func(c *gin.Context) { handlers.Login(c, db) })
 	rateLimited.POST("/refresh", func(c *gin.Context) { handlers.Refresh(c, db) })
+
+	// Home Page Routes
+	rateLimited.GET("/homepage", func(c *gin.Context) { handlers.HomePage(c, db) })
 
 	jwtAuthorized := rateLimited.Group("", middlewares.JWTTokenMiddleware())
 
@@ -51,12 +82,17 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	jwtAuthorized.GET("/categories/:categoryId", func(c *gin.Context) { handlers.GetCategoryByID(c, db) })
 
 	// Quiz Routes
-	jwtAuthorized.GET("/quizzes", func(c *gin.Context) { handlers.GetQuizzes(c, db) })
+	// Public Quiz Routes
+	rateLimited.GET("/quizzes", func(c *gin.Context) { handlers.GetQuizzes(c, db) })
+	rateLimited.GET("/quizzes/:quizId", func(c *gin.Context) { handlers.GetQuizByID(c, db) })
+
+	// Protected Quiz Routes
 	jwtAuthorized.GET("/me/quizzes", func(c *gin.Context) { handlers.GetOwnQuizzes(c, db) })
 	jwtAuthorized.POST("/quizzes", func(c *gin.Context) { handlers.CreateQuiz(c, db) })
-	jwtAuthorized.GET("/quizzes/:quizId", func(c *gin.Context) { handlers.GetQuizByID(c, db) })
 	jwtAuthorized.PATCH("/quizzes/:quizId", func(c *gin.Context) { handlers.UpdateQuiz(c, db) })
 	jwtAuthorized.DELETE("/quizzes/:quizId", func(c *gin.Context) { handlers.DeleteQuiz(c, db) })
+	jwtAuthorized.POST("/quizzes/:quizId/like", func(c *gin.Context) { handlers.LikeQuiz(c, db) })
+	jwtAuthorized.POST("/quizzes/:quizId/dislike", func(c *gin.Context) { handlers.DislikeQuiz(c, db) })
 
 	// Question Routes
 	jwtAuthorized.GET("/questions", func(c *gin.Context) { handlers.GetQuestions(c, db) })

@@ -15,9 +15,13 @@ type Quiz struct {
 	Category    *Category       `json:"category,omitempty"`
 	CreatedBy   string          `json:"created_by,omitempty"`
 	User        *User           `json:"user,omitempty" gorm:"foreignKey:CreatedBy"`
+	UserLikes   []*User         `json:"user_likes,omitempty" gorm:"many2many:quiz_user_likes;"`
+	Likes       int             `json:"likes" gorm:"->;-:migration"`
+	Score       float32         `json:"score,omitempty" gorm:"->;-:migration"`
+	CuratorPick bool            `json:"curator_pick" gorm:"not null;default:false"`
 	Questions   []Question      `json:"questions,omitempty"`
 	Games       []Game          `json:"games,omitempty"`
-	GamesPlayed int             `json:"games_played" gorm:"-"`
+	GamesPlayed int             `json:"games_played" gorm:"->;-:migration"`
 	CreatedAt   *time.Time      `json:"created_at,omitempty"`
 	UpdatedAt   *time.Time      `json:"updated_at,omitempty"`
 	DeletedAt   *gorm.DeletedAt `json:"deleted_at,omitempty" gorm:"index"`

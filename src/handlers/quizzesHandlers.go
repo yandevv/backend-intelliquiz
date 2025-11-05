@@ -18,12 +18,15 @@ import (
 // @Tags quizzes
 // @Produce json
 // @Success 200 {object} types.GetQuizzesSuccessResponseStruct
-// @Failure 403 {object} types.ForbiddenErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
 // @Router /quizzes [get]
 func GetQuizzes(c *gin.Context, db *gorm.DB) {
 	quizzes, err := gorm.G[schemas.Quiz](db).
-		Select("id, name, category_id, created_by, created_at, updated_at").
+		Select("id, name, category_id, created_by, curator_pick, created_at, updated_at").
+		Preload("UserLikes", func(db gorm.PreloadBuilder) error {
+			db.Select("id")
+			return nil
+		}).
 		Preload("Category", func(db gorm.PreloadBuilder) error {
 			db.Select("id, name")
 			return nil
@@ -45,7 +48,9 @@ func GetQuizzes(c *gin.Context, db *gorm.DB) {
 
 	for i := range quizzes {
 		quizzes[i].GamesPlayed = len(quizzes[i].Games)
+		quizzes[i].Likes = len(quizzes[i].UserLikes)
 		quizzes[i].Games = nil
+		quizzes[i].UserLikes = nil
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -77,8 +82,12 @@ func GetOwnQuizzes(c *gin.Context, db *gorm.DB) {
 	}
 
 	quizzes, err := gorm.G[schemas.Quiz](db).
-		Select("id, name, category_id, created_by, created_at, updated_at").
+		Select("id, name, category_id, created_by, curator_pick, created_at, updated_at").
 		Where("created_by = ?", userUuid).
+		Preload("UserLikes", func(db gorm.PreloadBuilder) error {
+			db.Select("id")
+			return nil
+		}).
 		Preload("Category", func(db gorm.PreloadBuilder) error {
 			db.Select("id, name")
 			return nil
@@ -100,7 +109,9 @@ func GetOwnQuizzes(c *gin.Context, db *gorm.DB) {
 
 	for i := range quizzes {
 		quizzes[i].GamesPlayed = len(quizzes[i].Games)
+		quizzes[i].Likes = len(quizzes[i].UserLikes)
 		quizzes[i].Games = nil
+		quizzes[i].UserLikes = nil
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -301,7 +312,6 @@ func CreateQuiz(c *gin.Context, db *gorm.DB) {
 // @Param id path string true "Quiz ID"
 // @Success 200 {object} types.GetQuizSuccessResponseStruct
 // @Failure 400 {object} types.BadRequestErrorResponseStruct
-// @Failure 403 {object} types.ForbiddenErrorResponseStruct
 // @Failure 404 {object} types.NotFoundErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
 // @Router /quizzes/{quizId} [get]
@@ -319,7 +329,11 @@ func GetQuizByID(c *gin.Context, db *gorm.DB) {
 	}
 
 	quiz, err := gorm.G[schemas.Quiz](db).Where("id = ?", quizUuid).
-		Select("id, name, category_id, created_by").
+		Select("id, name, category_id, created_by, curator_pick, created_at, updated_at").
+		Preload("UserLikes", func(db gorm.PreloadBuilder) error {
+			db.Select("id")
+			return nil
+		}).
 		Preload("Category", func(db gorm.PreloadBuilder) error {
 			db.Select("id, name")
 			return nil
@@ -351,8 +365,10 @@ func GetQuizByID(c *gin.Context, db *gorm.DB) {
 	}
 
 	quiz.GamesPlayed = len(quiz.Games)
+	quiz.Likes = len(quiz.UserLikes)
 
 	quiz.Games = nil
+	quiz.UserLikes = nil
 
 	c.JSON(http.StatusOK, gin.H{
 		"statusCode": http.StatusOK,
@@ -558,5 +574,165 @@ func DeleteQuiz(c *gin.Context, db *gorm.DB) {
 		"statusCode": http.StatusOK,
 		"success":    true,
 		"message":    "Quiz deleted successfully.",
+	})
+}
+
+func LikeQuiz(c *gin.Context, db *gorm.DB) {
+	userUuid, err := uuid.Parse(c.MustGet("userID").(string))
+	if err != nil {
+		c.JSON(http.StatusForbidden, types.ForbiddenErrorResponseStruct{
+			StatusCode: http.StatusForbidden,
+			Success:    false,
+			Message:    "Invalid user ID format on claims.",
+		})
+		return
+	}
+
+	user, err := gorm.G[schemas.User](db).Where("id = ?", userUuid).First(c)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusForbidden, types.ForbiddenErrorResponseStruct{
+				StatusCode: http.StatusForbidden,
+				Success:    false,
+				Message:    "Authenticated user not found.",
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while fetching the user.",
+		})
+		return
+	}
+
+	quizUuid, err := uuid.Parse(c.Param("quizId"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "Invalid quiz ID format.",
+		})
+		return
+	}
+
+	quiz, err := gorm.G[schemas.Quiz](db).Where("id = ?", quizUuid).First(c)
+	if err != nil {
+		log.Printf("Error fetching quiz by ID: %v", err)
+
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, types.NotFoundErrorResponseStruct{
+				StatusCode: http.StatusNotFound,
+				Success:    false,
+				Message:    "Quiz not found.",
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while fetching the quiz.",
+		})
+		return
+	}
+
+	err = db.Model(&quiz).Association("UserLikes").Append(&user)
+	if err != nil {
+		log.Printf("Error liking quiz: %v", err)
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while liking the quiz.",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"statusCode": http.StatusOK,
+		"success":    true,
+		"message":    "Quiz liked successfully.",
+	})
+}
+
+func DislikeQuiz(c *gin.Context, db *gorm.DB) {
+	userUuid, err := uuid.Parse(c.MustGet("userID").(string))
+	if err != nil {
+		c.JSON(http.StatusForbidden, types.ForbiddenErrorResponseStruct{
+			StatusCode: http.StatusForbidden,
+			Success:    false,
+			Message:    "Invalid user ID format on claims.",
+		})
+		return
+	}
+
+	user, err := gorm.G[schemas.User](db).Where("id = ?", userUuid).First(c)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusForbidden, types.ForbiddenErrorResponseStruct{
+				StatusCode: http.StatusForbidden,
+				Success:    false,
+				Message:    "Authenticated user not found.",
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while fetching the user.",
+		})
+		return
+	}
+
+	quizUuid, err := uuid.Parse(c.Param("quizId"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "Invalid quiz ID format.",
+		})
+		return
+	}
+
+	quiz, err := gorm.G[schemas.Quiz](db).Where("id = ?", quizUuid).First(c)
+	if err != nil {
+		log.Printf("Error fetching quiz by ID: %v", err)
+
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, types.NotFoundErrorResponseStruct{
+				StatusCode: http.StatusNotFound,
+				Success:    false,
+				Message:    "Quiz not found.",
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while fetching the quiz.",
+		})
+		return
+	}
+
+	err = db.Model(&quiz).Association("UserLikes").Delete(&user)
+	if err != nil {
+		log.Printf("Error unliking quiz: %v", err)
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while unliking the quiz.",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"statusCode": http.StatusOK,
+		"success":    true,
+		"message":    "Quiz disliked successfully.",
 	})
 }

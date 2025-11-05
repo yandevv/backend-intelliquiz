@@ -1,7 +1,26 @@
 basePath: /
 definitions:
-  gin.H:
-    additionalProperties: {}
+  types.AnswerQuestionDataStruct:
+    properties:
+      is_correct:
+        example: true
+        type: boolean
+      is_finished:
+        example: false
+        type: boolean
+      next_question:
+        $ref: '#/definitions/types.GameQuestionDTO'
+    type: object
+  types.AnswerQuestionResponseStruct:
+    properties:
+      data:
+        $ref: '#/definitions/types.AnswerQuestionDataStruct'
+      status_code:
+        example: 200
+        type: integer
+      success:
+        example: true
+        type: boolean
     type: object
   types.BadRequestErrorResponseStruct:
     properties:
@@ -15,12 +34,440 @@ definitions:
         example: false
         type: boolean
     type: object
-  types.CreateUserSuccessResponseStruct:
+  types.CategoryQuizResponseDTOStruct:
+    properties:
+      id:
+        example: d27b21ab-6177-4159-9e13-15dc50ffed29
+        type: string
+      name:
+        example: General Knowledge
+        type: string
+    type: object
+  types.CategoryResponseStruct:
+    properties:
+      id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      name:
+        example: Science
+        type: string
+      quizzes:
+        items:
+          $ref: '#/definitions/types.GetCategoryQuizDTO'
+        type: array
+    type: object
+  types.ChoiceDTO:
+    properties:
+      content:
+        example: Paris
+        type: string
+      created_at:
+        example: "2024-01-01T00:00:00Z"
+        type: string
+      id:
+        example: 4fdb53f5-74d2-4d0e-8267-43f893a51aca
+        type: string
+      is_correct:
+        example: true
+        type: boolean
+      question_id:
+        example: d27b21ab-6177-4159-9e13-15dc50ffed29
+        type: string
+      updated_at:
+        example: "2024-01-01T00:00:00Z"
+        type: string
+    type: object
+  types.CreateChoiceRequestBody:
+    properties:
+      content:
+        example: Paris
+        type: string
+    required:
+    - content
+    type: object
+  types.CreateChoiceSuccessResponseStruct:
     properties:
       data:
-        $ref: '#/definitions/types.UserResponseStruct'
+        $ref: '#/definitions/types.ChoiceDTO'
       statusCode:
         example: 201
+        type: integer
+      success:
+        example: true
+        type: boolean
+    type: object
+  types.CreateQuestionRequestBody:
+    properties:
+      content:
+        example: What is the capital of France?
+        type: string
+      quiz_id:
+        example: 4fdb53f5-74d2-4d0e-8267-43f893a51aca
+        type: string
+    required:
+    - content
+    - quiz_id
+    type: object
+  types.CreateQuestionSuccessResponseStruct:
+    properties:
+      data:
+        $ref: '#/definitions/types.QuestionResponseDTO'
+      statusCode:
+        default: 201
+        type: integer
+      success:
+        default: true
+        type: boolean
+    type: object
+  types.CreateQuizQuestionChoiceStruct:
+    properties:
+      content:
+        example: Paris
+        type: string
+      is_correct:
+        example: true
+        type: boolean
+    type: object
+  types.CreateQuizQuestionsStruct:
+    properties:
+      choices:
+        items:
+          $ref: '#/definitions/types.CreateQuizQuestionChoiceStruct'
+        type: array
+      content:
+        example: What is the capital of France?
+        type: string
+    required:
+    - choices
+    - content
+    type: object
+  types.CreateQuizRequestBody:
+    properties:
+      category_id:
+        example: d27b21ab-6177-4159-9e13-15dc50ffed29
+        type: string
+      name:
+        example: Sample Quiz
+        type: string
+      questions:
+        items:
+          $ref: '#/definitions/types.CreateQuizQuestionsStruct'
+        type: array
+    required:
+    - category_id
+    - name
+    - questions
+    type: object
+  types.CreateQuizSuccessResponseStruct:
+    properties:
+      data:
+        $ref: '#/definitions/types.QuizResponseDTO'
+      statusCode:
+        example: 201
+        type: integer
+      success:
+        example: true
+        type: boolean
+    type: object
+  types.ForbiddenErrorResponseStruct:
+    properties:
+      message:
+        example: Forbidden
+        type: string
+      statusCode:
+        example: 403
+        type: integer
+      success:
+        example: false
+        type: boolean
+    type: object
+  types.GameQuestionChoiceDTO:
+    properties:
+      content:
+        example: Choice content
+        type: string
+      id:
+        example: 550e8400-e29b-41d4-a716-446655440000
+        type: string
+      question_id:
+        example: 550e8400-e29b-41d4-a716-446655440001
+        type: string
+    type: object
+  types.GameQuestionDTO:
+    properties:
+      choices:
+        items:
+          $ref: '#/definitions/types.GameQuestionChoiceDTO'
+        type: array
+      content:
+        example: Question content
+        type: string
+      id:
+        example: 550e8400-e29b-41d4-a716-446655440002
+        type: string
+      quiz_id:
+        example: 550e8400-e29b-41d4-a716-446655440002
+        type: string
+    type: object
+  types.GameQuestionResultDTO:
+    properties:
+      answered_at:
+        example: "2025-10-25T18:45:27.849543Z"
+        type: string
+      choice:
+        $ref: '#/definitions/types.GameResultChoiceDTO'
+      choice_id:
+        example: 04da923c-314a-41c6-98fc-8a39a992d5c0
+        type: string
+      created_at:
+        example: "2025-10-25T18:45:10.258139Z"
+        type: string
+      game_id:
+        example: 38822b7e-1a36-492e-bfc3-8c26131a278f
+        type: string
+      id:
+        example: 047bdcd1-fd82-43f2-895a-8ad7fc7206e3
+        type: string
+      is_correct:
+        example: true
+        type: boolean
+      position:
+        example: 0
+        type: integer
+      question:
+        $ref: '#/definitions/types.GameResultQuestionDTO'
+      question_id:
+        example: c9118e52-e912-4396-9f66-f8976f84e935
+        type: string
+      seconds_taken:
+        example: 17
+        type: integer
+      updated_at:
+        example: "2025-10-25T18:45:27.84965Z"
+        type: string
+    type: object
+  types.GameResultChoiceDTO:
+    properties:
+      content:
+        example: Paris
+        type: string
+      id:
+        example: 04da923c-314a-41c6-98fc-8a39a992d5c0
+        type: string
+    type: object
+  types.GameResultDetailedDataStruct:
+    properties:
+      game:
+        $ref: '#/definitions/types.GameResultGameDTO'
+    type: object
+  types.GameResultDetailedResponseStruct:
+    properties:
+      data:
+        $ref: '#/definitions/types.GameResultDetailedDataStruct'
+      status_code:
+        example: 200
+        type: integer
+      success:
+        example: true
+        type: boolean
+    type: object
+  types.GameResultGameDTO:
+    properties:
+      correct_answers:
+        example: 1
+        type: integer
+      created_at:
+        example: "2025-10-25T18:45:10.256695Z"
+        type: string
+      finished_at:
+        example: "2025-10-25T18:45:27.849543Z"
+        type: string
+      game_questions:
+        items:
+          $ref: '#/definitions/types.GameQuestionResultDTO'
+        type: array
+      id:
+        example: 38822b7e-1a36-492e-bfc3-8c26131a278f
+        type: string
+      total_questions:
+        example: 2
+        type: integer
+      total_seconds_taken:
+        example: 24
+        type: integer
+      updated_at:
+        example: "2025-10-25T18:45:45.67655Z"
+        type: string
+      user_id:
+        example: 4b97df8d-7616-47da-858f-acddb95d675a
+        type: string
+    type: object
+  types.GameResultQuestionDTO:
+    properties:
+      content:
+        example: Qual a capital da França?
+        type: string
+      id:
+        example: c9118e52-e912-4396-9f66-f8976f84e935
+        type: string
+    type: object
+  types.GamesResultsDataStruct:
+    properties:
+      correct_answers:
+        example: 1
+        type: integer
+      created_at:
+        example: "2025-10-25T18:45:10.256695Z"
+        type: string
+      finished_at:
+        example: "2025-10-25T18:45:27.849543Z"
+        type: string
+      id:
+        example: 38822b7e-1a36-492e-bfc3-8c26131a278f
+        type: string
+      total_questions:
+        example: 2
+        type: integer
+      total_seconds_taken:
+        example: 24
+        type: integer
+      updated_at:
+        example: "2025-10-25T18:45:45.67655Z"
+        type: string
+      user_id:
+        example: 4b97df8d-7616-47da-858f-acddb95d675a
+        type: string
+    type: object
+  types.GamesResultsResponseStruct:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.GamesResultsDataStruct'
+        type: array
+      status_code:
+        example: 200
+        type: integer
+      success:
+        example: true
+        type: boolean
+    type: object
+  types.GetCategoriesSuccessResponseStruct:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.CategoryResponseStruct'
+        type: array
+      statusCode:
+        example: 200
+        type: integer
+      success:
+        example: true
+        type: boolean
+    type: object
+  types.GetCategoryQuizDTO:
+    properties:
+      category_id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      created_by:
+        example: user123
+        type: string
+      id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      name:
+        example: General Knowledge Quiz
+        type: string
+    type: object
+  types.GetCategorySuccessResponseStruct:
+    properties:
+      data:
+        $ref: '#/definitions/types.CategoryResponseStruct'
+      statusCode:
+        example: 200
+        type: integer
+      success:
+        example: true
+        type: boolean
+    type: object
+  types.GetChoiceSuccessResponseStruct:
+    properties:
+      data:
+        $ref: '#/definitions/types.ChoiceDTO'
+      statusCode:
+        example: 200
+        type: integer
+      success:
+        example: true
+        type: boolean
+    type: object
+  types.GetChoicesSuccessResponseStruct:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.ChoiceDTO'
+        type: array
+      statusCode:
+        example: 200
+        type: integer
+      success:
+        example: true
+        type: boolean
+    type: object
+  types.GetOwnUserSuccessResponseStruct:
+    properties:
+      data:
+        $ref: '#/definitions/types.UserWithEmailResponseStruct'
+      statusCode:
+        example: 200
+        type: integer
+      success:
+        example: true
+        type: boolean
+    type: object
+  types.GetQuestionSuccessResponseStruct:
+    properties:
+      data:
+        $ref: '#/definitions/types.QuestionResponseDTO'
+      statusCode:
+        default: 200
+        type: integer
+      success:
+        default: true
+        type: boolean
+    type: object
+  types.GetQuestionsSuccessResponseStruct:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.QuestionResponseDTO'
+        type: array
+      statusCode:
+        default: 200
+        type: integer
+      success:
+        default: true
+        type: boolean
+    type: object
+  types.GetQuizSuccessResponseStruct:
+    properties:
+      data:
+        $ref: '#/definitions/types.QuizResponseDTO'
+      statusCode:
+        example: 200
+        type: integer
+      success:
+        example: true
+        type: boolean
+    type: object
+  types.GetQuizzesSuccessResponseStruct:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.QuizResponseDTO'
+        type: array
+      statusCode:
+        example: 200
         type: integer
       success:
         example: true
@@ -42,13 +489,45 @@ definitions:
   types.InternalServerErrorResponseStruct:
     properties:
       message:
-        example: Internal Server Error
+        default: Internal Server Error
         type: string
       statusCode:
-        example: 500
+        default: 500
         type: integer
       success:
-        example: false
+        default: false
+        type: boolean
+    type: object
+  types.LoginRequestBody:
+    properties:
+      password:
+        example: password123
+        type: string
+      username:
+        example: johndoe
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  types.LoginResponseData:
+    properties:
+      refreshToken:
+        example: eyJhbGciOiJSUzI1NiIsImtpZCI6IjY0Y2I3Y2E3Y2I3Y2E3Y2I3Y2E3Y2E3Y2E3Y2E3Y2EifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJpbnRlbGxpcXVpei1jMjczNCIsImF1dGhfdGltZSI6MTcwMTIzNzM5NSwidXNlcl9pZCI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsInN1YiI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsImlhdCI6MTcwMTIzNzM5NSwiZXhwIjoxNzAxMjQxOTk1LCJlbWFpbCI6InlhbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0.XYZ
+        type: string
+      token:
+        example: eyJhbGciOiJSUzI1NiIsImtpZCI6IjY0Y2I3Y2E3Y2I3Y2E3Y2I3Y2E3Y2E3Y2E3Y2E3Y2EifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJpbnRlbGxpcXVpei1jMjczNCIsImF1dGhfdGltZSI6MTcwMTIzNzM5NSwidXNlcl9pZCI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsInN1YiI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsImlhdCI6MTcwMTIzNzM5NSwiZXhwIjoxNzAxMjQxOTk1LCJlbWFpbCI6InlhbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0.XYZ
+        type: string
+    type: object
+  types.LoginResponseStruct:
+    properties:
+      data:
+        $ref: '#/definitions/types.LoginResponseData'
+      statusCode:
+        example: 200
+        type: integer
+      success:
+        example: true
         type: boolean
     type: object
   types.NotFoundErrorResponseStruct:
@@ -63,6 +542,128 @@ definitions:
         example: false
         type: boolean
     type: object
+  types.QuestionResponseDTO:
+    properties:
+      content:
+        default: What is the capital of France?
+        type: string
+      id:
+        default: 4fdb53f5-74d2-4d0e-8267-43f893a51aca
+        type: string
+      quiz_id:
+        default: d27b21ab-6177-4159-9e13-15dc50ffed29
+        type: string
+    type: object
+  types.QuizResponseDTO:
+    properties:
+      category:
+        $ref: '#/definitions/types.CategoryQuizResponseDTOStruct'
+      category_id:
+        example: d27b21ab-6177-4159-9e13-15dc50ffed29
+        type: string
+      created_by:
+        example: 0fde5216-1bab-41f6-bd90-4c3f088ee91f
+        type: string
+      id:
+        example: 4fdb53f5-74d2-4d0e-8267-43f893a51aca
+        type: string
+      name:
+        example: Sample Quiz
+        type: string
+      user:
+        $ref: '#/definitions/types.UserQuizResponseDTOStruct'
+      users_played:
+        example: 0
+        type: integer
+    type: object
+  types.RefreshRequestBody:
+    properties:
+      refreshToken:
+        example: eyJhbGciOiJSUzI1NiIsImtpZCI6IjY0Y2I3Y2E3Y2I3Y2E3Y2I3Y2E3Y2E3Y2E3Y2E3Y2EifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJpbnRlbGxpcXVpei1jMjczNCIsImF1dGhfdGltZSI6MTcwMTIzNzM5NSwidXNlcl9pZCI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsInN1YiI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsImlhdCI6MTcwMTIzNzM5NSwiZXhwIjoxNzAxMjQxOTk1LCJlbWFpbCI6InlhbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0.XYZ
+        type: string
+    required:
+    - refreshToken
+    type: object
+  types.RefreshResponseData:
+    properties:
+      refreshToken:
+        example: eyJhbGciOiJSUzI1NiIsImtpZCI6IjY0Y2I3Y2E3Y2I3Y2E3Y2I3Y2E3Y2E3Y2E3Y2E3Y2EifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJpbnRlbGxpcXVpei1jMjczNCIsImF1dGhfdGltZSI6MTcwMTIzNzM5NSwidXNlcl9pZCI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsInN1YiI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsImlhdCI6MTcwMTIzNzM5NSwiZXhwIjoxNzAxMjQxOTk1LCJlbWFpbCI6InlhbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0.XYZ
+        type: string
+      token:
+        example: eyJhbGciOiJSUzI1NiIsImtpZCI6IjY0Y2I3Y2E3Y2I3Y2E3Y2I3Y2E3Y2E3Y2E3Y2E3Y2EifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJpbnRlbGxpcXVpei1jMjczNCIsImF1dGhfdGltZSI6MTcwMTIzNzM5NSwidXNlcl9pZCI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsInN1YiI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsImlhdCI6MTcwMTIzNzM5NSwiZXhwIjoxNzAxMjQxOTk1LCJlbWFpbCI6InlhbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0.XYZ
+        type: string
+    type: object
+  types.RefreshResponseStruct:
+    properties:
+      data:
+        $ref: '#/definitions/types.RefreshResponseData'
+      statusCode:
+        example: 201
+        type: integer
+      success:
+        example: true
+        type: boolean
+    type: object
+  types.SignUpRequestBody:
+    properties:
+      email:
+        example: johndoe@example.com
+        type: string
+      name:
+        example: John Doe
+        type: string
+      password:
+        example: password123
+        minLength: 6
+        type: string
+      username:
+        example: johndoe
+        type: string
+    required:
+    - email
+    - name
+    - password
+    - username
+    type: object
+  types.SignUpResponseData:
+    properties:
+      refreshToken:
+        example: eyJhbGciOiJSUzI1NiIsImtpZCI6IjY0Y2I3Y2E3Y2I3Y2E3Y2I3Y2E3Y2E3Y2E3Y2E3Y2EifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJpbnRlbGxpcXVpei1jMjczNCIsImF1dGhfdGltZSI6MTcwMTIzNzM5NSwidXNlcl9pZCI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsInN1YiI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsImlhdCI6MTcwMTIzNzM5NSwiZXhwIjoxNzAxMjQxOTk1LCJlbWFpbCI6InlhbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0.XYZ
+        type: string
+      token:
+        example: eyJhbGciOiJSUzI1NiIsImtpZCI6IjY0Y2I3Y2E3Y2I3Y2E3Y2I3Y2E3Y2E3Y2E3Y2E3Y2EifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJpbnRlbGxpcXVpei1jMjczNCIsImF1dGhfdGltZSI6MTcwMTIzNzM5NSwidXNlcl9pZCI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsInN1YiI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsImlhdCI6MTcwMTIzNzM5NSwiZXhwIjoxNzAxMjQxOTk1LCJlbWFpbCI6InlhbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0.XYZ
+        type: string
+    type: object
+  types.SignUpResponseStruct:
+    properties:
+      data:
+        $ref: '#/definitions/types.SignUpResponseData'
+      statusCode:
+        example: 201
+        type: integer
+      success:
+        example: true
+        type: boolean
+    type: object
+  types.StartGameDataStruct:
+    properties:
+      game_id:
+        example: 550e8400-e29b-41d4-a716-446655440003
+        type: string
+      question:
+        $ref: '#/definitions/types.GameQuestionDTO'
+    type: object
+  types.StartGameResponseStruct:
+    properties:
+      data:
+        $ref: '#/definitions/types.StartGameDataStruct'
+      status_code:
+        example: 201
+        type: integer
+      success:
+        example: true
+        type: boolean
+    type: object
   types.SuccessResponseStruct:
     properties:
       message:
@@ -75,6 +676,53 @@ definitions:
         example: true
         type: boolean
     type: object
+  types.UpdateChoiceRequestBody:
+    properties:
+      content:
+        example: Paris
+        type: string
+    required:
+    - content
+    type: object
+  types.UpdateQuestionRequestBody:
+    properties:
+      content:
+        example: What is the capital of France?
+        type: string
+      quiz_id:
+        example: 4fdb53f5-74d2-4d0e-8267-43f893a51aca
+        type: string
+    type: object
+  types.UpdateQuizRequestBody:
+    properties:
+      category_id:
+        example: d27b21ab-6177-4159-9e13-15dc50ffed29
+        type: string
+      name:
+        example: Sample Quiz
+        type: string
+    type: object
+  types.UpdateUserRequestBody:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      username:
+        type: string
+    type: object
+  types.UserQuizResponseDTOStruct:
+    properties:
+      email:
+        example: john_doe@example.com
+        type: string
+      id:
+        example: 0fde5216-1bab-41f6-bd90-4c3f088ee91f
+        type: string
+      username:
+        example: john_doe
+        type: string
+    type: object
   types.UserResponseStruct:
     properties:
       id:
@@ -82,6 +730,24 @@ definitions:
         type: string
       name:
         example: John Doe
+        type: string
+      username:
+        example: johndoe
+        type: string
+    type: object
+  types.UserWithEmailResponseStruct:
+    properties:
+      email:
+        example: johndoe@example.com
+        type: string
+      id:
+        example: c6c45f7c-107b-4454-8bdf-a9cff7d3089b
+        type: string
+      name:
+        example: John Doe
+        type: string
+      username:
+        example: johndoe
         type: string
     type: object
 externalDocs:
@@ -97,34 +763,386 @@ info:
   title: IntelliQuiz API
   version: "1.0"
 paths:
-  /users:
+  /categories:
     get:
-      description: Retrieve a list of all users
+      description: Retrieve a list of all categories
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.GetUsersSuccessResponseStruct'
+            $ref: '#/definitions/types.GetCategoriesSuccessResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/types.InternalServerErrorResponseStruct'
-      summary: Get all users
+      summary: Get all categories
       tags:
-      - users
+      - categories
+  /categories/{categoryId}:
+    get:
+      description: Retrieve a category by its ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetCategorySuccessResponseStruct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Get a category by ID
+      tags:
+      - categories
+  /choices/{choiceId}:
+    delete:
+      description: Delete a choice by its ID
+      parameters:
+      - description: Choice ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponseStruct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Delete a choice by ID
+      tags:
+      - choices
+    get:
+      description: Retrieve a choice by its ID
+      parameters:
+      - description: Choice ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetChoiceSuccessResponseStruct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Get a choice by ID
+      tags:
+      - choices
+    patch:
+      consumes:
+      - application/json
+      description: Update a choice by its ID
+      parameters:
+      - description: Choice ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Choice Request Body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateChoiceRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponseStruct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Update a choice by ID
+      tags:
+      - choices
+  /games/{gameId}/answer/{choiceId}:
+    post:
+      description: Submit an answer for the current question in a game session
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameId
+        required: true
+        type: string
+      - description: Choice ID
+        in: path
+        name: choiceId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.AnswerQuestionResponseStruct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Answer a question in a game
+      tags:
+      - games
+  /games/{gameId}/result:
+    get:
+      description: Retrieve the result of a finished game session
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GameResultDetailedResponseStruct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Get game result
+      tags:
+      - games
+  /login:
     post:
       consumes:
       - application/json
-      description: Create a new user
+      description: Authenticate a user and return access and refresh tokens
+      parameters:
+      - description: Login Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.LoginRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.LoginResponseStruct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Log in a user
+      tags:
+      - authentication
+  /me:
+    get:
+      description: Retrieve the authenticated user's data
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetOwnUserSuccessResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Get own user data
+      tags:
+      - users
+  /me/games:
+    get:
+      description: Retrieve all finished game sessions for the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GamesResultsResponseStruct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Get user's finished games
+      tags:
+      - games
+  /me/quizzes:
+    get:
+      description: Retrieve a list of quizzes created by the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetQuizzesSuccessResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Get own quizzes
+      tags:
+      - quizzes
+  /questions:
+    get:
+      description: Retrieve a list of all questions
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetQuestionsSuccessResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Get all questions
+      tags:
+      - questions
+    post:
+      description: Create a new question
+      parameters:
+      - description: Create Question Request Body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateQuestionRequestBody'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/types.CreateUserSuccessResponseStruct'
+            $ref: '#/definitions/types.CreateQuestionSuccessResponseStruct'
         "400":
           description: Bad Request
           schema:
@@ -133,14 +1151,14 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/types.InternalServerErrorResponseStruct'
-      summary: Create a new user
+      summary: Create a new question
       tags:
-      - users
-  /users/{id}:
+      - questions
+  /questions/{questionId}:
     delete:
-      description: Delete a user by their ID
+      description: Delete a question by its ID
       parameters:
-      - description: User ID
+      - description: Question ID
         in: path
         name: id
         required: true
@@ -164,9 +1182,409 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/types.InternalServerErrorResponseStruct'
-      summary: Delete a user by ID
+      summary: Delete a question by ID
+      tags:
+      - questions
+    get:
+      description: Retrieve a question by its ID
+      parameters:
+      - description: Question ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetQuestionSuccessResponseStruct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Get a question by ID
+      tags:
+      - questions
+    patch:
+      description: Update a question by its ID
+      parameters:
+      - description: Question ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Question Request Body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateQuestionRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponseStruct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Update a question by ID
+      tags:
+      - questions
+  /questions/{questionId}/choices:
+    get:
+      description: Retrieve a list of all choices for a specific question
+      parameters:
+      - description: Question ID
+        in: path
+        name: questionID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetChoicesSuccessResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Get all choices
+      tags:
+      - choices
+    post:
+      description: Create a new choice
+      parameters:
+      - description: Create Choice Request Body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateChoiceRequestBody'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.CreateChoiceSuccessResponseStruct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Create a new choice
+      tags:
+      - choices
+  /quizzes:
+    get:
+      description: Retrieve a list of all quizzes
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetQuizzesSuccessResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Get all quizzes
+      tags:
+      - quizzes
+    post:
+      description: Create a new quiz
+      parameters:
+      - description: Create Quiz Request Body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.CreateQuizRequestBody'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.CreateQuizSuccessResponseStruct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Create a new quiz
+      tags:
+      - quizzes
+  /quizzes/{quizId}:
+    delete:
+      description: Delete a quiz by its ID
+      parameters:
+      - description: Quiz ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponseStruct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Delete a quiz by ID
+      tags:
+      - quizzes
+    get:
+      description: Retrieve a quiz by its ID
+      parameters:
+      - description: Quiz ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetQuizSuccessResponseStruct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Get a quiz by ID
+      tags:
+      - quizzes
+    patch:
+      consumes:
+      - application/json
+      description: Update a quiz by its ID
+      parameters:
+      - description: Quiz ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Quiz Request Body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateQuizRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponseStruct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Update a quiz by ID
+      tags:
+      - quizzes
+  /quizzes/{quizId}/play:
+    post:
+      description: Start a new game session for a specific quiz
+      parameters:
+      - description: Quiz ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.StartGameResponseStruct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Start a new game
+      tags:
+      - games
+  /refresh:
+    post:
+      consumes:
+      - application/json
+      description: Refresh the access and refresh tokens using a valid refresh token
+      parameters:
+      - description: Refresh Token Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.RefreshRequestBody'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.RefreshResponseStruct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Refresh access and refresh tokens
+      tags:
+      - authentication
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account and return access and refresh tokens
+      parameters:
+      - description: User Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.SignUpRequestBody'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.SignUpResponseStruct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Register a new user
+      tags:
+      - authentication
+  /users:
+    get:
+      description: Retrieve a list of all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetUsersSuccessResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Get all users
       tags:
       - users
+  /users/{userId}:
     get:
       description: Retrieve a user by their ID
       parameters:
@@ -186,10 +1604,14 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
@@ -207,17 +1629,27 @@ paths:
         name: id
         required: true
         type: string
+      - description: Update User Request Body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateUserRequestBody'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/types.SuccessResponseStruct'
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
         "404":
           description: Not Found
           schema:
