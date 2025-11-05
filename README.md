@@ -50,6 +50,7 @@ A aplicação também apresenta um sistema de autenticação pelo Firebase, cont
 **Containerização:**
 - Docker com Docker Compose
 - Front-end e back-end conectados via network
+
 ## Rodando localmente
 
 O projeto utiliza Docker Compose para facilitar a configuração e execução da aplicação, desta forma inicialmente é necessário a clonagem do repositório localmente:
@@ -64,13 +65,20 @@ Entrar no diretório do projeto:
   cd my-project
 ```
 
-E iniciar o criar/iniciar o contâiner da aplicação back-end:
+E, para iniciar o projeto em um ambiente própria para desenvolvimento, devemos iniciar o criar/iniciar o *container* da aplicação back-end:
 
 ```bash
-docker-compose up --build
+docker-compose -f docker-compose-dev.yaml up --build
+```
+
+Ou, para iniciar o projeto em um ambiente de produção:
+
+```bash
+docker-compose -f docker-compose-prod.yaml up --build
 ```
 
 Desta maneira, a aplicação será executada na porta 8080 e o banco PostgreSQL na porta 5432.
+
 ## Documentação
 
 ### Diagrama Relacional Inicial
