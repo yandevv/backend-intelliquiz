@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"intelliquiz/src/auth"
 	"intelliquiz/src/database/schemas"
+	"intelliquiz/src/middlewares"
 	"intelliquiz/src/types"
 	"log"
 	"net/http"
@@ -316,6 +318,29 @@ func CreateQuiz(c *gin.Context, db *gorm.DB) {
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
 // @Router /quizzes/{quizId} [get]
 func GetQuizByID(c *gin.Context, db *gorm.DB) {
+	tokenStr := middlewares.BearerFromHeader(c)
+
+	var userUuid string
+	if tokenStr != "" {
+		claims, err := auth.ParseAccess(tokenStr)
+		if err != nil {
+			log.Printf("Error parsing access token: %v", err)
+
+			message := "Access token is malformed."
+			if err.Error() == "token expired" {
+				message = "Token has expired."
+			}
+			c.AbortWithStatusJSON(http.StatusForbidden, types.ForbiddenErrorResponseStruct{
+				StatusCode: http.StatusForbidden,
+				Success:    false,
+				Message:    message,
+			})
+			return
+		}
+
+		userUuid = claims.Subject
+	}
+
 	quizUuid, err := uuid.Parse(c.Param("quizId"))
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
@@ -328,7 +353,7 @@ func GetQuizByID(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	quiz, err := gorm.G[schemas.Quiz](db).Where("id = ?", quizUuid).
+	quizQueryChain := gorm.G[schemas.Quiz](db).Where("id = ?", quizUuid).
 		Select("id, name, category_id, created_by, curator_pick, created_at, updated_at").
 		Preload("UserLikes", func(db gorm.PreloadBuilder) error {
 			db.Select("id")
@@ -342,8 +367,20 @@ func GetQuizByID(c *gin.Context, db *gorm.DB) {
 			db.Select("id, username, name")
 			return nil
 		}).
-		Preload("Games", nil).
-		First(c)
+		Preload("Games", nil)
+
+	if userUuid != "" {
+		quizQueryChain = quizQueryChain.Preload("Questions", func(db gorm.PreloadBuilder) error {
+			db.Select("id, content, quiz_id")
+			return nil
+		}).
+			Preload("Questions.Choices", func(db gorm.PreloadBuilder) error {
+				db.Select("id, content, is_correct, question_id")
+				return nil
+			})
+	}
+
+	quiz, err := quizQueryChain.First(c)
 	if err != nil {
 		log.Printf("Error fetching quiz by ID: %v", err)
 
