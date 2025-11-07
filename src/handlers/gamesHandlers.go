@@ -140,8 +140,9 @@ func StartGame(c *gin.Context, db *gorm.DB) {
 		"status_code": http.StatusCreated,
 		"success":     true,
 		"data": gin.H{
-			"game_id":  gameId,
-			"question": quiz.Questions[0],
+			"game_id":         gameId,
+			"question":        quiz.Questions[0],
+			"total_questions": len(quiz.Questions),
 		},
 	})
 }
