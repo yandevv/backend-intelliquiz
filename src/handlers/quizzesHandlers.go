@@ -264,13 +264,13 @@ func CreateQuiz(c *gin.Context, db *gorm.DB) {
 		questions = append(questions, question)
 	}
 
-	if len(questions) == 0 {
-		log.Printf("No questions provided for the quiz")
+	if len(questions) < 2 || len(questions) > 50 {
+		log.Printf("Invalid number of questions: %d", len(questions))
 
 		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
 			StatusCode: http.StatusBadRequest,
 			Success:    false,
-			Message:    "At least one question must be provided for the quiz.",
+			Message:    "Number of questions must be between 2 and 50.",
 		})
 		return
 	}
