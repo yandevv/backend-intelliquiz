@@ -548,11 +548,27 @@ const docTemplate = `{
                     "quizzes"
                 ],
                 "summary": "Get own quizzes",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Limit of quizzes per page (min: 5, max: 50)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Page number (0-indexed)",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.GetQuizzesSuccessResponseStruct"
+                            "$ref": "#/definitions/types.GetOwnQuizzesSuccessResponseStruct"
                         }
                     },
                     "403": {
@@ -881,6 +897,22 @@ const docTemplate = `{
                     "quizzes"
                 ],
                 "summary": "Get all quizzes",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Limit of quizzes per page (min: 5, max: 50)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Page number (0-indexed)",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -2128,6 +2160,37 @@ const docTemplate = `{
                 }
             }
         },
+        "types.GetOwnQuizzesDataField": {
+            "type": "object",
+            "properties": {
+                "maxPage": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "quizzes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.QuizResponseDTO"
+                    }
+                }
+            }
+        },
+        "types.GetOwnQuizzesSuccessResponseStruct": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/types.GetOwnQuizzesDataField"
+                },
+                "statusCode": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
         "types.GetOwnUserSuccessResponseStruct": {
             "type": "object",
             "properties": {
@@ -2195,14 +2258,26 @@ const docTemplate = `{
                 }
             }
         },
-        "types.GetQuizzesSuccessResponseStruct": {
+        "types.GetQuizzesDataField": {
             "type": "object",
             "properties": {
-                "data": {
+                "maxPage": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "quizzes": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/types.QuizResponseDTO"
                     }
+                }
+            }
+        },
+        "types.GetQuizzesSuccessResponseStruct": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/types.GetQuizzesDataField"
                 },
                 "statusCode": {
                     "type": "integer",

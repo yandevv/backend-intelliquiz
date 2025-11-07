@@ -40,10 +40,26 @@ type QuizDetailedResponseDTO struct {
 	Questions   []QuizQuestionResponseDTO     `json:"questions,omitempty"`
 }
 
+type GetQuizzesDataField struct {
+	Quizzes []QuizResponseDTO `json:"quizzes"`
+	MaxPage int               `json:"maxPage" example:"10"`
+}
+
 type GetQuizzesSuccessResponseStruct struct {
-	StatusCode int               `json:"statusCode" example:"200"`
-	Success    bool              `json:"success" example:"true"`
-	Data       []QuizResponseDTO `json:"data"`
+	StatusCode int                 `json:"statusCode" example:"200"`
+	Success    bool                `json:"success" example:"true"`
+	Data       GetQuizzesDataField `json:"data"`
+}
+
+type GetOwnQuizzesDataField struct {
+	Quizzes []QuizResponseDTO `json:"quizzes"`
+	MaxPage int               `json:"maxPage" example:"10"`
+}
+
+type GetOwnQuizzesSuccessResponseStruct struct {
+	StatusCode int                    `json:"statusCode" example:"200"`
+	Success    bool                   `json:"success" example:"true"`
+	Data       GetOwnQuizzesDataField `json:"data"`
 }
 
 type CreateQuizQuestionChoiceStruct struct {
