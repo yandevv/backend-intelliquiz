@@ -76,9 +76,46 @@ func CreateQuestion(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	alreadyCorrect := false
+	var choices []schemas.Choice
+	for _, choiceDTO := range reqBody.Choices {
+		if alreadyCorrect && *choiceDTO.IsCorrect {
+			log.Printf("Multiple correct choices provided")
+
+			c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+				StatusCode: http.StatusBadRequest,
+				Success:    false,
+				Message:    "A question can have only one correct choice.",
+			})
+			return
+		}
+		if *choiceDTO.IsCorrect {
+			alreadyCorrect = true
+		}
+
+		choice := schemas.Choice{
+			Content:   choiceDTO.Content,
+			IsCorrect: choiceDTO.IsCorrect,
+		}
+		choices = append(choices, choice)
+	}
+
+	// Ensure at least two choices are provided, even though binding should handle it
+	if len(choices) < 2 {
+		log.Printf("Not enough choices provided")
+
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "A question must have at least two choices.",
+		})
+		return
+	}
+
 	question := schemas.Question{
 		Content: reqBody.Content,
 		QuizID:  quizUuid.String(),
+		Choices: choices,
 	}
 
 	if err := gorm.G[schemas.Question](db).Create(c, &question); err != nil {
