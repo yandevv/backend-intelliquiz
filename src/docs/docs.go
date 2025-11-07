@@ -2719,6 +2719,10 @@ const docTemplate = `{
                 },
                 "question": {
                     "$ref": "#/definitions/types.GameQuestionDTO"
+                },
+                "total_questions": {
+                    "type": "integer",
+                    "example": 10
                 }
             }
         },

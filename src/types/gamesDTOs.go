@@ -16,8 +16,9 @@ type GameQuestionDTO struct {
 }
 
 type StartGameDataStruct struct {
-	GameID   string          `json:"game_id" example:"550e8400-e29b-41d4-a716-446655440003"`
-	Question GameQuestionDTO `json:"question"`
+	GameID         string          `json:"game_id" example:"550e8400-e29b-41d4-a716-446655440003"`
+	Question       GameQuestionDTO `json:"question"`
+	TotalQuestions int             `json:"total_questions" example:"10"`
 }
 
 type StartGameResponseStruct struct {

@@ -847,6 +847,9 @@ definitions:
         type: string
       question:
         $ref: '#/definitions/types.GameQuestionDTO'
+      total_questions:
+        example: 10
+        type: integer
     type: object
   types.StartGameResponseStruct:
     properties:
