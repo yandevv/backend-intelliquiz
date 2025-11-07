@@ -7,6 +7,7 @@ import (
 	"intelliquiz/src/types"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -19,10 +20,29 @@ import (
 // @Description Retrieve a list of all quizzes
 // @Tags quizzes
 // @Produce json
+// @Param limit query int false "Limit of quizzes per page (min: 5, max: 50)" default(10)
+// @Param page query int false "Page number (0-indexed)" default(0)
 // @Success 200 {object} types.GetQuizzesSuccessResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
 // @Router /quizzes [get]
 func GetQuizzes(c *gin.Context, db *gorm.DB) {
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "0"))
+
+	limit = max(5, min(50, limit))
+	page = max(0, page)
+
+	quizzesCount, err := gorm.G[schemas.Quiz](db).
+		Count(c.Request.Context(), "id")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while fetching quizzes count",
+		})
+		return
+	}
+
 	quizzes, err := gorm.G[schemas.Quiz](db).
 		Select("id, name, category_id, created_by, curator_pick, created_at, updated_at").
 		Preload("UserLikes", func(db gorm.PreloadBuilder) error {
@@ -38,6 +58,8 @@ func GetQuizzes(c *gin.Context, db *gorm.DB) {
 			return nil
 		}).
 		Preload("Games", nil).
+		Limit(limit).
+		Offset(page * limit).
 		Find(c.Request.Context())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
@@ -58,7 +80,10 @@ func GetQuizzes(c *gin.Context, db *gorm.DB) {
 	c.JSON(http.StatusOK, gin.H{
 		"statusCode": http.StatusOK,
 		"success":    true,
-		"data":       quizzes,
+		"data": gin.H{
+			"quizzes": quizzes,
+			"maxPage": int(quizzesCount) / limit,
+		},
 	})
 }
 
@@ -68,17 +93,37 @@ func GetQuizzes(c *gin.Context, db *gorm.DB) {
 // @Description Retrieve a list of quizzes created by the authenticated user
 // @Tags quizzes
 // @Produce json
-// @Success 200 {object} types.GetQuizzesSuccessResponseStruct
+// @Param limit query int false "Limit of quizzes per page (min: 5, max: 50)" default(10)
+// @Param page query int false "Page number (0-indexed)" default(0)
+// @Success 200 {object} types.GetOwnQuizzesSuccessResponseStruct
 // @Failure 403 {object} types.ForbiddenErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
 // @Router /me/quizzes [get]
 func GetOwnQuizzes(c *gin.Context, db *gorm.DB) {
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "0"))
+
+	limit = max(5, min(50, limit))
+	page = max(0, page)
+
 	userUuid, err := uuid.Parse(c.MustGet("userID").(string))
 	if err != nil {
 		c.JSON(http.StatusForbidden, types.ForbiddenErrorResponseStruct{
 			StatusCode: http.StatusForbidden,
 			Success:    false,
 			Message:    "Invalid user ID format on claims.",
+		})
+		return
+	}
+
+	quizzesCount, err := gorm.G[schemas.Quiz](db).
+		Where("created_by = ?", userUuid).
+		Count(c.Request.Context(), "id")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while fetching quizzes count",
 		})
 		return
 	}
@@ -99,6 +144,8 @@ func GetOwnQuizzes(c *gin.Context, db *gorm.DB) {
 			return nil
 		}).
 		Preload("Games", nil).
+		Limit(limit).
+		Offset(page * limit).
 		Find(c.Request.Context())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
@@ -119,7 +166,10 @@ func GetOwnQuizzes(c *gin.Context, db *gorm.DB) {
 	c.JSON(http.StatusOK, gin.H{
 		"statusCode": http.StatusOK,
 		"success":    true,
-		"data":       quizzes,
+		"data": gin.H{
+			"quizzes": quizzes,
+			"maxPage": int(quizzesCount) / limit,
+		},
 	})
 }
 
