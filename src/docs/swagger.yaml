@@ -77,6 +77,18 @@ definitions:
         example: "2024-01-01T00:00:00Z"
         type: string
     type: object
+  types.ChoicesCreateQuestionDTO:
+    properties:
+      content:
+        example: Paris
+        type: string
+      is_correct:
+        example: true
+        type: boolean
+    required:
+    - content
+    - is_correct
+    type: object
   types.CreateChoiceRequestBody:
     properties:
       content:
@@ -98,6 +110,11 @@ definitions:
     type: object
   types.CreateQuestionRequestBody:
     properties:
+      choices:
+        items:
+          $ref: '#/definitions/types.ChoicesCreateQuestionDTO'
+        minItems: 2
+        type: array
       content:
         example: What is the capital of France?
         type: string
@@ -105,6 +122,7 @@ definitions:
         example: 4fdb53f5-74d2-4d0e-8267-43f893a51aca
         type: string
     required:
+    - choices
     - content
     - quiz_id
     type: object
@@ -414,6 +432,27 @@ definitions:
         example: true
         type: boolean
     type: object
+  types.GetOwnQuizzesDataField:
+    properties:
+      maxPage:
+        example: 10
+        type: integer
+      quizzes:
+        items:
+          $ref: '#/definitions/types.QuizResponseDTO'
+        type: array
+    type: object
+  types.GetOwnQuizzesSuccessResponseStruct:
+    properties:
+      data:
+        $ref: '#/definitions/types.GetOwnQuizzesDataField'
+      statusCode:
+        example: 200
+        type: integer
+      success:
+        example: true
+        type: boolean
+    type: object
   types.GetOwnUserSuccessResponseStruct:
     properties:
       data:
@@ -452,7 +491,7 @@ definitions:
   types.GetQuizSuccessResponseStruct:
     properties:
       data:
-        $ref: '#/definitions/types.QuizResponseDTO'
+        $ref: '#/definitions/types.QuizDetailedResponseDTO'
       statusCode:
         example: 200
         type: integer
@@ -460,12 +499,20 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.GetQuizzesSuccessResponseStruct:
+  types.GetQuizzesDataField:
     properties:
-      data:
+      maxPage:
+        example: 10
+        type: integer
+      quizzes:
         items:
           $ref: '#/definitions/types.QuizResponseDTO'
         type: array
+    type: object
+  types.GetQuizzesSuccessResponseStruct:
+    properties:
+      data:
+        $ref: '#/definitions/types.GetQuizzesDataField'
       statusCode:
         example: 200
         type: integer
@@ -485,6 +532,120 @@ definitions:
       success:
         example: true
         type: boolean
+    type: object
+  types.HomePageCategoryDTO:
+    properties:
+      id:
+        example: 69f93509-275f-4c04-b5da-f105f4764830
+        type: string
+      name:
+        example: Geografia
+        type: string
+    type: object
+  types.HomePageDataField:
+    properties:
+      bestQuizzesOfMonth:
+        items:
+          $ref: '#/definitions/types.HomePageQuizDTO'
+        type: array
+      curatedQuizzes:
+        items:
+          $ref: '#/definitions/types.HomePageQuizDTO'
+        type: array
+      mostLikedQuizzes:
+        items:
+          $ref: '#/definitions/types.HomePageQuizDTO'
+        type: array
+      mostPlayedQuizzes:
+        items:
+          $ref: '#/definitions/types.HomePageQuizDTO'
+        type: array
+      newlyAddedQuizzes:
+        items:
+          $ref: '#/definitions/types.HomePageQuizDTO'
+        type: array
+    type: object
+  types.HomePageGameDTO:
+    properties:
+      correct_answers:
+        example: 7
+        type: integer
+      id:
+        example: 622ad40f-44d0-416d-beb0-d62c7c7abb2e
+        type: string
+      quiz_id:
+        example: 95e85c0b-ea32-437f-91a3-8daaeb492951
+        type: string
+      total_questions:
+        example: 10
+        type: integer
+      total_seconds_taken:
+        example: 120
+        type: integer
+    type: object
+  types.HomePageQuizDTO:
+    properties:
+      category:
+        $ref: '#/definitions/types.HomePageCategoryDTO'
+      category_id:
+        example: 69f93509-275f-4c04-b5da-f105f4764830
+        type: string
+      created_at:
+        example: "2025-11-04T21:35:49.803868Z"
+        type: string
+      created_by:
+        example: ece40bba-484f-4de3-9ca6-9aa5cf56220b
+        type: string
+      curator_pick:
+        example: false
+        type: boolean
+      games:
+        items:
+          $ref: '#/definitions/types.HomePageGameDTO'
+        type: array
+      games_played:
+        example: 1
+        type: integer
+      id:
+        example: 95e85c0b-ea32-437f-91a3-8daaeb492951
+        type: string
+      likes:
+        example: 1
+        type: integer
+      name:
+        example: Geografia da França
+        type: string
+      score:
+        example: 1
+        type: number
+      updated_at:
+        example: "2025-11-04T21:40:51.906957Z"
+        type: string
+      user:
+        $ref: '#/definitions/types.HomePageUserDTO'
+    type: object
+  types.HomePageSuccessResponseStruct:
+    properties:
+      data:
+        $ref: '#/definitions/types.HomePageDataField'
+      message:
+        example: Quizzes retrieved successfully
+        type: string
+      statusCode:
+        example: 200
+        type: integer
+      success:
+        example: true
+        type: boolean
+    type: object
+  types.HomePageUserDTO:
+    properties:
+      id:
+        example: ece40bba-484f-4de3-9ca6-9aa5cf56220b
+        type: string
+      username:
+        example: newyann
+        type: string
     type: object
   types.InternalServerErrorResponseStruct:
     properties:
@@ -554,6 +715,75 @@ definitions:
         default: d27b21ab-6177-4159-9e13-15dc50ffed29
         type: string
     type: object
+  types.QuizChoiceResponseDTO:
+    properties:
+      content:
+        example: Paris
+        type: string
+      id:
+        example: 05a93ef2-23a6-4793-a6dc-0167bae5150f
+        type: string
+      is_correct:
+        example: true
+        type: boolean
+      question_id:
+        example: 78712bb2-7005-4510-bff6-133359af04f9
+        type: string
+    type: object
+  types.QuizDetailedResponseDTO:
+    properties:
+      category:
+        $ref: '#/definitions/types.CategoryQuizResponseDTOStruct'
+      category_id:
+        example: d27b21ab-6177-4159-9e13-15dc50ffed29
+        type: string
+      created_at:
+        example: "2025-10-22T19:01:58.778079424Z"
+        type: string
+      created_by:
+        example: 0fde5216-1bab-41f6-bd90-4c3f088ee91f
+        type: string
+      curator_pick:
+        example: false
+        type: boolean
+      games_played:
+        example: 0
+        type: integer
+      id:
+        example: 4fdb53f5-74d2-4d0e-8267-43f893a51aca
+        type: string
+      likes:
+        example: 0
+        type: integer
+      name:
+        example: Sample Quiz
+        type: string
+      questions:
+        items:
+          $ref: '#/definitions/types.QuizQuestionResponseDTO'
+        type: array
+      updated_at:
+        example: "2025-10-22T19:01:58.778079424Z"
+        type: string
+      user:
+        $ref: '#/definitions/types.UserQuizResponseDTOStruct'
+    type: object
+  types.QuizQuestionResponseDTO:
+    properties:
+      choices:
+        items:
+          $ref: '#/definitions/types.QuizChoiceResponseDTO'
+        type: array
+      content:
+        example: Qual a capital da França?
+        type: string
+      id:
+        example: 78712bb2-7005-4510-bff6-133359af04f9
+        type: string
+      quiz_id:
+        example: 304827d4-f291-4253-9a86-07d2305afd95
+        type: string
+    type: object
   types.QuizResponseDTO:
     properties:
       category:
@@ -561,20 +791,32 @@ definitions:
       category_id:
         example: d27b21ab-6177-4159-9e13-15dc50ffed29
         type: string
+      created_at:
+        example: "2025-10-22T19:01:58.778079424Z"
+        type: string
       created_by:
         example: 0fde5216-1bab-41f6-bd90-4c3f088ee91f
         type: string
+      curator_pick:
+        example: false
+        type: boolean
+      games_played:
+        example: 0
+        type: integer
       id:
         example: 4fdb53f5-74d2-4d0e-8267-43f893a51aca
         type: string
+      likes:
+        example: 0
+        type: integer
       name:
         example: Sample Quiz
         type: string
+      updated_at:
+        example: "2025-10-22T19:01:58.778079424Z"
+        type: string
       user:
         $ref: '#/definitions/types.UserQuizResponseDTOStruct'
-      users_played:
-        example: 0
-        type: integer
     type: object
   types.RefreshRequestBody:
     properties:
@@ -652,6 +894,9 @@ definitions:
         type: string
       question:
         $ref: '#/definitions/types.GameQuestionDTO'
+      total_questions:
+        example: 10
+        type: integer
     type: object
   types.StartGameResponseStruct:
     properties:
@@ -713,11 +958,11 @@ definitions:
     type: object
   types.UserQuizResponseDTOStruct:
     properties:
-      email:
-        example: john_doe@example.com
-        type: string
       id:
         example: 0fde5216-1bab-41f6-bd90-4c3f088ee91f
+        type: string
+      name:
+        example: John Doe
         type: string
       username:
         example: john_doe
@@ -1005,6 +1250,23 @@ paths:
       summary: Get game result
       tags:
       - games
+  /homepage:
+    get:
+      description: Retrieve quizzes for home page sections
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.HomePageSuccessResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Get quizzes for home page
+      tags:
+      - homepage
   /login:
     post:
       consumes:
@@ -1092,13 +1354,24 @@ paths:
   /me/quizzes:
     get:
       description: Retrieve a list of quizzes created by the authenticated user
+      parameters:
+      - default: 10
+        description: 'Limit of quizzes per page (min: 5, max: 50)'
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Page number (0-indexed)
+        in: query
+        name: page
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.GetQuizzesSuccessResponseStruct'
+            $ref: '#/definitions/types.GetOwnQuizzesSuccessResponseStruct'
         "403":
           description: Forbidden
           schema:
@@ -1312,6 +1585,17 @@ paths:
   /quizzes:
     get:
       description: Retrieve a list of all quizzes
+      parameters:
+      - default: 10
+        description: 'Limit of quizzes per page (min: 5, max: 50)'
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Page number (0-indexed)
+        in: query
+        name: page
+        type: integer
       produces:
       - application/json
       responses:
@@ -1462,6 +1746,76 @@ paths:
           schema:
             $ref: '#/definitions/types.InternalServerErrorResponseStruct'
       summary: Update a quiz by ID
+      tags:
+      - quizzes
+  /quizzes/{quizId}/dislike:
+    post:
+      description: Dislike a quiz by its ID
+      parameters:
+      - description: Quiz ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponseStruct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Dislike a quiz by ID
+      tags:
+      - quizzes
+  /quizzes/{quizId}/like:
+    post:
+      description: Like a quiz by its ID
+      parameters:
+      - description: Quiz ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponseStruct'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Like a quiz by ID
       tags:
       - quizzes
   /quizzes/{quizId}/play:

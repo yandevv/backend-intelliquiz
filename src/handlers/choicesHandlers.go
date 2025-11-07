@@ -441,6 +441,7 @@ func DeleteChoice(c *gin.Context, db *gorm.DB) {
 
 	choice, err := gorm.G[schemas.Choice](db).Where("id = ?", choiceUuid.String()).
 		Preload("Question.Quiz", nil).
+		Preload("Question.Choices", nil).
 		First(c)
 	if err != nil {
 		log.Printf("Error fetching choice by ID: %v", err)
@@ -467,6 +468,17 @@ func DeleteChoice(c *gin.Context, db *gorm.DB) {
 			StatusCode: http.StatusForbidden,
 			Success:    false,
 			Message:    "You do not have permission to delete this choice.",
+		})
+		return
+	}
+
+	if len(choice.Question.Choices) <= 2 {
+		log.Printf("Cannot delete choice, minimum choices reached for question: %v", choice.Question.Content)
+
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "Cannot delete choice. A question must have at least 2 choices.",
 		})
 		return
 	}

@@ -384,6 +384,32 @@ const docTemplate = `{
                 }
             }
         },
+        "/homepage": {
+            "get": {
+                "description": "Retrieve quizzes for home page sections",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "homepage"
+                ],
+                "summary": "Get quizzes for home page",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.HomePageSuccessResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "description": "Authenticate a user and return access and refresh tokens",
@@ -522,11 +548,27 @@ const docTemplate = `{
                     "quizzes"
                 ],
                 "summary": "Get own quizzes",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Limit of quizzes per page (min: 5, max: 50)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Page number (0-indexed)",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.GetQuizzesSuccessResponseStruct"
+                            "$ref": "#/definitions/types.GetOwnQuizzesSuccessResponseStruct"
                         }
                     },
                     "403": {
@@ -855,6 +897,22 @@ const docTemplate = `{
                     "quizzes"
                 ],
                 "summary": "Get all quizzes",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Limit of quizzes per page (min: 5, max: 50)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Page number (0-indexed)",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1043,6 +1101,112 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/types.UpdateQuizRequestBody"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.SuccessResponseStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.NotFoundErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            }
+        },
+        "/quizzes/{quizId}/dislike": {
+            "post": {
+                "description": "Dislike a quiz by its ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "quizzes"
+                ],
+                "summary": "Dislike a quiz by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Quiz ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.SuccessResponseStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.NotFoundErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            }
+        },
+        "/quizzes/{quizId}/like": {
+            "post": {
+                "description": "Like a quiz by its ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "quizzes"
+                ],
+                "summary": "Like a quiz by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Quiz ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1490,6 +1654,23 @@ const docTemplate = `{
                 }
             }
         },
+        "types.ChoicesCreateQuestionDTO": {
+            "type": "object",
+            "required": [
+                "content",
+                "is_correct"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "example": "Paris"
+                },
+                "is_correct": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
         "types.CreateChoiceRequestBody": {
             "type": "object",
             "required": [
@@ -1521,10 +1702,18 @@ const docTemplate = `{
         "types.CreateQuestionRequestBody": {
             "type": "object",
             "required": [
+                "choices",
                 "content",
                 "quiz_id"
             ],
             "properties": {
+                "choices": {
+                    "type": "array",
+                    "minItems": 2,
+                    "items": {
+                        "$ref": "#/definitions/types.ChoicesCreateQuestionDTO"
+                    }
+                },
                 "content": {
                     "type": "string",
                     "example": "What is the capital of France?"
@@ -1971,6 +2160,37 @@ const docTemplate = `{
                 }
             }
         },
+        "types.GetOwnQuizzesDataField": {
+            "type": "object",
+            "properties": {
+                "maxPage": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "quizzes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.QuizResponseDTO"
+                    }
+                }
+            }
+        },
+        "types.GetOwnQuizzesSuccessResponseStruct": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/types.GetOwnQuizzesDataField"
+                },
+                "statusCode": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
         "types.GetOwnUserSuccessResponseStruct": {
             "type": "object",
             "properties": {
@@ -2026,7 +2246,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/types.QuizResponseDTO"
+                    "$ref": "#/definitions/types.QuizDetailedResponseDTO"
                 },
                 "statusCode": {
                     "type": "integer",
@@ -2038,14 +2258,26 @@ const docTemplate = `{
                 }
             }
         },
-        "types.GetQuizzesSuccessResponseStruct": {
+        "types.GetQuizzesDataField": {
             "type": "object",
             "properties": {
-                "data": {
+                "maxPage": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "quizzes": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/types.QuizResponseDTO"
                     }
+                }
+            }
+        },
+        "types.GetQuizzesSuccessResponseStruct": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/types.GetQuizzesDataField"
                 },
                 "statusCode": {
                     "type": "integer",
@@ -2073,6 +2305,169 @@ const docTemplate = `{
                 "success": {
                     "type": "boolean",
                     "example": true
+                }
+            }
+        },
+        "types.HomePageCategoryDTO": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "69f93509-275f-4c04-b5da-f105f4764830"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Geografia"
+                }
+            }
+        },
+        "types.HomePageDataField": {
+            "type": "object",
+            "properties": {
+                "bestQuizzesOfMonth": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.HomePageQuizDTO"
+                    }
+                },
+                "curatedQuizzes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.HomePageQuizDTO"
+                    }
+                },
+                "mostLikedQuizzes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.HomePageQuizDTO"
+                    }
+                },
+                "mostPlayedQuizzes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.HomePageQuizDTO"
+                    }
+                },
+                "newlyAddedQuizzes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.HomePageQuizDTO"
+                    }
+                }
+            }
+        },
+        "types.HomePageGameDTO": {
+            "type": "object",
+            "properties": {
+                "correct_answers": {
+                    "type": "integer",
+                    "example": 7
+                },
+                "id": {
+                    "type": "string",
+                    "example": "622ad40f-44d0-416d-beb0-d62c7c7abb2e"
+                },
+                "quiz_id": {
+                    "type": "string",
+                    "example": "95e85c0b-ea32-437f-91a3-8daaeb492951"
+                },
+                "total_questions": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "total_seconds_taken": {
+                    "type": "integer",
+                    "example": 120
+                }
+            }
+        },
+        "types.HomePageQuizDTO": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "$ref": "#/definitions/types.HomePageCategoryDTO"
+                },
+                "category_id": {
+                    "type": "string",
+                    "example": "69f93509-275f-4c04-b5da-f105f4764830"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2025-11-04T21:35:49.803868Z"
+                },
+                "created_by": {
+                    "type": "string",
+                    "example": "ece40bba-484f-4de3-9ca6-9aa5cf56220b"
+                },
+                "curator_pick": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "games": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.HomePageGameDTO"
+                    }
+                },
+                "games_played": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "id": {
+                    "type": "string",
+                    "example": "95e85c0b-ea32-437f-91a3-8daaeb492951"
+                },
+                "likes": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Geografia da França"
+                },
+                "score": {
+                    "type": "number",
+                    "example": 1
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2025-11-04T21:40:51.906957Z"
+                },
+                "user": {
+                    "$ref": "#/definitions/types.HomePageUserDTO"
+                }
+            }
+        },
+        "types.HomePageSuccessResponseStruct": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/types.HomePageDataField"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Quizzes retrieved successfully"
+                },
+                "statusCode": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "types.HomePageUserDTO": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "ece40bba-484f-4de3-9ca6-9aa5cf56220b"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "newyann"
                 }
             }
         },
@@ -2173,6 +2568,103 @@ const docTemplate = `{
                 }
             }
         },
+        "types.QuizChoiceResponseDTO": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "example": "Paris"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "05a93ef2-23a6-4793-a6dc-0167bae5150f"
+                },
+                "is_correct": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "question_id": {
+                    "type": "string",
+                    "example": "78712bb2-7005-4510-bff6-133359af04f9"
+                }
+            }
+        },
+        "types.QuizDetailedResponseDTO": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "$ref": "#/definitions/types.CategoryQuizResponseDTOStruct"
+                },
+                "category_id": {
+                    "type": "string",
+                    "example": "d27b21ab-6177-4159-9e13-15dc50ffed29"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2025-10-22T19:01:58.778079424Z"
+                },
+                "created_by": {
+                    "type": "string",
+                    "example": "0fde5216-1bab-41f6-bd90-4c3f088ee91f"
+                },
+                "curator_pick": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "games_played": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "id": {
+                    "type": "string",
+                    "example": "4fdb53f5-74d2-4d0e-8267-43f893a51aca"
+                },
+                "likes": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Sample Quiz"
+                },
+                "questions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.QuizQuestionResponseDTO"
+                    }
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2025-10-22T19:01:58.778079424Z"
+                },
+                "user": {
+                    "$ref": "#/definitions/types.UserQuizResponseDTOStruct"
+                }
+            }
+        },
+        "types.QuizQuestionResponseDTO": {
+            "type": "object",
+            "properties": {
+                "choices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.QuizChoiceResponseDTO"
+                    }
+                },
+                "content": {
+                    "type": "string",
+                    "example": "Qual a capital da França?"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "78712bb2-7005-4510-bff6-133359af04f9"
+                },
+                "quiz_id": {
+                    "type": "string",
+                    "example": "304827d4-f291-4253-9a86-07d2305afd95"
+                }
+            }
+        },
         "types.QuizResponseDTO": {
             "type": "object",
             "properties": {
@@ -2183,24 +2675,40 @@ const docTemplate = `{
                     "type": "string",
                     "example": "d27b21ab-6177-4159-9e13-15dc50ffed29"
                 },
+                "created_at": {
+                    "type": "string",
+                    "example": "2025-10-22T19:01:58.778079424Z"
+                },
                 "created_by": {
                     "type": "string",
                     "example": "0fde5216-1bab-41f6-bd90-4c3f088ee91f"
+                },
+                "curator_pick": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "games_played": {
+                    "type": "integer",
+                    "example": 0
                 },
                 "id": {
                     "type": "string",
                     "example": "4fdb53f5-74d2-4d0e-8267-43f893a51aca"
                 },
+                "likes": {
+                    "type": "integer",
+                    "example": 0
+                },
                 "name": {
                     "type": "string",
                     "example": "Sample Quiz"
                 },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2025-10-22T19:01:58.778079424Z"
+                },
                 "user": {
                     "$ref": "#/definitions/types.UserQuizResponseDTOStruct"
-                },
-                "users_played": {
-                    "type": "integer",
-                    "example": 0
                 }
             }
         },
@@ -2311,6 +2819,10 @@ const docTemplate = `{
                 },
                 "question": {
                     "$ref": "#/definitions/types.GameQuestionDTO"
+                },
+                "total_questions": {
+                    "type": "integer",
+                    "example": 10
                 }
             }
         },
@@ -2402,13 +2914,13 @@ const docTemplate = `{
         "types.UserQuizResponseDTOStruct": {
             "type": "object",
             "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "john_doe@example.com"
-                },
                 "id": {
                     "type": "string",
                     "example": "0fde5216-1bab-41f6-bd90-4c3f088ee91f"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "John Doe"
                 },
                 "username": {
                     "type": "string",
