@@ -77,6 +77,18 @@ definitions:
         example: "2024-01-01T00:00:00Z"
         type: string
     type: object
+  types.ChoicesCreateQuestionDTO:
+    properties:
+      content:
+        example: Paris
+        type: string
+      is_correct:
+        example: true
+        type: boolean
+    required:
+    - content
+    - is_correct
+    type: object
   types.CreateChoiceRequestBody:
     properties:
       content:
@@ -98,6 +110,11 @@ definitions:
     type: object
   types.CreateQuestionRequestBody:
     properties:
+      choices:
+        items:
+          $ref: '#/definitions/types.ChoicesCreateQuestionDTO'
+        minItems: 2
+        type: array
       content:
         example: What is the capital of France?
         type: string
@@ -105,6 +122,7 @@ definitions:
         example: 4fdb53f5-74d2-4d0e-8267-43f893a51aca
         type: string
     required:
+    - choices
     - content
     - quiz_id
     type: object

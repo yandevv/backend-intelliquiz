@@ -12,9 +12,15 @@ type GetQuestionsSuccessResponseStruct struct {
 	Data       []QuestionResponseDTO `json:"data"`
 }
 
+type ChoicesCreateQuestionDTO struct {
+	Content   string `json:"content" binding:"required" example:"Paris"`
+	IsCorrect *bool  `json:"is_correct" binding:"required" example:"true"`
+}
+
 type CreateQuestionRequestBody struct {
-	Content string `json:"content" binding:"required" example:"What is the capital of France?"`
-	QuizID  string `json:"quiz_id" binding:"required" example:"4fdb53f5-74d2-4d0e-8267-43f893a51aca"`
+	Content string                     `json:"content" binding:"required" example:"What is the capital of France?"`
+	QuizID  string                     `json:"quiz_id" binding:"required" example:"4fdb53f5-74d2-4d0e-8267-43f893a51aca"`
+	Choices []ChoicesCreateQuestionDTO `json:"choices" binding:"required,min=2,dive,required"`
 }
 
 type CreateQuestionSuccessResponseStruct struct {

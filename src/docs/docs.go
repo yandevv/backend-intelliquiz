@@ -1622,6 +1622,23 @@ const docTemplate = `{
                 }
             }
         },
+        "types.ChoicesCreateQuestionDTO": {
+            "type": "object",
+            "required": [
+                "content",
+                "is_correct"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "example": "Paris"
+                },
+                "is_correct": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
         "types.CreateChoiceRequestBody": {
             "type": "object",
             "required": [
@@ -1653,10 +1670,18 @@ const docTemplate = `{
         "types.CreateQuestionRequestBody": {
             "type": "object",
             "required": [
+                "choices",
                 "content",
                 "quiz_id"
             ],
             "properties": {
+                "choices": {
+                    "type": "array",
+                    "minItems": 2,
+                    "items": {
+                        "$ref": "#/definitions/types.ChoicesCreateQuestionDTO"
+                    }
+                },
                 "content": {
                     "type": "string",
                     "example": "What is the capital of France?"
