@@ -11,6 +11,15 @@ import (
 	"gorm.io/gorm"
 )
 
+// HomePage godoc
+// @Summary Get quizzes for home page
+// @Schemes
+// @Description Retrieve quizzes for home page sections
+// @Tags homepage
+// @Produce json
+// @Success 200 {object} types.HomePageSuccessResponseStruct
+// @Failure 500 {object} types.InternalServerErrorResponseStruct
+// @Router /homepage [get]
 func HomePage(c *gin.Context, db *gorm.DB) {
 	// TODO: Implement user-specific quiz recommendations
 	// tokenStr := middlewares.BearerFromHeader(c)

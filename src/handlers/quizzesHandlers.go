@@ -614,6 +614,19 @@ func DeleteQuiz(c *gin.Context, db *gorm.DB) {
 	})
 }
 
+// LikeQuiz godoc
+// @Summary Like a quiz by ID
+// @Schemes
+// @Description Like a quiz by its ID
+// @Tags quizzes
+// @Produce json
+// @Param id path string true "Quiz ID"
+// @Success 200 {object} types.SuccessResponseStruct
+// @Failure 400 {object} types.BadRequestErrorResponseStruct
+// @Failure 403 {object} types.ForbiddenErrorResponseStruct
+// @Failure 404 {object} types.NotFoundErrorResponseStruct
+// @Failure 500 {object} types.InternalServerErrorResponseStruct
+// @Router /quizzes/{quizId}/like [post]
 func LikeQuiz(c *gin.Context, db *gorm.DB) {
 	userUuid, err := uuid.Parse(c.MustGet("userID").(string))
 	if err != nil {
@@ -694,6 +707,19 @@ func LikeQuiz(c *gin.Context, db *gorm.DB) {
 	})
 }
 
+// DislikeQuiz godoc
+// @Summary Dislike a quiz by ID
+// @Schemes
+// @Description Dislike a quiz by its ID
+// @Tags quizzes
+// @Produce json
+// @Param id path string true "Quiz ID"
+// @Success 200 {object} types.SuccessResponseStruct
+// @Failure 400 {object} types.BadRequestErrorResponseStruct
+// @Failure 403 {object} types.ForbiddenErrorResponseStruct
+// @Failure 404 {object} types.NotFoundErrorResponseStruct
+// @Failure 500 {object} types.InternalServerErrorResponseStruct
+// @Router /quizzes/{quizId}/dislike [post]
 func DislikeQuiz(c *gin.Context, db *gorm.DB) {
 	userUuid, err := uuid.Parse(c.MustGet("userID").(string))
 	if err != nil {
