@@ -381,7 +381,27 @@ func UpdateChoice(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	choice.Content = reqBody.Content
+	if reqBody.Content != "" {
+		choice.Content = reqBody.Content
+	}
+
+	if reqBody.IsCorrect {
+		_, err := gorm.G[schemas.Choice](db).
+			Where("question_id = ?", choice.QuestionID).
+			Update(c, "is_correct", false)
+		if err != nil {
+			log.Printf("Error resetting other choices' is_correct: %v", err)
+
+			c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+				StatusCode: http.StatusInternalServerError,
+				Success:    false,
+				Message:    "An error occurred while resetting other choices is_correct field.",
+			})
+			return
+		}
+
+		choice.IsCorrect = &reqBody.IsCorrect
+	}
 
 	if err := db.Save(&choice).Error; err != nil {
 		log.Printf("Error updating choice: %v", err)
