@@ -6,6 +6,7 @@ import (
 	"intelliquiz/src/middlewares"
 	"intelliquiz/src/types"
 	"log"
+	"math"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -100,7 +101,7 @@ func GetQuizzes(c *gin.Context, db *gorm.DB) {
 		"success":    true,
 		"data": gin.H{
 			"quizzes": quizzes,
-			"maxPage": int(quizzesCount) / limit,
+			"maxPage": math.Ceil(float64(quizzesCount)/float64(limit)) - 1,
 		},
 	})
 }
@@ -207,7 +208,7 @@ func GetOwnQuizzes(c *gin.Context, db *gorm.DB) {
 		"success":    true,
 		"data": gin.H{
 			"quizzes": quizzes,
-			"maxPage": int(quizzesCount) / limit,
+			"maxPage": math.Ceil(float64(quizzesCount)/float64(limit)) - 1,
 		},
 	})
 }
