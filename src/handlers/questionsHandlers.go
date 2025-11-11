@@ -264,10 +264,6 @@ func UpdateQuestion(c *gin.Context, db *gorm.DB) {
 		question.Content = reqBody.Content
 	}
 
-	if reqBody.QuizID != "" {
-		question.QuizID = reqBody.QuizID
-	}
-
 	if err := db.Save(&question).Error; err != nil {
 		log.Printf("Error updating question: %v", err)
 

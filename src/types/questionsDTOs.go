@@ -36,6 +36,5 @@ type GetQuestionSuccessResponseStruct struct {
 }
 
 type UpdateQuestionRequestBody struct {
-	QuizID  string `json:"quiz_id" example:"4fdb53f5-74d2-4d0e-8267-43f893a51aca"`
 	Content string `json:"content" example:"What is the capital of France?"`
 }
