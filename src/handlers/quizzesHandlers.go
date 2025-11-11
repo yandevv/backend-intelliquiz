@@ -23,6 +23,7 @@ import (
 // @Produce json
 // @Param limit query int false "Limit of quizzes per page (min: 5, max: 50)" default(10)
 // @Param page query int false "Page number (0-indexed)" default(0)
+// @Param name query string false "Filter quizzes by name, category name, user name, or username"
 // @Success 200 {object} types.GetQuizzesSuccessResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
 // @Router /quizzes [get]
@@ -112,6 +113,7 @@ func GetQuizzes(c *gin.Context, db *gorm.DB) {
 // @Produce json
 // @Param limit query int false "Limit of quizzes per page (min: 5, max: 50)" default(10)
 // @Param page query int false "Page number (0-indexed)" default(0)
+// @Param name query string false "Filter quizzes by name, category name, user name, or username"
 // @Success 200 {object} types.GetOwnQuizzesSuccessResponseStruct
 // @Failure 403 {object} types.ForbiddenErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct

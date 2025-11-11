@@ -935,16 +935,14 @@ definitions:
       content:
         example: Paris
         type: string
-    required:
-    - content
+      is_correct:
+        example: true
+        type: boolean
     type: object
   types.UpdateQuestionRequestBody:
     properties:
       content:
         example: What is the capital of France?
-        type: string
-      quiz_id:
-        example: 4fdb53f5-74d2-4d0e-8267-43f893a51aca
         type: string
     type: object
   types.UpdateQuizRequestBody:
@@ -1377,6 +1375,10 @@ paths:
         in: query
         name: page
         type: integer
+      - description: Filter quizzes by name, category name, user name, or username
+        in: query
+        name: name
+        type: string
       produces:
       - application/json
       responses:
@@ -1608,6 +1610,10 @@ paths:
         in: query
         name: page
         type: integer
+      - description: Filter quizzes by name, category name, user name, or username
+        in: query
+        name: name
+        type: string
       produces:
       - application/json
       responses:
