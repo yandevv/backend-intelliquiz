@@ -21,6 +21,7 @@ type QuizResponseDTO struct {
 	CuratorPick bool                          `json:"curator_pick" example:"false"`
 	GamesPlayed int                           `json:"games_played" example:"0"`
 	Likes       int                           `json:"likes" example:"0"`
+	ImageUrl    string                        `json:"image_url,omitempty" example:"https://example.com/image.jpg"`
 	CreatedAt   string                        `json:"created_at" example:"2025-10-22T19:01:58.778079424Z"`
 	UpdatedAt   string                        `json:"updated_at" example:"2025-10-22T19:01:58.778079424Z"`
 }
@@ -35,6 +36,7 @@ type QuizDetailedResponseDTO struct {
 	CuratorPick bool                          `json:"curator_pick" example:"false"`
 	GamesPlayed int                           `json:"games_played" example:"0"`
 	Likes       int                           `json:"likes" example:"0"`
+	ImageUrl    string                        `json:"image_url,omitempty" example:"https://example.com/image.jpg"`
 	CreatedAt   string                        `json:"created_at" example:"2025-10-22T19:01:58.778079424Z"`
 	UpdatedAt   string                        `json:"updated_at" example:"2025-10-22T19:01:58.778079424Z"`
 	Questions   []QuizQuestionResponseDTO     `json:"questions,omitempty"`
