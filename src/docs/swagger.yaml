@@ -164,6 +164,9 @@ definitions:
       category_id:
         example: d27b21ab-6177-4159-9e13-15dc50ffed29
         type: string
+      image_url:
+        example: https://example.com/image.jpg
+        type: string
       name:
         example: Sample Quiz
         type: string
@@ -752,6 +755,9 @@ definitions:
       id:
         example: 4fdb53f5-74d2-4d0e-8267-43f893a51aca
         type: string
+      image_url:
+        example: https://example.com/image.jpg
+        type: string
       likes:
         example: 0
         type: integer
@@ -805,6 +811,9 @@ definitions:
         type: integer
       id:
         example: 4fdb53f5-74d2-4d0e-8267-43f893a51aca
+        type: string
+      image_url:
+        example: https://example.com/image.jpg
         type: string
       likes:
         example: 0
@@ -942,6 +951,9 @@ definitions:
     properties:
       category_id:
         example: d27b21ab-6177-4159-9e13-15dc50ffed29
+        type: string
+      image_url:
+        example: https://example.com/image.jpg
         type: string
       name:
         example: Sample Quiz

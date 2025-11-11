@@ -21,6 +21,7 @@ type QuizResponseDTO struct {
 	CuratorPick bool                          `json:"curator_pick" example:"false"`
 	GamesPlayed int                           `json:"games_played" example:"0"`
 	Likes       int                           `json:"likes" example:"0"`
+	ImageUrl    string                        `json:"image_url,omitempty" example:"https://example.com/image.jpg"`
 	CreatedAt   string                        `json:"created_at" example:"2025-10-22T19:01:58.778079424Z"`
 	UpdatedAt   string                        `json:"updated_at" example:"2025-10-22T19:01:58.778079424Z"`
 }
@@ -35,6 +36,7 @@ type QuizDetailedResponseDTO struct {
 	CuratorPick bool                          `json:"curator_pick" example:"false"`
 	GamesPlayed int                           `json:"games_played" example:"0"`
 	Likes       int                           `json:"likes" example:"0"`
+	ImageUrl    string                        `json:"image_url,omitempty" example:"https://example.com/image.jpg"`
 	CreatedAt   string                        `json:"created_at" example:"2025-10-22T19:01:58.778079424Z"`
 	UpdatedAt   string                        `json:"updated_at" example:"2025-10-22T19:01:58.778079424Z"`
 	Questions   []QuizQuestionResponseDTO     `json:"questions,omitempty"`
@@ -76,6 +78,7 @@ type CreateQuizRequestBody struct {
 	Name       string                      `json:"name" binding:"required" example:"Sample Quiz"`
 	CategoryID string                      `json:"category_id" binding:"required" example:"d27b21ab-6177-4159-9e13-15dc50ffed29"`
 	Questions  []CreateQuizQuestionsStruct `json:"questions" binding:"required"`
+	ImageUrl   string                      `json:"image_url" example:"https://example.com/image.jpg"`
 }
 
 type CreateQuizResponseDTO struct {
@@ -100,6 +103,7 @@ type GetQuizSuccessResponseStruct struct {
 type UpdateQuizRequestBody struct {
 	Name       string `json:"name" example:"Sample Quiz"`
 	CategoryID string `json:"category_id" example:"d27b21ab-6177-4159-9e13-15dc50ffed29"`
+	ImageUrl   string `json:"image_url" example:"https://example.com/image.jpg"`
 }
 
 type QuizChoiceResponseDTO struct {

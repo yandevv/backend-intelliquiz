@@ -32,5 +32,6 @@ type GetChoiceSuccessResponseStruct struct {
 }
 
 type UpdateChoiceRequestBody struct {
-	Content string `json:"content" binding:"required" example:"Paris"`
+	Content   string `json:"content" example:"Paris"`
+	IsCorrect bool   `json:"is_correct" example:"true"`
 }

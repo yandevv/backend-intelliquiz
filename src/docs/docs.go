@@ -1784,6 +1784,10 @@ const docTemplate = `{
                     "type": "string",
                     "example": "d27b21ab-6177-4159-9e13-15dc50ffed29"
                 },
+                "image_url": {
+                    "type": "string",
+                    "example": "https://example.com/image.jpg"
+                },
                 "name": {
                     "type": "string",
                     "example": "Sample Quiz"
@@ -2619,6 +2623,10 @@ const docTemplate = `{
                     "type": "string",
                     "example": "4fdb53f5-74d2-4d0e-8267-43f893a51aca"
                 },
+                "image_url": {
+                    "type": "string",
+                    "example": "https://example.com/image.jpg"
+                },
                 "likes": {
                     "type": "integer",
                     "example": 0
@@ -2694,6 +2702,10 @@ const docTemplate = `{
                 "id": {
                     "type": "string",
                     "example": "4fdb53f5-74d2-4d0e-8267-43f893a51aca"
+                },
+                "image_url": {
+                    "type": "string",
+                    "example": "https://example.com/image.jpg"
                 },
                 "likes": {
                     "type": "integer",
@@ -2890,6 +2902,10 @@ const docTemplate = `{
                 "category_id": {
                     "type": "string",
                     "example": "d27b21ab-6177-4159-9e13-15dc50ffed29"
+                },
+                "image_url": {
+                    "type": "string",
+                    "example": "https://example.com/image.jpg"
                 },
                 "name": {
                     "type": "string",
