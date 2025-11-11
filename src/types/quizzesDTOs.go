@@ -76,6 +76,7 @@ type CreateQuizRequestBody struct {
 	Name       string                      `json:"name" binding:"required" example:"Sample Quiz"`
 	CategoryID string                      `json:"category_id" binding:"required" example:"d27b21ab-6177-4159-9e13-15dc50ffed29"`
 	Questions  []CreateQuizQuestionsStruct `json:"questions" binding:"required"`
+	ImageUrl   string                      `json:"image_url" example:"https://example.com/image.jpg"`
 }
 
 type CreateQuizResponseDTO struct {
@@ -100,6 +101,7 @@ type GetQuizSuccessResponseStruct struct {
 type UpdateQuizRequestBody struct {
 	Name       string `json:"name" example:"Sample Quiz"`
 	CategoryID string `json:"category_id" example:"d27b21ab-6177-4159-9e13-15dc50ffed29"`
+	ImageUrl   string `json:"image_url" example:"https://example.com/image.jpg"`
 }
 
 type QuizChoiceResponseDTO struct {

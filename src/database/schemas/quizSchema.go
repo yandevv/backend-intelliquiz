@@ -22,6 +22,7 @@ type Quiz struct {
 	Questions   []Question      `json:"questions,omitempty"`
 	Games       []Game          `json:"games,omitempty"`
 	GamesPlayed int             `json:"games_played" gorm:"->;-:migration"`
+	ImageUrl    string          `json:"image_url,omitempty"`
 	CreatedAt   *time.Time      `json:"created_at,omitempty"`
 	UpdatedAt   *time.Time      `json:"updated_at,omitempty"`
 	DeletedAt   *gorm.DeletedAt `json:"deleted_at,omitempty" gorm:"index"`

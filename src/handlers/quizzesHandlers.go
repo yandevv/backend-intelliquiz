@@ -7,6 +7,7 @@ import (
 	"intelliquiz/src/types"
 	"log"
 	"net/http"
+	"regexp"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -46,7 +47,7 @@ func GetQuizzes(c *gin.Context, db *gorm.DB) {
 	}
 
 	quizzes, err := gorm.G[schemas.Quiz](db).
-		Select("id, name, category_id, created_by, curator_pick, created_at, updated_at").
+		Select("id, name, category_id, created_by, curator_pick, image_url, created_at, updated_at").
 		Where("name LIKE ?", "%"+quizNameFilter+"%").
 		Preload("UserLikes", func(db gorm.PreloadBuilder) error {
 			db.Select("id")
@@ -134,7 +135,7 @@ func GetOwnQuizzes(c *gin.Context, db *gorm.DB) {
 	}
 
 	quizzes, err := gorm.G[schemas.Quiz](db).
-		Select("id, name, category_id, created_by, curator_pick, created_at, updated_at").
+		Select("id, name, category_id, created_by, curator_pick, image_url, created_at, updated_at").
 		Where("name LIKE ?", "%"+quizNameFilter+"%").
 		Where("created_by = ?", userUuid).
 		Preload("UserLikes", func(db gorm.PreloadBuilder) error {
@@ -248,6 +249,27 @@ func CreateQuiz(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	matched, err := regexp.MatchString(`^(?:(?<scheme>[^:\/?#]+):)?(?:\/\/(?<authority>[^\/?#]*))?(?<path>[^?#]*\/)?(?<file>[^?#]*\.(?<extension>[Jj][Pp][Ee]?[Gg]|[Pp][Nn][Gg]|[Gg][Ii][Ff]|[Ww][Ee][Bb][Pp]))(?:\?(?<query>[^#]*))?(?:#(?<fragment>.*))?$`, reqBody.ImageUrl)
+	if err != nil {
+		log.Printf("Error validating image URL: %v", err)
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while validating the image URL.",
+		})
+		return
+	} else if reqBody.ImageUrl != "" && !matched {
+		log.Printf("Invalid image URL format: %v", reqBody.ImageUrl)
+
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "Invalid image URL format. Image URL must end with .jpg, .jpeg, .png, .webp, or .gif and be a valid URL.",
+		})
+		return
+	}
+
 	questions := []schemas.Question{}
 	for _, q := range reqBody.Questions {
 		hasCorrectChoice := false
@@ -336,6 +358,7 @@ func CreateQuiz(c *gin.Context, db *gorm.DB) {
 		CategoryID: categoryUuid.String(),
 		CreatedBy:  userUuid.String(),
 		Questions:  questions,
+		ImageUrl:   reqBody.ImageUrl,
 	}
 
 	if err := gorm.G[schemas.Quiz](db).Create(c, &quiz); err != nil {
@@ -410,7 +433,7 @@ func GetQuizByID(c *gin.Context, db *gorm.DB) {
 	}
 
 	quizQueryChain := gorm.G[schemas.Quiz](db).Where("id = ?", quizUuid).
-		Select("id, name, category_id, created_by, curator_pick, created_at, updated_at").
+		Select("id, name, category_id, created_by, curator_pick, image_url, created_at, updated_at").
 		Preload("UserLikes", func(db gorm.PreloadBuilder) error {
 			db.Select("id")
 			return nil
@@ -560,6 +583,31 @@ func UpdateQuiz(c *gin.Context, db *gorm.DB) {
 
 	if reqBody.CategoryID != "" {
 		quiz.CategoryID = reqBody.CategoryID
+	}
+
+	matched, err := regexp.MatchString(`^(?:(?<scheme>[^:\/?#]+):)?(?:\/\/(?<authority>[^\/?#]*))?(?<path>[^?#]*\/)?(?<file>[^?#]*\.(?<extension>[Jj][Pp][Ee]?[Gg]|[Pp][Nn][Gg]|[Gg][Ii][Ff]|[Ww][Ee][Bb][Pp]))(?:\?(?<query>[^#]*))?(?:#(?<fragment>.*))?$`, reqBody.ImageUrl)
+	if err != nil {
+		log.Printf("Error validating image URL: %v", err)
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while validating the image URL.",
+		})
+		return
+	} else if reqBody.ImageUrl != "" {
+		if !matched {
+			log.Printf("Invalid image URL format: %v", reqBody.ImageUrl)
+
+			c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+				StatusCode: http.StatusBadRequest,
+				Success:    false,
+				Message:    "Invalid image URL format. Image URL must end with .jpg, .jpeg, .png, .webp or .gif and be a valid URL.",
+			})
+			return
+		}
+
+		quiz.ImageUrl = reqBody.ImageUrl
 	}
 
 	if err := db.Save(&quiz).Error; err != nil {
