@@ -22,6 +22,41 @@ definitions:
         example: true
         type: boolean
     type: object
+  types.AutocompleteChoiceRequestDTO:
+    properties:
+      category_id:
+        example: d27b21ab-6177-4159-9e13-15dc50ffed29
+        type: string
+      content:
+        example: Par
+        type: string
+      is_correct:
+        example: true
+        type: boolean
+      question_content:
+        example: What is the capital of France?
+        type: string
+      quiz_title:
+        example: Geography Quiz
+        type: string
+    required:
+    - category_id
+    - is_correct
+    - question_content
+    - quiz_title
+    type: object
+  types.AutocompleteChoiceSuccessResponseDTO:
+    properties:
+      data:
+        example: Paris
+        type: string
+      statusCode:
+        example: 200
+        type: integer
+      success:
+        example: true
+        type: boolean
+    type: object
   types.AutocompleteQuestionRequestDTO:
     properties:
       category_id:
@@ -35,7 +70,6 @@ definitions:
         type: string
     required:
     - category_id
-    - content
     - quiz_title
     type: object
   types.AutocompleteQuestionSuccessResponseDTO:
@@ -1069,6 +1103,38 @@ info:
   title: IntelliQuiz API
   version: "1.0"
 paths:
+  /ai/autocomplete-choice:
+    post:
+      description: Autocomplete the content of a quiz choice
+      parameters:
+      - description: Autocomplete Choice Request Body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.AutocompleteChoiceRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.AutocompleteChoiceSuccessResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Autocomplete Choice Content
+      tags:
+      - ai
   /ai/autocomplete-question:
     post:
       description: Autocomplete the content of a quiz question
