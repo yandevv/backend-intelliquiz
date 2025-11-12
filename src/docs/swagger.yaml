@@ -22,6 +22,34 @@ definitions:
         example: true
         type: boolean
     type: object
+  types.AutocompleteQuestionRequestDTO:
+    properties:
+      category_id:
+        example: d27b21ab-6177-4159-9e13-15dc50ffed29
+        type: string
+      content:
+        example: What is the capital of
+        type: string
+      quiz_title:
+        example: Geography Quiz
+        type: string
+    required:
+    - category_id
+    - content
+    - quiz_title
+    type: object
+  types.AutocompleteQuestionSuccessResponseDTO:
+    properties:
+      data:
+        example: What is the capital of France?
+        type: string
+      statusCode:
+        example: 200
+        type: integer
+      success:
+        example: true
+        type: boolean
+    type: object
   types.AutocompleteQuizRequestDTO:
     properties:
       category_id:
@@ -1041,6 +1069,38 @@ info:
   title: IntelliQuiz API
   version: "1.0"
 paths:
+  /ai/autocomplete-question:
+    post:
+      description: Autocomplete the content of a quiz question
+      parameters:
+      - description: Autocomplete Question Request Body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/types.AutocompleteQuestionRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.AutocompleteQuestionSuccessResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+      summary: Autocomplete Question Content
+      tags:
+      - ai
   /ai/autocomplete-quiz:
     post:
       description: Autocomplete the title of a quiz

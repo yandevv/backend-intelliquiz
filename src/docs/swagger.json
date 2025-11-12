@@ -13,6 +13,55 @@
     "host": "localhost:8080",
     "basePath": "/",
     "paths": {
+        "/ai/autocomplete-question": {
+            "post": {
+                "description": "Autocomplete the content of a quiz question",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ai"
+                ],
+                "summary": "Autocomplete Question Content",
+                "parameters": [
+                    {
+                        "description": "Autocomplete Question Request Body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.AutocompleteQuestionRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.AutocompleteQuestionSuccessResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            }
+        },
         "/ai/autocomplete-quiz": {
             "post": {
                 "description": "Autocomplete the title of a quiz",
@@ -1622,6 +1671,45 @@
                     "$ref": "#/definitions/types.AnswerQuestionDataStruct"
                 },
                 "status_code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "types.AutocompleteQuestionRequestDTO": {
+            "type": "object",
+            "required": [
+                "category_id",
+                "content",
+                "quiz_title"
+            ],
+            "properties": {
+                "category_id": {
+                    "type": "string",
+                    "example": "d27b21ab-6177-4159-9e13-15dc50ffed29"
+                },
+                "content": {
+                    "type": "string",
+                    "example": "What is the capital of"
+                },
+                "quiz_title": {
+                    "type": "string",
+                    "example": "Geography Quiz"
+                }
+            }
+        },
+        "types.AutocompleteQuestionSuccessResponseDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "string",
+                    "example": "What is the capital of France?"
+                },
+                "statusCode": {
                     "type": "integer",
                     "example": 200
                 },
