@@ -19,6 +19,55 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/ai/autocomplete-quiz": {
+            "post": {
+                "description": "Autocomplete the title of a quiz",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ai"
+                ],
+                "summary": "Autocomplete Quiz Title",
+                "parameters": [
+                    {
+                        "description": "Autocomplete Quiz Request Body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.AutocompleteQuizRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.AutocompleteQuizSuccessResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            }
+        },
         "/categories": {
             "get": {
                 "description": "Retrieve a list of all categories",
@@ -1579,6 +1628,39 @@ const docTemplate = `{
                     "$ref": "#/definitions/types.AnswerQuestionDataStruct"
                 },
                 "status_code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "types.AutocompleteQuizRequestDTO": {
+            "type": "object",
+            "required": [
+                "category_id"
+            ],
+            "properties": {
+                "category_id": {
+                    "type": "string",
+                    "example": "d27b21ab-6177-4159-9e13-15dc50ffed29"
+                },
+                "content": {
+                    "type": "string",
+                    "example": "What is the capital of"
+                }
+            }
+        },
+        "types.AutocompleteQuizSuccessResponseDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "string",
+                    "example": "What is the capital of France?"
+                },
+                "statusCode": {
                     "type": "integer",
                     "example": 200
                 },
