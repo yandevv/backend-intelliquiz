@@ -12,9 +12,17 @@ type AutocompleteQuizSuccessResponseDTO struct {
 }
 
 type AutocompleteQuestionRequestDTO struct {
-	QuestionId string `json:"question_id" example:"a1b2c3d4-e5f6-7890-abcd-ef1234567890"`
+	QuizTitle  string `json:"quiz_title" binding:"required" example:"Geography Quiz"`
+	CategoryID string `json:"category_id" binding:"required" example:"d27b21ab-6177-4159-9e13-15dc50ffed29"`
+	Content    string `json:"content" binding:"required" example:"What is the capital of"`
+}
+
+type AutocompleteQuestionSuccessResponseDTO struct {
+	StatusCode int    `json:"statusCode" example:"200"`
+	Success    bool   `json:"success" example:"true"`
+	Data       string `json:"data" example:"What is the capital of France?"`
 }
 
 type AutocompleteChoiceRequestDTO struct {
-	ChoiceId string `json:"choice_id" example:"z9y8x7w6-v5u4-3210-tsrq-ponmlkjihgfe"`
+	ChoiceID string `json:"choice_id" example:"z9y8x7w6-v5u4-3210-tsrq-ponmlkjihgfe"`
 }
