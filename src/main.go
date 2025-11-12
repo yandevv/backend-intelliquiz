@@ -13,6 +13,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	openai "github.com/sashabaranov/go-openai"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
@@ -28,7 +29,7 @@ func dotEnvLoader() {
 	}
 }
 
-func setupRouter(db *gorm.DB) *gin.Engine {
+func setupRouter(db *gorm.DB, openAIClient *openai.Client) *gin.Engine {
 	// Disable Console Color
 	// gin.DisableConsoleColor()
 	r := gin.Default()
@@ -112,6 +113,13 @@ func setupRouter(db *gorm.DB) *gin.Engine {
 	jwtAuthorized.GET("/games/:gameId/result", func(c *gin.Context) { handlers.GameResultById(c, db) })
 	jwtAuthorized.GET("/me/games", func(c *gin.Context) { handlers.GamesResults(c, db) })
 
+	// Integration AI Routes
+	jwtAuthorized.POST("/ai/generate-quiz", func(c *gin.Context) { handlers.GenerateQuizAI(c, db, openAIClient) })
+	jwtAuthorized.POST("/ai/generate-question", func(c *gin.Context) { handlers.GenerateQuestionAI(c, db, openAIClient) })
+	jwtAuthorized.POST("/ai/autocomplete-quiz", func(c *gin.Context) { handlers.AutocompleteQuiz(c, db, openAIClient) })
+	jwtAuthorized.POST("/ai/autocomplete-question", func(c *gin.Context) { handlers.AutocompleteQuestion(c, db, openAIClient) })
+	jwtAuthorized.POST("/ai/autocomplete-choice", func(c *gin.Context) { handlers.AutocompleteChoice(c, db, openAIClient) })
+
 	if os.Getenv("GIN_MODE") != "production" {
 		docs.SwaggerInfo.BasePath = "/"
 		r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -154,7 +162,15 @@ func main() {
 		schemas.Run(db, &freshMigrate)
 	}
 
-	r := setupRouter(db)
+	var openAIClient *openai.Client
+	openAIKey := os.Getenv("OPENAI_API_KEY")
+	if openAIKey == "" {
+		log.Println("Warning: OPENAI_API_KEY is not set. AI features will not work.")
+	} else {
+		openAIClient = openai.NewClient(openAIKey)
+	}
+
+	r := setupRouter(db, openAIClient)
 
 	r.Run(":" + os.Getenv("PORT"))
 }
