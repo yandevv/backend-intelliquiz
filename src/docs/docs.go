@@ -562,6 +562,12 @@ const docTemplate = `{
                         "description": "Page number (0-indexed)",
                         "name": "page",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter quizzes by name, category name, user name, or username",
+                        "name": "name",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -910,6 +916,12 @@ const docTemplate = `{
                         "default": 0,
                         "description": "Page number (0-indexed)",
                         "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter quizzes by name, category name, user name, or username",
+                        "name": "name",
                         "in": "query"
                     }
                 ],
@@ -2873,13 +2885,14 @@ const docTemplate = `{
         },
         "types.UpdateChoiceRequestBody": {
             "type": "object",
-            "required": [
-                "content"
-            ],
             "properties": {
                 "content": {
                     "type": "string",
                     "example": "Paris"
+                },
+                "is_correct": {
+                    "type": "boolean",
+                    "example": true
                 }
             }
         },
@@ -2889,10 +2902,6 @@ const docTemplate = `{
                 "content": {
                     "type": "string",
                     "example": "What is the capital of France?"
-                },
-                "quiz_id": {
-                    "type": "string",
-                    "example": "4fdb53f5-74d2-4d0e-8267-43f893a51aca"
                 }
             }
         },

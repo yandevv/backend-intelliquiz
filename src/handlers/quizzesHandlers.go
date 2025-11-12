@@ -6,6 +6,7 @@ import (
 	"intelliquiz/src/middlewares"
 	"intelliquiz/src/types"
 	"log"
+	"math"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -23,6 +24,7 @@ import (
 // @Produce json
 // @Param limit query int false "Limit of quizzes per page (min: 5, max: 50)" default(10)
 // @Param page query int false "Page number (0-indexed)" default(0)
+// @Param name query string false "Filter quizzes by name, category name, user name, or username"
 // @Success 200 {object} types.GetQuizzesSuccessResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
 // @Router /quizzes [get]
@@ -34,9 +36,17 @@ func GetQuizzes(c *gin.Context, db *gorm.DB) {
 	limit = max(5, min(50, limit))
 	page = max(0, page)
 
-	quizzesCount, err := gorm.G[schemas.Quiz](db).
-		Where("name LIKE ?", "%"+quizNameFilter+"%").
-		Count(c.Request.Context(), "id")
+	var quizzesCount int64
+	err := db.Model(&schemas.Quiz{}).
+		WithContext(c.Request.Context()).
+		Where("quizzes.name LIKE ?", "%"+quizNameFilter+"%").
+		Or("categories.name LIKE ?", "%"+quizNameFilter+"%").
+		Or("users.name LIKE ?", "%"+quizNameFilter+"%").
+		Or("users.username LIKE ?", "%"+quizNameFilter+"%").
+		Joins("LEFT JOIN categories ON categories.id = quizzes.category_id").
+		Joins("LEFT JOIN users ON users.id = quizzes.created_by").
+		Count(&quizzesCount).
+		Error
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
 			StatusCode: http.StatusInternalServerError,
@@ -46,25 +56,30 @@ func GetQuizzes(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	quizzes, err := gorm.G[schemas.Quiz](db).
-		Select("id, name, category_id, created_by, curator_pick, image_url, created_at, updated_at").
-		Where("name LIKE ?", "%"+quizNameFilter+"%").
-		Preload("UserLikes", func(db gorm.PreloadBuilder) error {
-			db.Select("id")
-			return nil
+	var quizzes []schemas.Quiz
+	err = db.Model(&schemas.Quiz{}).
+		WithContext(c.Request.Context()).
+		Select("quizzes.id, quizzes.name, quizzes.category_id, quizzes.created_by, quizzes.curator_pick, quizzes.image_url, quizzes.created_at, quizzes.updated_at").
+		Where("quizzes.name LIKE ?", "%"+quizNameFilter+"%").
+		Or("categories.name LIKE ?", "%"+quizNameFilter+"%").
+		Or("users.name LIKE ?", "%"+quizNameFilter+"%").
+		Or("users.username LIKE ?", "%"+quizNameFilter+"%").
+		Joins("LEFT JOIN categories ON categories.id = quizzes.category_id").
+		Joins("LEFT JOIN users ON users.id = quizzes.created_by").
+		Preload("UserLikes", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id")
 		}).
-		Preload("Category", func(db gorm.PreloadBuilder) error {
-			db.Select("id, name")
-			return nil
+		Preload("Category", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id, name")
 		}).
-		Preload("User", func(db gorm.PreloadBuilder) error {
-			db.Select("id, username, name")
-			return nil
+		Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id, username, name")
 		}).
 		Preload("Games", nil).
 		Limit(limit).
 		Offset(page * limit).
-		Find(c.Request.Context())
+		Find(&quizzes).
+		Error
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
 			StatusCode: http.StatusInternalServerError,
@@ -86,7 +101,7 @@ func GetQuizzes(c *gin.Context, db *gorm.DB) {
 		"success":    true,
 		"data": gin.H{
 			"quizzes": quizzes,
-			"maxPage": int(quizzesCount) / limit,
+			"maxPage": math.Ceil(float64(quizzesCount)/float64(limit)) - 1,
 		},
 	})
 }
@@ -99,6 +114,7 @@ func GetQuizzes(c *gin.Context, db *gorm.DB) {
 // @Produce json
 // @Param limit query int false "Limit of quizzes per page (min: 5, max: 50)" default(10)
 // @Param page query int false "Page number (0-indexed)" default(0)
+// @Param name query string false "Filter quizzes by name, category name, user name, or username"
 // @Success 200 {object} types.GetOwnQuizzesSuccessResponseStruct
 // @Failure 403 {object} types.ForbiddenErrorResponseStruct
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
@@ -121,10 +137,20 @@ func GetOwnQuizzes(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	quizzesCount, err := gorm.G[schemas.Quiz](db).
-		Where("name LIKE ?", "%"+quizNameFilter+"%").
-		Where("created_by = ?", userUuid).
-		Count(c.Request.Context(), "id")
+	var quizzesCount int64
+	err = db.Model(&schemas.Quiz{}).
+		WithContext(c.Request.Context()).
+		Where("quizzes.created_by = ?", userUuid.String()).
+		Where(
+			db.Where("quizzes.name LIKE ?", "%"+quizNameFilter+"%").
+				Or("categories.name LIKE ?", "%"+quizNameFilter+"%").
+				Or("users.name LIKE ?", "%"+quizNameFilter+"%").
+				Or("users.username LIKE ?", "%"+quizNameFilter+"%"),
+		).
+		Joins("LEFT JOIN categories ON categories.id = quizzes.category_id").
+		Joins("LEFT JOIN users ON users.id = quizzes.created_by").
+		Count(&quizzesCount).
+		Error
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
 			StatusCode: http.StatusInternalServerError,
@@ -134,26 +160,33 @@ func GetOwnQuizzes(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	quizzes, err := gorm.G[schemas.Quiz](db).
-		Select("id, name, category_id, created_by, curator_pick, image_url, created_at, updated_at").
-		Where("name LIKE ?", "%"+quizNameFilter+"%").
-		Where("created_by = ?", userUuid).
-		Preload("UserLikes", func(db gorm.PreloadBuilder) error {
-			db.Select("id")
-			return nil
+	var quizzes []schemas.Quiz
+	err = db.Model(&schemas.Quiz{}).
+		WithContext(c.Request.Context()).
+		Select("quizzes.id, quizzes.name, quizzes.category_id, quizzes.created_by, quizzes.curator_pick, quizzes.image_url, quizzes.created_at, quizzes.updated_at").
+		Where("quizzes.created_by = ?", userUuid.String()).
+		Where(
+			db.Where("quizzes.name LIKE ?", "%"+quizNameFilter+"%").
+				Or("categories.name LIKE ?", "%"+quizNameFilter+"%").
+				Or("users.name LIKE ?", "%"+quizNameFilter+"%").
+				Or("users.username LIKE ?", "%"+quizNameFilter+"%"),
+		).
+		Joins("LEFT JOIN categories ON categories.id = quizzes.category_id").
+		Joins("LEFT JOIN users ON users.id = quizzes.created_by").
+		Preload("UserLikes", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id")
 		}).
-		Preload("Category", func(db gorm.PreloadBuilder) error {
-			db.Select("id, name")
-			return nil
+		Preload("Category", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id, name")
 		}).
-		Preload("User", func(db gorm.PreloadBuilder) error {
-			db.Select("id, username, name")
-			return nil
+		Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id, username, name")
 		}).
 		Preload("Games", nil).
 		Limit(limit).
 		Offset(page * limit).
-		Find(c.Request.Context())
+		Find(&quizzes).
+		Error
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
 			StatusCode: http.StatusInternalServerError,
@@ -175,7 +208,7 @@ func GetOwnQuizzes(c *gin.Context, db *gorm.DB) {
 		"success":    true,
 		"data": gin.H{
 			"quizzes": quizzes,
-			"maxPage": int(quizzesCount) / limit,
+			"maxPage": math.Ceil(float64(quizzesCount)/float64(limit)) - 1,
 		},
 	})
 }

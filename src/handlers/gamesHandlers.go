@@ -4,8 +4,10 @@ import (
 	"intelliquiz/src/database/schemas"
 	"intelliquiz/src/types"
 	"log"
+	"math"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -338,6 +340,12 @@ func AnswerQuestion(c *gin.Context, db *gorm.DB) {
 // @Failure 500 {object} types.InternalServerErrorResponseStruct
 // @Router /me/games [get]
 func GamesResults(c *gin.Context, db *gorm.DB) {
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "0"))
+
+	limit = max(5, min(50, limit))
+	page = max(0, page)
+
 	userUuid, err := uuid.Parse(c.MustGet("userID").(string))
 	if err != nil {
 		log.Printf("Error parsing User UUID from context: %v", err)
@@ -350,7 +358,22 @@ func GamesResults(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	games, err := gorm.G[schemas.Game](db).Where("user_id = ? AND finished_at IS NOT NULL", userUuid.String()).
+	gamesCount, err := gorm.G[schemas.Game](db).
+		Where("user_id = ? AND finished_at IS NOT NULL", userUuid.String()).
+		Count(c.Request.Context(), "id")
+	if err != nil {
+		log.Printf("Error retrieving games from database: %v", err)
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "Internal server error while retrieving games.",
+		})
+		return
+	}
+
+	games, err := gorm.G[schemas.Game](db).
+		Where("user_id = ? AND finished_at IS NOT NULL", userUuid.String()).
 		Select("id, user_id, created_at, updated_at, finished_at").
 		Preload("GameQuestions", nil).
 		Preload("GameQuestions.Question", func(db gorm.PreloadBuilder) error {
@@ -361,6 +384,9 @@ func GamesResults(c *gin.Context, db *gorm.DB) {
 			db.Select("id, content")
 			return nil
 		}).
+		Limit(limit).
+		Offset(page * limit).
+		Order("created_at DESC").
 		Find(c)
 	if err != nil {
 		log.Printf("Error retrieving games from database: %v", err)
@@ -377,7 +403,10 @@ func GamesResults(c *gin.Context, db *gorm.DB) {
 		c.JSON(http.StatusOK, gin.H{
 			"status_code": http.StatusOK,
 			"success":     true,
-			"data":        []schemas.Game{},
+			"data": gin.H{
+				"games":   []schemas.Game{},
+				"maxPage": math.Ceil(float64(gamesCount)/float64(limit)) - 1,
+			},
 		})
 		return
 	}
@@ -405,7 +434,10 @@ func GamesResults(c *gin.Context, db *gorm.DB) {
 	c.JSON(http.StatusOK, gin.H{
 		"status_code": http.StatusOK,
 		"success":     true,
-		"data":        games,
+		"data": gin.H{
+			"games":   games,
+			"maxPage": int(gamesCount)/limit - 1,
+		},
 	})
 }
 
