@@ -32,7 +32,7 @@ RUN go build -o main
 
 EXPOSE 8080
 
-CMD ["/intelliquiz/src/main", "--migrate=true", "--fresh=true"]
+CMD ["/intelliquiz/src/main"]
 
 FROM deps AS development
 
