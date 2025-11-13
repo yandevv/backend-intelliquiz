@@ -199,7 +199,7 @@ func HomePage(c *gin.Context, db *gorm.DB) {
 		Joins("LEFT JOIN games AS games_last_month ON games_last_month.quiz_id = quizzes.id AND games_last_month.created_at >= ?", time.Now().AddDate(0, -1, 0)).
 		Joins("LEFT JOIN quiz_user_likes AS ql_all_time ON ql_all_time.quiz_id = quizzes.id").
 		Joins("LEFT JOIN quiz_user_likes AS ql_last_month ON ql_last_month.quiz_id = quizzes.id AND ql_last_month.created_at >= ?", time.Now().AddDate(0, -1, 0)).
-		Select("quizzes.*, COUNT(ql_all_time.user_id) AS likes, (COUNT(games_all_time.id) * 0.05) + (COUNT(games_last_month.id) * 0.3) + (COUNT(ql_all_time.user_id) * 0.15) + (COUNT(ql_last_month.user_id) * 0.5) AS score").
+		Select("quizzes.*, COUNT(DISTINCT ql_all_time.user_id) AS likes, (COUNT(DISTINCT games_all_time.id) * 0.05) + (COUNT(DISTINCT games_last_month.id) * 0.3) + (COUNT(DISTINCT ql_all_time.user_id) * 0.15) + (COUNT(DISTINCT ql_last_month.user_id) * 0.5) AS score").
 		Group("quizzes.id").
 		Order("score DESC").
 		Limit(21).
