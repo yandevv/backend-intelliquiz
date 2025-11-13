@@ -26,14 +26,6 @@ WORKDIR /intelliquiz/src
 
 RUN swag init --parseDependency --parseInternal
 
-FROM deps AS build
-
-RUN go build -o main
-
-EXPOSE 8080
-
-CMD ["/intelliquiz/src/main"]
-
 FROM deps AS development
 
 WORKDIR /intelliquiz/src
@@ -41,3 +33,11 @@ WORKDIR /intelliquiz/src
 EXPOSE 8080
 
 CMD ["air"]
+
+FROM deps AS build
+
+RUN go build -o main
+
+EXPOSE 8080
+
+CMD ["/intelliquiz/src/main"]
