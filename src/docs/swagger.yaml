@@ -480,6 +480,25 @@ definitions:
         example: true
         type: boolean
     type: object
+  intelliquiz_src_types.GenerateQuizRequestDTO:
+    properties:
+      category_id:
+        example: d27b21ab-6177-4159-9e13-15dc50ffed29
+        type: string
+    required:
+    - category_id
+    type: object
+  intelliquiz_src_types.GenerateQuizSuccessResponseDTO:
+    properties:
+      data:
+        $ref: '#/definitions/intelliquiz_src_types.GeneratedQuizDataDTO'
+      statusCode:
+        example: 200
+        type: integer
+      success:
+        example: true
+        type: boolean
+    type: object
   intelliquiz_src_types.GeneratedChoiceDTO:
     properties:
       content:
@@ -490,6 +509,26 @@ definitions:
         type: boolean
     type: object
   intelliquiz_src_types.GeneratedQuestionDataDTO:
+    properties:
+      choices:
+        items:
+          $ref: '#/definitions/intelliquiz_src_types.GeneratedChoiceDTO'
+        type: array
+      question_content:
+        example: What is the capital of France?
+        type: string
+    type: object
+  intelliquiz_src_types.GeneratedQuizDataDTO:
+    properties:
+      questions:
+        items:
+          $ref: '#/definitions/intelliquiz_src_types.GeneratedQuizQuestionDTO'
+        type: array
+      quiz_title:
+        example: European Capitals Quiz
+        type: string
+    type: object
+  intelliquiz_src_types.GeneratedQuizQuestionDTO:
     properties:
       choices:
         items:
@@ -1275,6 +1314,43 @@ paths:
           schema:
             $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Generate Full Question with Choices
+      tags:
+      - ai
+  /ai/generate-quiz:
+    post:
+      description: Generate a complete quiz with title, questions and choices using
+        AI
+      parameters:
+      - description: Generate Quiz Request Body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/intelliquiz_src_types.GenerateQuizRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/intelliquiz_src_types.GenerateQuizSuccessResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/intelliquiz_src_types.NotFoundErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
+      summary: Generate Full Quiz with Questions and Choices
       tags:
       - ai
   /categories:

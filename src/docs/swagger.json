@@ -215,6 +215,61 @@
                 }
             }
         },
+        "/ai/generate-quiz": {
+            "post": {
+                "description": "Generate a complete quiz with title, questions and choices using AI",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ai"
+                ],
+                "summary": "Generate Full Quiz with Questions and Choices",
+                "parameters": [
+                    {
+                        "description": "Generate Quiz Request Body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/intelliquiz_src_types.GenerateQuizRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/intelliquiz_src_types.GenerateQuizSuccessResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/intelliquiz_src_types.NotFoundErrorResponseStruct"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct"
+                        }
+                    }
+                }
+            }
+        },
         "/categories": {
             "get": {
                 "description": "Retrieve a list of all categories",
@@ -2433,6 +2488,34 @@
                 }
             }
         },
+        "intelliquiz_src_types.GenerateQuizRequestDTO": {
+            "type": "object",
+            "required": [
+                "category_id"
+            ],
+            "properties": {
+                "category_id": {
+                    "type": "string",
+                    "example": "d27b21ab-6177-4159-9e13-15dc50ffed29"
+                }
+            }
+        },
+        "intelliquiz_src_types.GenerateQuizSuccessResponseDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/intelliquiz_src_types.GeneratedQuizDataDTO"
+                },
+                "statusCode": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
         "intelliquiz_src_types.GeneratedChoiceDTO": {
             "type": "object",
             "properties": {
@@ -2447,6 +2530,36 @@
             }
         },
         "intelliquiz_src_types.GeneratedQuestionDataDTO": {
+            "type": "object",
+            "properties": {
+                "choices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/intelliquiz_src_types.GeneratedChoiceDTO"
+                    }
+                },
+                "question_content": {
+                    "type": "string",
+                    "example": "What is the capital of France?"
+                }
+            }
+        },
+        "intelliquiz_src_types.GeneratedQuizDataDTO": {
+            "type": "object",
+            "properties": {
+                "questions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/intelliquiz_src_types.GeneratedQuizQuestionDTO"
+                    }
+                },
+                "quiz_title": {
+                    "type": "string",
+                    "example": "European Capitals Quiz"
+                }
+            }
+        },
+        "intelliquiz_src_types.GeneratedQuizQuestionDTO": {
             "type": "object",
             "properties": {
                 "choices": {
