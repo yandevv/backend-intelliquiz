@@ -1,6 +1,6 @@
 basePath: /
 definitions:
-  types.AnswerQuestionDataStruct:
+  intelliquiz_src_types.AnswerQuestionDataStruct:
     properties:
       is_correct:
         example: true
@@ -9,12 +9,12 @@ definitions:
         example: false
         type: boolean
       next_question:
-        $ref: '#/definitions/types.GameQuestionDTO'
+        $ref: '#/definitions/intelliquiz_src_types.GameQuestionDTO'
     type: object
-  types.AnswerQuestionResponseStruct:
+  intelliquiz_src_types.AnswerQuestionResponseStruct:
     properties:
       data:
-        $ref: '#/definitions/types.AnswerQuestionDataStruct'
+        $ref: '#/definitions/intelliquiz_src_types.AnswerQuestionDataStruct'
       status_code:
         example: 200
         type: integer
@@ -22,7 +22,7 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.AutocompleteChoiceRequestDTO:
+  intelliquiz_src_types.AutocompleteChoiceRequestDTO:
     properties:
       category_id:
         example: d27b21ab-6177-4159-9e13-15dc50ffed29
@@ -45,7 +45,7 @@ definitions:
     - question_content
     - quiz_title
     type: object
-  types.AutocompleteChoiceSuccessResponseDTO:
+  intelliquiz_src_types.AutocompleteChoiceSuccessResponseDTO:
     properties:
       data:
         example: Paris
@@ -57,7 +57,7 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.AutocompleteQuestionRequestDTO:
+  intelliquiz_src_types.AutocompleteQuestionRequestDTO:
     properties:
       category_id:
         example: d27b21ab-6177-4159-9e13-15dc50ffed29
@@ -72,7 +72,7 @@ definitions:
     - category_id
     - quiz_title
     type: object
-  types.AutocompleteQuestionSuccessResponseDTO:
+  intelliquiz_src_types.AutocompleteQuestionSuccessResponseDTO:
     properties:
       data:
         example: What is the capital of France?
@@ -84,7 +84,7 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.AutocompleteQuizRequestDTO:
+  intelliquiz_src_types.AutocompleteQuizRequestDTO:
     properties:
       category_id:
         example: d27b21ab-6177-4159-9e13-15dc50ffed29
@@ -95,7 +95,7 @@ definitions:
     required:
     - category_id
     type: object
-  types.AutocompleteQuizSuccessResponseDTO:
+  intelliquiz_src_types.AutocompleteQuizSuccessResponseDTO:
     properties:
       data:
         example: What is the capital of France?
@@ -107,7 +107,7 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.BadRequestErrorResponseStruct:
+  intelliquiz_src_types.BadRequestErrorResponseStruct:
     properties:
       message:
         example: Bad Request
@@ -119,7 +119,7 @@ definitions:
         example: false
         type: boolean
     type: object
-  types.CategoryQuizResponseDTOStruct:
+  intelliquiz_src_types.CategoryQuizResponseDTOStruct:
     properties:
       id:
         example: d27b21ab-6177-4159-9e13-15dc50ffed29
@@ -128,7 +128,7 @@ definitions:
         example: General Knowledge
         type: string
     type: object
-  types.CategoryResponseStruct:
+  intelliquiz_src_types.CategoryResponseStruct:
     properties:
       id:
         example: 123e4567-e89b-12d3-a456-426614174000
@@ -138,10 +138,10 @@ definitions:
         type: string
       quizzes:
         items:
-          $ref: '#/definitions/types.GetCategoryQuizDTO'
+          $ref: '#/definitions/intelliquiz_src_types.GetCategoryQuizDTO'
         type: array
     type: object
-  types.ChoiceDTO:
+  intelliquiz_src_types.ChoiceDTO:
     properties:
       content:
         example: Paris
@@ -162,7 +162,7 @@ definitions:
         example: "2024-01-01T00:00:00Z"
         type: string
     type: object
-  types.ChoicesCreateQuestionDTO:
+  intelliquiz_src_types.ChoicesCreateQuestionDTO:
     properties:
       content:
         example: Paris
@@ -174,7 +174,7 @@ definitions:
     - content
     - is_correct
     type: object
-  types.CreateChoiceRequestBody:
+  intelliquiz_src_types.CreateChoiceRequestBody:
     properties:
       content:
         example: Paris
@@ -182,10 +182,10 @@ definitions:
     required:
     - content
     type: object
-  types.CreateChoiceSuccessResponseStruct:
+  intelliquiz_src_types.CreateChoiceSuccessResponseStruct:
     properties:
       data:
-        $ref: '#/definitions/types.ChoiceDTO'
+        $ref: '#/definitions/intelliquiz_src_types.ChoiceDTO'
       statusCode:
         example: 201
         type: integer
@@ -193,11 +193,11 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.CreateQuestionRequestBody:
+  intelliquiz_src_types.CreateQuestionRequestBody:
     properties:
       choices:
         items:
-          $ref: '#/definitions/types.ChoicesCreateQuestionDTO'
+          $ref: '#/definitions/intelliquiz_src_types.ChoicesCreateQuestionDTO'
         minItems: 2
         type: array
       content:
@@ -211,10 +211,10 @@ definitions:
     - content
     - quiz_id
     type: object
-  types.CreateQuestionSuccessResponseStruct:
+  intelliquiz_src_types.CreateQuestionSuccessResponseStruct:
     properties:
       data:
-        $ref: '#/definitions/types.QuestionResponseDTO'
+        $ref: '#/definitions/intelliquiz_src_types.QuestionResponseDTO'
       statusCode:
         default: 201
         type: integer
@@ -222,7 +222,7 @@ definitions:
         default: true
         type: boolean
     type: object
-  types.CreateQuizQuestionChoiceStruct:
+  intelliquiz_src_types.CreateQuizQuestionChoiceStruct:
     properties:
       content:
         example: Paris
@@ -231,11 +231,11 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.CreateQuizQuestionsStruct:
+  intelliquiz_src_types.CreateQuizQuestionsStruct:
     properties:
       choices:
         items:
-          $ref: '#/definitions/types.CreateQuizQuestionChoiceStruct'
+          $ref: '#/definitions/intelliquiz_src_types.CreateQuizQuestionChoiceStruct'
         type: array
       content:
         example: What is the capital of France?
@@ -244,7 +244,7 @@ definitions:
     - choices
     - content
     type: object
-  types.CreateQuizRequestBody:
+  intelliquiz_src_types.CreateQuizRequestBody:
     properties:
       category_id:
         example: d27b21ab-6177-4159-9e13-15dc50ffed29
@@ -257,17 +257,17 @@ definitions:
         type: string
       questions:
         items:
-          $ref: '#/definitions/types.CreateQuizQuestionsStruct'
+          $ref: '#/definitions/intelliquiz_src_types.CreateQuizQuestionsStruct'
         type: array
     required:
     - category_id
     - name
     - questions
     type: object
-  types.CreateQuizSuccessResponseStruct:
+  intelliquiz_src_types.CreateQuizSuccessResponseStruct:
     properties:
       data:
-        $ref: '#/definitions/types.QuizResponseDTO'
+        $ref: '#/definitions/intelliquiz_src_types.QuizResponseDTO'
       statusCode:
         example: 201
         type: integer
@@ -275,7 +275,7 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.ForbiddenErrorResponseStruct:
+  intelliquiz_src_types.ForbiddenErrorResponseStruct:
     properties:
       message:
         example: Forbidden
@@ -287,7 +287,7 @@ definitions:
         example: false
         type: boolean
     type: object
-  types.GameQuestionChoiceDTO:
+  intelliquiz_src_types.GameQuestionChoiceDTO:
     properties:
       content:
         example: Choice content
@@ -299,11 +299,11 @@ definitions:
         example: 550e8400-e29b-41d4-a716-446655440001
         type: string
     type: object
-  types.GameQuestionDTO:
+  intelliquiz_src_types.GameQuestionDTO:
     properties:
       choices:
         items:
-          $ref: '#/definitions/types.GameQuestionChoiceDTO'
+          $ref: '#/definitions/intelliquiz_src_types.GameQuestionChoiceDTO'
         type: array
       content:
         example: Question content
@@ -315,13 +315,13 @@ definitions:
         example: 550e8400-e29b-41d4-a716-446655440002
         type: string
     type: object
-  types.GameQuestionResultDTO:
+  intelliquiz_src_types.GameQuestionResultDTO:
     properties:
       answered_at:
         example: "2025-10-25T18:45:27.849543Z"
         type: string
       choice:
-        $ref: '#/definitions/types.GameResultChoiceDTO'
+        $ref: '#/definitions/intelliquiz_src_types.GameResultChoiceDTO'
       choice_id:
         example: 04da923c-314a-41c6-98fc-8a39a992d5c0
         type: string
@@ -341,7 +341,7 @@ definitions:
         example: 0
         type: integer
       question:
-        $ref: '#/definitions/types.GameResultQuestionDTO'
+        $ref: '#/definitions/intelliquiz_src_types.GameResultQuestionDTO'
       question_id:
         example: c9118e52-e912-4396-9f66-f8976f84e935
         type: string
@@ -352,7 +352,7 @@ definitions:
         example: "2025-10-25T18:45:27.84965Z"
         type: string
     type: object
-  types.GameResultChoiceDTO:
+  intelliquiz_src_types.GameResultChoiceDTO:
     properties:
       content:
         example: Paris
@@ -361,15 +361,15 @@ definitions:
         example: 04da923c-314a-41c6-98fc-8a39a992d5c0
         type: string
     type: object
-  types.GameResultDetailedDataStruct:
+  intelliquiz_src_types.GameResultDetailedDataStruct:
     properties:
       game:
-        $ref: '#/definitions/types.GameResultGameDTO'
+        $ref: '#/definitions/intelliquiz_src_types.GameResultGameDTO'
     type: object
-  types.GameResultDetailedResponseStruct:
+  intelliquiz_src_types.GameResultDetailedResponseStruct:
     properties:
       data:
-        $ref: '#/definitions/types.GameResultDetailedDataStruct'
+        $ref: '#/definitions/intelliquiz_src_types.GameResultDetailedDataStruct'
       status_code:
         example: 200
         type: integer
@@ -377,7 +377,7 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.GameResultGameDTO:
+  intelliquiz_src_types.GameResultGameDTO:
     properties:
       correct_answers:
         example: 1
@@ -390,7 +390,7 @@ definitions:
         type: string
       game_questions:
         items:
-          $ref: '#/definitions/types.GameQuestionResultDTO'
+          $ref: '#/definitions/intelliquiz_src_types.GameQuestionResultDTO'
         type: array
       id:
         example: 38822b7e-1a36-492e-bfc3-8c26131a278f
@@ -408,7 +408,7 @@ definitions:
         example: 4b97df8d-7616-47da-858f-acddb95d675a
         type: string
     type: object
-  types.GameResultQuestionDTO:
+  intelliquiz_src_types.GameResultQuestionDTO:
     properties:
       content:
         example: Qual a capital da França?
@@ -417,7 +417,7 @@ definitions:
         example: c9118e52-e912-4396-9f66-f8976f84e935
         type: string
     type: object
-  types.GamesResultsDataStruct:
+  intelliquiz_src_types.GamesResultsDataStruct:
     properties:
       correct_answers:
         example: 1
@@ -444,11 +444,11 @@ definitions:
         example: 4b97df8d-7616-47da-858f-acddb95d675a
         type: string
     type: object
-  types.GamesResultsResponseStruct:
+  intelliquiz_src_types.GamesResultsResponseStruct:
     properties:
       data:
         items:
-          $ref: '#/definitions/types.GamesResultsDataStruct'
+          $ref: '#/definitions/intelliquiz_src_types.GamesResultsDataStruct'
         type: array
       status_code:
         example: 200
@@ -457,11 +457,53 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.GetCategoriesSuccessResponseStruct:
+  intelliquiz_src_types.GenerateQuestionRequestDTO:
+    properties:
+      category_id:
+        example: d27b21ab-6177-4159-9e13-15dc50ffed29
+        type: string
+      quiz_title:
+        example: Geography Quiz
+        type: string
+    required:
+    - category_id
+    - quiz_title
+    type: object
+  intelliquiz_src_types.GenerateQuestionSuccessResponseDTO:
+    properties:
+      data:
+        $ref: '#/definitions/intelliquiz_src_types.GeneratedQuestionDataDTO'
+      statusCode:
+        example: 200
+        type: integer
+      success:
+        example: true
+        type: boolean
+    type: object
+  intelliquiz_src_types.GeneratedChoiceDTO:
+    properties:
+      content:
+        example: Paris
+        type: string
+      is_correct:
+        example: true
+        type: boolean
+    type: object
+  intelliquiz_src_types.GeneratedQuestionDataDTO:
+    properties:
+      choices:
+        items:
+          $ref: '#/definitions/intelliquiz_src_types.GeneratedChoiceDTO'
+        type: array
+      question_content:
+        example: What is the capital of France?
+        type: string
+    type: object
+  intelliquiz_src_types.GetCategoriesSuccessResponseStruct:
     properties:
       data:
         items:
-          $ref: '#/definitions/types.CategoryResponseStruct'
+          $ref: '#/definitions/intelliquiz_src_types.CategoryResponseStruct'
         type: array
       statusCode:
         example: 200
@@ -470,7 +512,7 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.GetCategoryQuizDTO:
+  intelliquiz_src_types.GetCategoryQuizDTO:
     properties:
       category_id:
         example: 123e4567-e89b-12d3-a456-426614174000
@@ -485,10 +527,10 @@ definitions:
         example: General Knowledge Quiz
         type: string
     type: object
-  types.GetCategorySuccessResponseStruct:
+  intelliquiz_src_types.GetCategorySuccessResponseStruct:
     properties:
       data:
-        $ref: '#/definitions/types.CategoryResponseStruct'
+        $ref: '#/definitions/intelliquiz_src_types.CategoryResponseStruct'
       statusCode:
         example: 200
         type: integer
@@ -496,10 +538,10 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.GetChoiceSuccessResponseStruct:
+  intelliquiz_src_types.GetChoiceSuccessResponseStruct:
     properties:
       data:
-        $ref: '#/definitions/types.ChoiceDTO'
+        $ref: '#/definitions/intelliquiz_src_types.ChoiceDTO'
       statusCode:
         example: 200
         type: integer
@@ -507,11 +549,11 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.GetChoicesSuccessResponseStruct:
+  intelliquiz_src_types.GetChoicesSuccessResponseStruct:
     properties:
       data:
         items:
-          $ref: '#/definitions/types.ChoiceDTO'
+          $ref: '#/definitions/intelliquiz_src_types.ChoiceDTO'
         type: array
       statusCode:
         example: 200
@@ -520,20 +562,20 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.GetOwnQuizzesDataField:
+  intelliquiz_src_types.GetOwnQuizzesDataField:
     properties:
       maxPage:
         example: 10
         type: integer
       quizzes:
         items:
-          $ref: '#/definitions/types.QuizResponseDTO'
+          $ref: '#/definitions/intelliquiz_src_types.QuizResponseDTO'
         type: array
     type: object
-  types.GetOwnQuizzesSuccessResponseStruct:
+  intelliquiz_src_types.GetOwnQuizzesSuccessResponseStruct:
     properties:
       data:
-        $ref: '#/definitions/types.GetOwnQuizzesDataField'
+        $ref: '#/definitions/intelliquiz_src_types.GetOwnQuizzesDataField'
       statusCode:
         example: 200
         type: integer
@@ -541,10 +583,10 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.GetOwnUserSuccessResponseStruct:
+  intelliquiz_src_types.GetOwnUserSuccessResponseStruct:
     properties:
       data:
-        $ref: '#/definitions/types.UserWithEmailResponseStruct'
+        $ref: '#/definitions/intelliquiz_src_types.UserWithEmailResponseStruct'
       statusCode:
         example: 200
         type: integer
@@ -552,10 +594,10 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.GetQuestionSuccessResponseStruct:
+  intelliquiz_src_types.GetQuestionSuccessResponseStruct:
     properties:
       data:
-        $ref: '#/definitions/types.QuestionResponseDTO'
+        $ref: '#/definitions/intelliquiz_src_types.QuestionResponseDTO'
       statusCode:
         default: 200
         type: integer
@@ -563,11 +605,11 @@ definitions:
         default: true
         type: boolean
     type: object
-  types.GetQuestionsSuccessResponseStruct:
+  intelliquiz_src_types.GetQuestionsSuccessResponseStruct:
     properties:
       data:
         items:
-          $ref: '#/definitions/types.QuestionResponseDTO'
+          $ref: '#/definitions/intelliquiz_src_types.QuestionResponseDTO'
         type: array
       statusCode:
         default: 200
@@ -576,10 +618,10 @@ definitions:
         default: true
         type: boolean
     type: object
-  types.GetQuizSuccessResponseStruct:
+  intelliquiz_src_types.GetQuizSuccessResponseStruct:
     properties:
       data:
-        $ref: '#/definitions/types.QuizDetailedResponseDTO'
+        $ref: '#/definitions/intelliquiz_src_types.QuizDetailedResponseDTO'
       statusCode:
         example: 200
         type: integer
@@ -587,20 +629,20 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.GetQuizzesDataField:
+  intelliquiz_src_types.GetQuizzesDataField:
     properties:
       maxPage:
         example: 10
         type: integer
       quizzes:
         items:
-          $ref: '#/definitions/types.QuizResponseDTO'
+          $ref: '#/definitions/intelliquiz_src_types.QuizResponseDTO'
         type: array
     type: object
-  types.GetQuizzesSuccessResponseStruct:
+  intelliquiz_src_types.GetQuizzesSuccessResponseStruct:
     properties:
       data:
-        $ref: '#/definitions/types.GetQuizzesDataField'
+        $ref: '#/definitions/intelliquiz_src_types.GetQuizzesDataField'
       statusCode:
         example: 200
         type: integer
@@ -608,11 +650,11 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.GetUsersSuccessResponseStruct:
+  intelliquiz_src_types.GetUsersSuccessResponseStruct:
     properties:
       data:
         items:
-          $ref: '#/definitions/types.UserResponseStruct'
+          $ref: '#/definitions/intelliquiz_src_types.UserResponseStruct'
         type: array
       statusCode:
         example: 200
@@ -621,7 +663,7 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.HomePageCategoryDTO:
+  intelliquiz_src_types.HomePageCategoryDTO:
     properties:
       id:
         example: 69f93509-275f-4c04-b5da-f105f4764830
@@ -630,30 +672,30 @@ definitions:
         example: Geografia
         type: string
     type: object
-  types.HomePageDataField:
+  intelliquiz_src_types.HomePageDataField:
     properties:
       bestQuizzesOfMonth:
         items:
-          $ref: '#/definitions/types.HomePageQuizDTO'
+          $ref: '#/definitions/intelliquiz_src_types.HomePageQuizDTO'
         type: array
       curatedQuizzes:
         items:
-          $ref: '#/definitions/types.HomePageQuizDTO'
+          $ref: '#/definitions/intelliquiz_src_types.HomePageQuizDTO'
         type: array
       mostLikedQuizzes:
         items:
-          $ref: '#/definitions/types.HomePageQuizDTO'
+          $ref: '#/definitions/intelliquiz_src_types.HomePageQuizDTO'
         type: array
       mostPlayedQuizzes:
         items:
-          $ref: '#/definitions/types.HomePageQuizDTO'
+          $ref: '#/definitions/intelliquiz_src_types.HomePageQuizDTO'
         type: array
       newlyAddedQuizzes:
         items:
-          $ref: '#/definitions/types.HomePageQuizDTO'
+          $ref: '#/definitions/intelliquiz_src_types.HomePageQuizDTO'
         type: array
     type: object
-  types.HomePageGameDTO:
+  intelliquiz_src_types.HomePageGameDTO:
     properties:
       correct_answers:
         example: 7
@@ -671,10 +713,10 @@ definitions:
         example: 120
         type: integer
     type: object
-  types.HomePageQuizDTO:
+  intelliquiz_src_types.HomePageQuizDTO:
     properties:
       category:
-        $ref: '#/definitions/types.HomePageCategoryDTO'
+        $ref: '#/definitions/intelliquiz_src_types.HomePageCategoryDTO'
       category_id:
         example: 69f93509-275f-4c04-b5da-f105f4764830
         type: string
@@ -689,7 +731,7 @@ definitions:
         type: boolean
       games:
         items:
-          $ref: '#/definitions/types.HomePageGameDTO'
+          $ref: '#/definitions/intelliquiz_src_types.HomePageGameDTO'
         type: array
       games_played:
         example: 1
@@ -710,12 +752,12 @@ definitions:
         example: "2025-11-04T21:40:51.906957Z"
         type: string
       user:
-        $ref: '#/definitions/types.HomePageUserDTO'
+        $ref: '#/definitions/intelliquiz_src_types.HomePageUserDTO'
     type: object
-  types.HomePageSuccessResponseStruct:
+  intelliquiz_src_types.HomePageSuccessResponseStruct:
     properties:
       data:
-        $ref: '#/definitions/types.HomePageDataField'
+        $ref: '#/definitions/intelliquiz_src_types.HomePageDataField'
       message:
         example: Quizzes retrieved successfully
         type: string
@@ -726,7 +768,7 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.HomePageUserDTO:
+  intelliquiz_src_types.HomePageUserDTO:
     properties:
       id:
         example: ece40bba-484f-4de3-9ca6-9aa5cf56220b
@@ -735,7 +777,7 @@ definitions:
         example: newyann
         type: string
     type: object
-  types.InternalServerErrorResponseStruct:
+  intelliquiz_src_types.InternalServerErrorResponseStruct:
     properties:
       message:
         default: Internal Server Error
@@ -747,7 +789,7 @@ definitions:
         default: false
         type: boolean
     type: object
-  types.LoginRequestBody:
+  intelliquiz_src_types.LoginRequestBody:
     properties:
       password:
         example: password123
@@ -759,7 +801,7 @@ definitions:
     - password
     - username
     type: object
-  types.LoginResponseData:
+  intelliquiz_src_types.LoginResponseData:
     properties:
       refreshToken:
         example: eyJhbGciOiJSUzI1NiIsImtpZCI6IjY0Y2I3Y2E3Y2I3Y2E3Y2I3Y2E3Y2E3Y2E3Y2E3Y2EifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJpbnRlbGxpcXVpei1jMjczNCIsImF1dGhfdGltZSI6MTcwMTIzNzM5NSwidXNlcl9pZCI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsInN1YiI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsImlhdCI6MTcwMTIzNzM5NSwiZXhwIjoxNzAxMjQxOTk1LCJlbWFpbCI6InlhbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0.XYZ
@@ -768,10 +810,10 @@ definitions:
         example: eyJhbGciOiJSUzI1NiIsImtpZCI6IjY0Y2I3Y2E3Y2I3Y2E3Y2I3Y2E3Y2E3Y2E3Y2E3Y2EifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJpbnRlbGxpcXVpei1jMjczNCIsImF1dGhfdGltZSI6MTcwMTIzNzM5NSwidXNlcl9pZCI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsInN1YiI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsImlhdCI6MTcwMTIzNzM5NSwiZXhwIjoxNzAxMjQxOTk1LCJlbWFpbCI6InlhbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0.XYZ
         type: string
     type: object
-  types.LoginResponseStruct:
+  intelliquiz_src_types.LoginResponseStruct:
     properties:
       data:
-        $ref: '#/definitions/types.LoginResponseData'
+        $ref: '#/definitions/intelliquiz_src_types.LoginResponseData'
       statusCode:
         example: 200
         type: integer
@@ -779,7 +821,7 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.NotFoundErrorResponseStruct:
+  intelliquiz_src_types.NotFoundErrorResponseStruct:
     properties:
       message:
         example: Not Found
@@ -791,7 +833,7 @@ definitions:
         example: false
         type: boolean
     type: object
-  types.QuestionResponseDTO:
+  intelliquiz_src_types.QuestionResponseDTO:
     properties:
       content:
         default: What is the capital of France?
@@ -803,7 +845,7 @@ definitions:
         default: d27b21ab-6177-4159-9e13-15dc50ffed29
         type: string
     type: object
-  types.QuizChoiceResponseDTO:
+  intelliquiz_src_types.QuizChoiceResponseDTO:
     properties:
       content:
         example: Paris
@@ -818,10 +860,10 @@ definitions:
         example: 78712bb2-7005-4510-bff6-133359af04f9
         type: string
     type: object
-  types.QuizDetailedResponseDTO:
+  intelliquiz_src_types.QuizDetailedResponseDTO:
     properties:
       category:
-        $ref: '#/definitions/types.CategoryQuizResponseDTOStruct'
+        $ref: '#/definitions/intelliquiz_src_types.CategoryQuizResponseDTOStruct'
       category_id:
         example: d27b21ab-6177-4159-9e13-15dc50ffed29
         type: string
@@ -851,19 +893,19 @@ definitions:
         type: string
       questions:
         items:
-          $ref: '#/definitions/types.QuizQuestionResponseDTO'
+          $ref: '#/definitions/intelliquiz_src_types.QuizQuestionResponseDTO'
         type: array
       updated_at:
         example: "2025-10-22T19:01:58.778079424Z"
         type: string
       user:
-        $ref: '#/definitions/types.UserQuizResponseDTOStruct'
+        $ref: '#/definitions/intelliquiz_src_types.UserQuizResponseDTOStruct'
     type: object
-  types.QuizQuestionResponseDTO:
+  intelliquiz_src_types.QuizQuestionResponseDTO:
     properties:
       choices:
         items:
-          $ref: '#/definitions/types.QuizChoiceResponseDTO'
+          $ref: '#/definitions/intelliquiz_src_types.QuizChoiceResponseDTO'
         type: array
       content:
         example: Qual a capital da França?
@@ -875,10 +917,10 @@ definitions:
         example: 304827d4-f291-4253-9a86-07d2305afd95
         type: string
     type: object
-  types.QuizResponseDTO:
+  intelliquiz_src_types.QuizResponseDTO:
     properties:
       category:
-        $ref: '#/definitions/types.CategoryQuizResponseDTOStruct'
+        $ref: '#/definitions/intelliquiz_src_types.CategoryQuizResponseDTOStruct'
       category_id:
         example: d27b21ab-6177-4159-9e13-15dc50ffed29
         type: string
@@ -910,9 +952,9 @@ definitions:
         example: "2025-10-22T19:01:58.778079424Z"
         type: string
       user:
-        $ref: '#/definitions/types.UserQuizResponseDTOStruct'
+        $ref: '#/definitions/intelliquiz_src_types.UserQuizResponseDTOStruct'
     type: object
-  types.RefreshRequestBody:
+  intelliquiz_src_types.RefreshRequestBody:
     properties:
       refreshToken:
         example: eyJhbGciOiJSUzI1NiIsImtpZCI6IjY0Y2I3Y2E3Y2I3Y2E3Y2I3Y2E3Y2E3Y2E3Y2E3Y2EifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJpbnRlbGxpcXVpei1jMjczNCIsImF1dGhfdGltZSI6MTcwMTIzNzM5NSwidXNlcl9pZCI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsInN1YiI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsImlhdCI6MTcwMTIzNzM5NSwiZXhwIjoxNzAxMjQxOTk1LCJlbWFpbCI6InlhbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0.XYZ
@@ -920,7 +962,7 @@ definitions:
     required:
     - refreshToken
     type: object
-  types.RefreshResponseData:
+  intelliquiz_src_types.RefreshResponseData:
     properties:
       refreshToken:
         example: eyJhbGciOiJSUzI1NiIsImtpZCI6IjY0Y2I3Y2E3Y2I3Y2E3Y2I3Y2E3Y2E3Y2E3Y2E3Y2EifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJpbnRlbGxpcXVpei1jMjczNCIsImF1dGhfdGltZSI6MTcwMTIzNzM5NSwidXNlcl9pZCI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsInN1YiI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsImlhdCI6MTcwMTIzNzM5NSwiZXhwIjoxNzAxMjQxOTk1LCJlbWFpbCI6InlhbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0.XYZ
@@ -929,10 +971,10 @@ definitions:
         example: eyJhbGciOiJSUzI1NiIsImtpZCI6IjY0Y2I3Y2E3Y2I3Y2E3Y2I3Y2E3Y2E3Y2E3Y2E3Y2EifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJpbnRlbGxpcXVpei1jMjczNCIsImF1dGhfdGltZSI6MTcwMTIzNzM5NSwidXNlcl9pZCI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsInN1YiI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsImlhdCI6MTcwMTIzNzM5NSwiZXhwIjoxNzAxMjQxOTk1LCJlbWFpbCI6InlhbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0.XYZ
         type: string
     type: object
-  types.RefreshResponseStruct:
+  intelliquiz_src_types.RefreshResponseStruct:
     properties:
       data:
-        $ref: '#/definitions/types.RefreshResponseData'
+        $ref: '#/definitions/intelliquiz_src_types.RefreshResponseData'
       statusCode:
         example: 201
         type: integer
@@ -940,7 +982,7 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.SignUpRequestBody:
+  intelliquiz_src_types.SignUpRequestBody:
     properties:
       email:
         example: johndoe@example.com
@@ -961,7 +1003,7 @@ definitions:
     - password
     - username
     type: object
-  types.SignUpResponseData:
+  intelliquiz_src_types.SignUpResponseData:
     properties:
       refreshToken:
         example: eyJhbGciOiJSUzI1NiIsImtpZCI6IjY0Y2I3Y2E3Y2I3Y2E3Y2I3Y2E3Y2E3Y2E3Y2E3Y2EifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJpbnRlbGxpcXVpei1jMjczNCIsImF1dGhfdGltZSI6MTcwMTIzNzM5NSwidXNlcl9pZCI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsInN1YiI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsImlhdCI6MTcwMTIzNzM5NSwiZXhwIjoxNzAxMjQxOTk1LCJlbWFpbCI6InlhbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0.XYZ
@@ -970,10 +1012,10 @@ definitions:
         example: eyJhbGciOiJSUzI1NiIsImtpZCI6IjY0Y2I3Y2E3Y2I3Y2E3Y2I3Y2E3Y2E3Y2E3Y2E3Y2EifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJpbnRlbGxpcXVpei1jMjczNCIsImF1dGhfdGltZSI6MTcwMTIzNzM5NSwidXNlcl9pZCI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsInN1YiI6Ijg5ZjI4ZjA4MjM0NmRiMGI4ODAzZDIyMiIsImlhdCI6MTcwMTIzNzM5NSwiZXhwIjoxNzAxMjQxOTk1LCJlbWFpbCI6InlhbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0.XYZ
         type: string
     type: object
-  types.SignUpResponseStruct:
+  intelliquiz_src_types.SignUpResponseStruct:
     properties:
       data:
-        $ref: '#/definitions/types.SignUpResponseData'
+        $ref: '#/definitions/intelliquiz_src_types.SignUpResponseData'
       statusCode:
         example: 201
         type: integer
@@ -981,21 +1023,21 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.StartGameDataStruct:
+  intelliquiz_src_types.StartGameDataStruct:
     properties:
       game_id:
         example: 550e8400-e29b-41d4-a716-446655440003
         type: string
       question:
-        $ref: '#/definitions/types.GameQuestionDTO'
+        $ref: '#/definitions/intelliquiz_src_types.GameQuestionDTO'
       total_questions:
         example: 10
         type: integer
     type: object
-  types.StartGameResponseStruct:
+  intelliquiz_src_types.StartGameResponseStruct:
     properties:
       data:
-        $ref: '#/definitions/types.StartGameDataStruct'
+        $ref: '#/definitions/intelliquiz_src_types.StartGameDataStruct'
       status_code:
         example: 201
         type: integer
@@ -1003,7 +1045,7 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.SuccessResponseStruct:
+  intelliquiz_src_types.SuccessResponseStruct:
     properties:
       message:
         example: OK
@@ -1015,7 +1057,7 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.UpdateChoiceRequestBody:
+  intelliquiz_src_types.UpdateChoiceRequestBody:
     properties:
       content:
         example: Paris
@@ -1024,13 +1066,13 @@ definitions:
         example: true
         type: boolean
     type: object
-  types.UpdateQuestionRequestBody:
+  intelliquiz_src_types.UpdateQuestionRequestBody:
     properties:
       content:
         example: What is the capital of France?
         type: string
     type: object
-  types.UpdateQuizRequestBody:
+  intelliquiz_src_types.UpdateQuizRequestBody:
     properties:
       category_id:
         example: d27b21ab-6177-4159-9e13-15dc50ffed29
@@ -1042,7 +1084,7 @@ definitions:
         example: Sample Quiz
         type: string
     type: object
-  types.UpdateUserRequestBody:
+  intelliquiz_src_types.UpdateUserRequestBody:
     properties:
       email:
         type: string
@@ -1051,7 +1093,7 @@ definitions:
       username:
         type: string
     type: object
-  types.UserQuizResponseDTOStruct:
+  intelliquiz_src_types.UserQuizResponseDTOStruct:
     properties:
       id:
         example: 0fde5216-1bab-41f6-bd90-4c3f088ee91f
@@ -1063,7 +1105,7 @@ definitions:
         example: john_doe
         type: string
     type: object
-  types.UserResponseStruct:
+  intelliquiz_src_types.UserResponseStruct:
     properties:
       id:
         example: c6c45f7c-107b-4454-8bdf-a9cff7d3089b
@@ -1075,7 +1117,7 @@ definitions:
         example: johndoe
         type: string
     type: object
-  types.UserWithEmailResponseStruct:
+  intelliquiz_src_types.UserWithEmailResponseStruct:
     properties:
       email:
         example: johndoe@example.com
@@ -1112,26 +1154,26 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.AutocompleteChoiceRequestDTO'
+          $ref: '#/definitions/intelliquiz_src_types.AutocompleteChoiceRequestDTO'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.AutocompleteChoiceSuccessResponseDTO'
+            $ref: '#/definitions/intelliquiz_src_types.AutocompleteChoiceSuccessResponseDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Autocomplete Choice Content
       tags:
       - ai
@@ -1144,26 +1186,26 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.AutocompleteQuestionRequestDTO'
+          $ref: '#/definitions/intelliquiz_src_types.AutocompleteQuestionRequestDTO'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.AutocompleteQuestionSuccessResponseDTO'
+            $ref: '#/definitions/intelliquiz_src_types.AutocompleteQuestionSuccessResponseDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Autocomplete Question Content
       tags:
       - ai
@@ -1176,27 +1218,63 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.AutocompleteQuizRequestDTO'
+          $ref: '#/definitions/intelliquiz_src_types.AutocompleteQuizRequestDTO'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.AutocompleteQuizSuccessResponseDTO'
+            $ref: '#/definitions/intelliquiz_src_types.AutocompleteQuizSuccessResponseDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Autocomplete Quiz Title
+      tags:
+      - ai
+  /ai/generate-question:
+    post:
+      description: Generate a complete question with multiple choices using AI
+      parameters:
+      - description: Generate Question Request Body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/intelliquiz_src_types.GenerateQuestionRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/intelliquiz_src_types.GenerateQuestionSuccessResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/intelliquiz_src_types.NotFoundErrorResponseStruct'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
+      summary: Generate Full Question with Choices
       tags:
       - ai
   /categories:
@@ -1208,15 +1286,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.GetCategoriesSuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.GetCategoriesSuccessResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Get all categories
       tags:
       - categories
@@ -1235,23 +1313,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.GetCategorySuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.GetCategorySuccessResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.NotFoundErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Get a category by ID
       tags:
       - categories
@@ -1270,23 +1348,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.SuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.SuccessResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.NotFoundErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Delete a choice by ID
       tags:
       - choices
@@ -1304,23 +1382,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.GetChoiceSuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.GetChoiceSuccessResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.NotFoundErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Get a choice by ID
       tags:
       - choices
@@ -1339,30 +1417,30 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.UpdateChoiceRequestBody'
+          $ref: '#/definitions/intelliquiz_src_types.UpdateChoiceRequestBody'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.SuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.SuccessResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.NotFoundErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Update a choice by ID
       tags:
       - choices
@@ -1386,23 +1464,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.AnswerQuestionResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.AnswerQuestionResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.NotFoundErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Answer a question in a game
       tags:
       - games
@@ -1421,23 +1499,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.GameResultDetailedResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.GameResultDetailedResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.NotFoundErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Get game result
       tags:
       - games
@@ -1450,11 +1528,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.HomePageSuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.HomePageSuccessResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Get quizzes for home page
       tags:
       - homepage
@@ -1469,26 +1547,26 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.LoginRequestBody'
+          $ref: '#/definitions/intelliquiz_src_types.LoginRequestBody'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.LoginResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.LoginResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Log in a user
       tags:
       - authentication
@@ -1501,19 +1579,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.GetOwnUserSuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.GetOwnUserSuccessResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.NotFoundErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Get own user data
       tags:
       - users
@@ -1526,19 +1604,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.GamesResultsResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.GamesResultsResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Get user's finished games
       tags:
       - games
@@ -1566,15 +1644,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.GetOwnQuizzesSuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.GetOwnQuizzesSuccessResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Get own quizzes
       tags:
       - quizzes
@@ -1587,11 +1665,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.GetQuestionsSuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.GetQuestionsSuccessResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Get all questions
       tags:
       - questions
@@ -1603,22 +1681,22 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.CreateQuestionRequestBody'
+          $ref: '#/definitions/intelliquiz_src_types.CreateQuestionRequestBody'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/types.CreateQuestionSuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.CreateQuestionSuccessResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Create a new question
       tags:
       - questions
@@ -1637,19 +1715,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.SuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.SuccessResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.NotFoundErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Delete a question by ID
       tags:
       - questions
@@ -1667,19 +1745,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.GetQuestionSuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.GetQuestionSuccessResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.NotFoundErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Get a question by ID
       tags:
       - questions
@@ -1696,26 +1774,26 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.UpdateQuestionRequestBody'
+          $ref: '#/definitions/intelliquiz_src_types.UpdateQuestionRequestBody'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.SuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.SuccessResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.NotFoundErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Update a question by ID
       tags:
       - questions
@@ -1734,15 +1812,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.GetChoicesSuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.GetChoicesSuccessResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Get all choices
       tags:
       - choices
@@ -1754,26 +1832,26 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.CreateChoiceRequestBody'
+          $ref: '#/definitions/intelliquiz_src_types.CreateChoiceRequestBody'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/types.CreateChoiceSuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.CreateChoiceSuccessResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Create a new choice
       tags:
       - choices
@@ -1801,11 +1879,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.GetQuizzesSuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.GetQuizzesSuccessResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Get all quizzes
       tags:
       - quizzes
@@ -1817,26 +1895,26 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.CreateQuizRequestBody'
+          $ref: '#/definitions/intelliquiz_src_types.CreateQuizRequestBody'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/types.CreateQuizSuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.CreateQuizSuccessResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Create a new quiz
       tags:
       - quizzes
@@ -1855,23 +1933,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.SuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.SuccessResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.NotFoundErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Delete a quiz by ID
       tags:
       - quizzes
@@ -1889,19 +1967,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.GetQuizSuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.GetQuizSuccessResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.NotFoundErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Get a quiz by ID
       tags:
       - quizzes
@@ -1920,30 +1998,30 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.UpdateQuizRequestBody'
+          $ref: '#/definitions/intelliquiz_src_types.UpdateQuizRequestBody'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.SuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.SuccessResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.NotFoundErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Update a quiz by ID
       tags:
       - quizzes
@@ -1962,23 +2040,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.SuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.SuccessResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.NotFoundErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Dislike a quiz by ID
       tags:
       - quizzes
@@ -1997,23 +2075,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.SuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.SuccessResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.NotFoundErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Like a quiz by ID
       tags:
       - quizzes
@@ -2032,23 +2110,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.StartGameResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.StartGameResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.NotFoundErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Start a new game
       tags:
       - games
@@ -2063,26 +2141,26 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.RefreshRequestBody'
+          $ref: '#/definitions/intelliquiz_src_types.RefreshRequestBody'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/types.RefreshResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.RefreshResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Refresh access and refresh tokens
       tags:
       - authentication
@@ -2097,22 +2175,22 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.SignUpRequestBody'
+          $ref: '#/definitions/intelliquiz_src_types.SignUpRequestBody'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/types.SignUpResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.SignUpResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Register a new user
       tags:
       - authentication
@@ -2125,15 +2203,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.GetUsersSuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.GetUsersSuccessResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Get all users
       tags:
       - users
@@ -2152,23 +2230,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.UserResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.UserResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.NotFoundErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Get a user by ID
       tags:
       - users
@@ -2187,30 +2265,30 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/types.UpdateUserRequestBody'
+          $ref: '#/definitions/intelliquiz_src_types.UpdateUserRequestBody'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.SuccessResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.SuccessResponseStruct'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/types.BadRequestErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.BadRequestErrorResponseStruct'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/types.ForbiddenErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.ForbiddenErrorResponseStruct'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/types.NotFoundErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.NotFoundErrorResponseStruct'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/types.InternalServerErrorResponseStruct'
+            $ref: '#/definitions/intelliquiz_src_types.InternalServerErrorResponseStruct'
       summary: Update a user by ID
       tags:
       - users
