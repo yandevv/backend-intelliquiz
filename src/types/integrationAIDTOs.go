@@ -57,3 +57,23 @@ type GenerateQuestionSuccessResponseDTO struct {
 	Success    bool                     `json:"success" example:"true"`
 	Data       GeneratedQuestionDataDTO `json:"data"`
 }
+
+type GenerateQuizRequestDTO struct {
+	CategoryID string `json:"category_id" binding:"required" example:"d27b21ab-6177-4159-9e13-15dc50ffed29"`
+}
+
+type GeneratedQuizQuestionDTO struct {
+	QuestionContent string               `json:"question_content" example:"What is the capital of France?"`
+	Choices         []GeneratedChoiceDTO `json:"choices"`
+}
+
+type GeneratedQuizDataDTO struct {
+	QuizTitle string                     `json:"quiz_title" example:"European Capitals Quiz"`
+	Questions []GeneratedQuizQuestionDTO `json:"questions"`
+}
+
+type GenerateQuizSuccessResponseDTO struct {
+	StatusCode int                  `json:"statusCode" example:"200"`
+	Success    bool                 `json:"success" example:"true"`
+	Data       GeneratedQuizDataDTO `json:"data"`
+}

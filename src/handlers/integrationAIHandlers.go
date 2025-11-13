@@ -13,6 +13,19 @@ import (
 	"gorm.io/gorm"
 )
 
+// GenerateQuizAI godoc
+// @Summary Generate Full Quiz with Questions and Choices
+// @Schemes
+// @Description Generate a complete quiz with title, questions and choices using AI
+// @Tags ai
+// @Produce json
+// @Param data body types.GenerateQuizRequestDTO true "Generate Quiz Request Body"
+// @Success 200 {object} types.GenerateQuizSuccessResponseDTO
+// @Failure 400 {object} types.BadRequestErrorResponseStruct
+// @Failure 403 {object} types.ForbiddenErrorResponseStruct
+// @Failure 404 {object} types.NotFoundErrorResponseStruct
+// @Failure 500 {object} types.InternalServerErrorResponseStruct
+// @Router /ai/generate-quiz [post]
 func GenerateQuizAI(c *gin.Context, db *gorm.DB, openAIClient *openai.Client) {
 	if openAIClient == nil {
 		log.Printf("OpenAI client is not initialized")
@@ -25,8 +38,165 @@ func GenerateQuizAI(c *gin.Context, db *gorm.DB, openAIClient *openai.Client) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "GenerateQuizAI endpoint is under construction.",
+	var reqBody types.GenerateQuizRequestDTO
+	if err := c.ShouldBindJSON(&reqBody); err != nil {
+		log.Printf("Error parsing request body: %v", err)
+
+		c.JSON(http.StatusBadRequest, types.BadRequestErrorResponseStruct{
+			StatusCode: http.StatusBadRequest,
+			Success:    false,
+			Message:    "An error occurred while parsing the request body.",
+		})
+		return
+	}
+
+	category, err := gorm.G[schemas.Category](db).
+		Where("id = ?", reqBody.CategoryID).
+		First(c.Request.Context())
+	if err != nil {
+		log.Printf("Error fetching category: %v", err)
+
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, types.NotFoundErrorResponseStruct{
+				StatusCode: http.StatusNotFound,
+				Success:    false,
+				Message:    "Category not found.",
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while fetching the category.",
+		})
+		return
+	}
+
+	type Choice struct {
+		Content   string `json:"content"`
+		IsCorrect bool   `json:"is_correct"`
+	}
+	type Question struct {
+		QuestionContent string   `json:"question_content"`
+		Choices         []Choice `json:"choices"`
+	}
+	type Result struct {
+		QuizTitle string     `json:"quiz_title"`
+		Questions []Question `json:"questions"`
+	}
+	var result Result
+	schema, err := jsonschema.GenerateSchemaForType(result)
+	if err != nil {
+		log.Printf("Error generating JSON schema: %v", err)
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while preparing the AI request.",
+		})
+		return
+	}
+
+	response, err := openAIClient.CreateChatCompletion(c.Request.Context(), openai.ChatCompletionRequest{
+		Model: openai.GPT4oMini,
+		Messages: []openai.ChatCompletionMessage{
+			{
+				Role: openai.ChatMessageRoleUser,
+				Content: "Você é um gerador de quizzes completos em pt-BR.\n" +
+					"Tarefa: dado category (categoria do quiz), produza 1 (um) quiz completo com título e 5 (cinco) questões, cada uma com 2 (duas) a 6 (seis) alternativas de resposta.\n" +
+					"Regras para o título do quiz:\n" +
+					"- \"seja relevante à categoria;\"\n" +
+					"- \"tenha no máximo 60 caracteres;\"\n" +
+					"- \"use português correto com contrações apropriadas (de+o=do; de+a=da; de+os=dos; de+as=das) e acentuação;\"\n" +
+					"- \"capitalize a primeira letra;\"\n" +
+					"- \"seja criativo e atrativo;\"\n" +
+					"Regras para cada questão:\n" +
+					"- \"seja relevante à categoria e coerente com o título do quiz;\"\n" +
+					"- \"tenha 1 linha e no máximo 255 caracteres;\"\n" +
+					"- \"use português correto, com contrações apropriadas (de+o=do; de+a=da; de+os=dos; de+as=das) e acentuação;\"\n" +
+					"- \"varie formas interrogativas quando fizer sentido (qual/quanto/onde/quando/quem/como/por que);\"\n" +
+					"- \"quando necessário, termine o enunciado da questão com '?';\"\n" +
+					"- \"capitalize a primeira letra;\"\n" +
+					"- \"as questões devem variar em dificuldade e tópicos dentro da categoria;\"\n" +
+					"Regras para as alternativas de cada questão:\n" +
+					"- \"gere de 2 a 6 alternativas por questão;\"\n" +
+					"- \"apenas 1 alternativa deve ser correta (is_correct: true);\"\n" +
+					"- \"as outras alternativas incorretas devem ser convincentes e plausíveis;\"\n" +
+					"- \"cada alternativa deve ter no máximo 150 caracteres;\"\n" +
+					"- \"use português correto com contrações e acentuação apropriadas;\"\n" +
+					"- \"capitalize a primeira letra de cada alternativa;\"\n" +
+					"- \"as alternativas não devem ser óbvias demais;\"\n" +
+					"Saída apenas em JSON conforme o schema fornecido.\n\n" +
+					"category: " + category.Name + "\n",
+			},
+		},
+		ResponseFormat: &openai.ChatCompletionResponseFormat{
+			Type: openai.ChatCompletionResponseFormatTypeJSONSchema,
+			JSONSchema: &openai.ChatCompletionResponseFormatJSONSchema{
+				Name:   "generate-full-quiz",
+				Schema: schema,
+				Strict: true,
+			},
+		},
+	})
+	if err != nil {
+		log.Printf("Error from OpenAI API: %v", err)
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while communicating with the AI service.",
+		})
+		return
+	}
+
+	if len(response.Choices) == 0 {
+		log.Printf("No choices returned from OpenAI API")
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "AI service did not return any suggestions.",
+		})
+		return
+	}
+
+	err = schema.Unmarshal(response.Choices[0].Message.Content, &result)
+	if err != nil {
+		log.Printf("Error unmarshaling AI response: %v", err)
+
+		c.JSON(http.StatusInternalServerError, types.InternalServerErrorResponseStruct{
+			StatusCode: http.StatusInternalServerError,
+			Success:    false,
+			Message:    "An error occurred while processing the AI response.",
+		})
+		return
+	}
+
+	// Convert internal result to DTO
+	questions := make([]types.GeneratedQuizQuestionDTO, len(result.Questions))
+	for i, question := range result.Questions {
+		choices := make([]types.GeneratedChoiceDTO, len(question.Choices))
+		for j, choice := range question.Choices {
+			choices[j] = types.GeneratedChoiceDTO{
+				Content:   choice.Content,
+				IsCorrect: choice.IsCorrect,
+			}
+		}
+		questions[i] = types.GeneratedQuizQuestionDTO{
+			QuestionContent: question.QuestionContent,
+			Choices:         choices,
+		}
+	}
+
+	c.JSON(http.StatusOK, types.GenerateQuizSuccessResponseDTO{
+		StatusCode: http.StatusOK,
+		Success:    true,
+		Data: types.GeneratedQuizDataDTO{
+			QuizTitle: result.QuizTitle,
+			Questions: questions,
+		},
 	})
 }
 
