@@ -28,7 +28,7 @@ func IssueTokens(userID string) (*Tokens, error) {
 		UserID:   userID,
 		JTIAcc:   uuid.NewString(),
 		JTIRef:   uuid.NewString(),
-		ExpAcc:   now.Add(15 * time.Minute),
+		ExpAcc:   now.Add(2 * time.Hour),
 		ExpRef:   now.Add(7 * 24 * time.Hour),
 		Issuer:   "intelliquiz-app",
 		Audience: "intelliquiz-client",
